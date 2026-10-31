@@ -254,7 +254,10 @@ export class MediaRoomController {
       void this.stopProgram();
     if (
       options.show.phase === "ended" &&
-      (this.room || this.camera || this.microphone)
+      (this.room ||
+        this.camera ||
+        this.microphone ||
+        this.snapshot.cameraRequestPending)
     )
       void this.disconnect();
   };

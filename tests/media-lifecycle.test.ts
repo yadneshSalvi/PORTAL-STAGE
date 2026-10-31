@@ -585,6 +585,45 @@ describe("LiveKit browser lifecycle", () => {
       localPreview: null,
     });
   });
+  it("ending an unjoined show cancels pending capture and stops a late permission grant", async () => {
+    let resolve!: (track: TestTrack) => void;
+    createVideo.mockImplementationOnce(
+      () =>
+        new Promise<TestTrack>((done) => {
+          resolve = done;
+        }),
+    );
+    const initial = options();
+    const media = controller(initial);
+    const enabling = media.enableCamera();
+    await flush();
+    expect(rooms).toHaveLength(0);
+    expect(media.getSnapshot().cameraRequestPending).toBe(true);
+    media.updateOptions({
+      ...initial,
+      show: { ...initial.show, phase: "ended" },
+    });
+    expect(media.getSnapshot().cameraRequestPending).toBe(false);
+    const lateTrack = new TestTrack();
+    resolve(lateTrack);
+    await enabling;
+    await flush();
+    expect(lateTrack.stop).toHaveBeenCalledTimes(1);
+    expect(lateTrack.attach).not.toHaveBeenCalled();
+    expect(requestToken).not.toHaveBeenCalled();
+    expect(rooms).toHaveLength(0);
+    expect(media.getSnapshot()).toMatchObject({
+      status: "disconnected",
+      connected: false,
+      cameraRequestPending: false,
+      cameraEnabled: false,
+      cameraPublished: false,
+      localPreview: null,
+      videos: { A: null, B: null },
+      permissions: { camera: "unknown" },
+      error: null,
+    });
+  });
   it("switches only an already enabled input and leaves disabled inputs private", async () => {
     const media = controller();
     await media.selectDevice("videoinput", "camera-2");
