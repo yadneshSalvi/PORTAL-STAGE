@@ -14,11 +14,15 @@ import { apertureCoverCrop } from "@/vision/calibration";
 import { stagePointForAperture } from "./coordinates";
 import { VideoFrameUpload } from "./video-frame-upload";
 import { startStageFrameLoop } from "./frame-loop";
+import { makeParcel } from "./parcel-prop";
+import { makeRoomIllustrations } from "./room-illustrations";
 
 export type RenderInput = {
   show: ShowState;
   videoA?: HTMLVideoElement | null;
   videoB?: HTMLVideoElement | null;
+  localPreviewA?: HTMLVideoElement | null;
+  localAnchorA?: Point | null;
   serverOffset?: number;
   forceCurtain?: boolean;
   anchors?: Partial<Record<Slot, Point>>;
@@ -35,12 +39,32 @@ const vertexShader = `varying vec2 vUv; void main(){vUv=uv; gl_Position=projecti
 const fragmentShader = `uniform sampler2D videoMap; uniform vec2 uvScale; uniform vec2 size; varying vec2 vUv; void main(){float y=vUv.y*size.y; float x=(vUv.x-.5)*size.x; float r=size.x*.5; if(y>size.y-r&&x*x+pow(y-(size.y-r),2.0)>r*r) discard; vec2 uv=(vUv-.5)*uvScale+.5; gl_FragColor=texture2D(videoMap,uv);}`;
 const clamp = (n: number, min: number, max: number) =>
   Math.min(max, Math.max(min, n));
+const MAX_RAIN_SEGMENTS = 380;
+export function rainPresentation(show: Pick<ShowState, "weather" | "preset">) {
+  const stormy = show.weather === "wild";
+  return {
+    count: show.weather
+      ? clamp(
+          Math.floor((stormy ? 350 : 145) * show.preset.rainIntensity),
+          0,
+          MAX_RAIN_SEGMENTS,
+        )
+      : 0,
+    opacity: stormy ? 0.42 : 0.3,
+    speed: stormy ? 360 : 180,
+    slant: stormy ? 8 : 2,
+    length: stormy ? 23 : 15,
+  };
+}
 function anchor(
   show: ShowState,
   slot: Slot,
   anchors?: Partial<Record<Slot, Point>>,
 ) {
-  const point = anchors?.[slot] || show.participants[slot].anchor;
+  const point =
+    show.mode === "solo" && slot === "B"
+      ? { x: 0.58, y: 0.72 }
+      : anchors?.[slot] || show.participants[slot].anchor;
   return stagePointForAperture(slot, point);
 }
 
@@ -76,6 +100,8 @@ export function createTheaterRenderer(
   scene.add(key);
   const scenery = makeScenery();
   scene.add(plane(scenery.texture, -60));
+  const rooms = makeRoomIllustrations();
+  scene.add(rooms.sceneryMesh, rooms.magicMesh);
   const overlay = canvasTexture();
   scene.add(plane(overlay.texture, 180));
   const iris = new THREE.Group();
@@ -107,6 +133,8 @@ export function createTheaterRenderer(
   }
   const umbrella = makeUmbrella();
   scene.add(umbrella.group);
+  const parcel = makeParcel();
+  scene.add(parcel.group);
   const pip = makePip();
   pip.position.set(960, 264, 95);
   scene.add(pip);
@@ -122,7 +150,7 @@ export function createTheaterRenderer(
   puddle.scale.set(90, 10, 1);
   puddle.position.set(960, 247, 20);
   scene.add(puddle);
-  const rainCount = 380,
+  const rainCount = MAX_RAIN_SEGMENTS,
     rainPositions = new Float32Array(rainCount * 6),
     rainGeometry = new THREE.BufferGeometry();
   rainGeometry.setAttribute(
@@ -179,6 +207,7 @@ export function createTheaterRenderer(
     source: HTMLVideoElement | null | undefined,
     show: ShowState,
     forceCurtain: boolean,
+    localOnly = false,
   ) {
     let entry = videoMeshes[slot];
     if (entry?.source !== source) {
@@ -224,10 +253,8 @@ export function createTheaterRenderer(
     const p = show.participants[slot];
     entry.mesh.visible =
       !forceCurtain &&
-      p.consentBroadcast &&
-      p.admitted &&
-      p.connected &&
-      p.camera &&
+      (localOnly ||
+        (p.consentBroadcast && p.admitted && p.connected && p.camera)) &&
       show.phase === "live" &&
       source.readyState >= 2;
     const crop = apertureCoverCrop({
@@ -246,21 +273,34 @@ export function createTheaterRenderer(
     const now = Date.now() + (current.serverOffset || 0),
       t = now / 1000;
     const calm = reduced.matches || show.preset.reducedMotion;
-    updateVideo("A", current.videoA, show, !!current.forceCurtain);
+    const isParcel = show.episode === "midnight-parcel";
+    rooms.update(show, now, time, calm);
+    parcel.update(show, now, calm);
+    const localCameraA =
+      show.mode === "rehearsal" &&
+      show.transport !== "livekit" &&
+      !!current.localPreviewA;
+    const videoA = localCameraA ? current.localPreviewA : current.videoA;
+    const anchors =
+      localCameraA && current.localAnchorA
+        ? { ...current.anchors, A: current.localAnchorA }
+        : current.anchors;
+    updateVideo("A", videoA, show, !!current.forceCurtain, localCameraA);
     updateVideo("B", current.videoB, show, !!current.forceCurtain);
-    const available = { A: !!current.videoA, B: !!current.videoB };
-    const textKey = `${show.sequence}:${show.phase}:${Math.floor(now / 1000)}:${current.forceCurtain}:${available.A}:${available.B}`;
+    const available = { A: !!videoA, B: !!current.videoB };
+    const textKey = `${show.revision}:${show.phase}:${Math.floor(now / 1000)}:${current.forceCurtain}:${available.A}:${available.B}:${localCameraA}`;
     if (textKey !== lastText) {
       drawProgramText(
         overlay.ctx,
         current.forceCurtain ? { ...show, phase: "hold" } : show,
         now,
         available,
+        { localCameraA },
       );
       overlay.texture.needsUpdate = true;
       lastText = textKey;
     }
-    const point = anchor(show, show.umbrella.owner, current.anchors);
+    const point = anchor(show, show.umbrella.owner, anchors);
     let ux = point.x,
       uy = point.y,
       tilt = show.umbrella.owner === "A" ? 0.1 : -0.1;
@@ -305,14 +345,13 @@ export function createTheaterRenderer(
             ? clamp((time - presentation.start) / presentation.duration, 0, 1)
             : 1,
         eased = p * p * (3 - 2 * p),
-        from =
-          presentation?.from || anchor(show, transfer.from, current.anchors),
-        to = anchor(show, transfer.to, current.anchors);
+        from = presentation?.from || anchor(show, transfer.from, anchors),
+        to = anchor(show, transfer.to, anchors);
       ux = from.x + (to.x - from.x) * eased;
       uy =
         from.y +
         (to.y - from.y) * eased +
-        Math.sin(p * Math.PI) * (70 + UMBRELLA_GRIP.y);
+        Math.sin(p * Math.PI) * (isParcel ? 80 : 70 + UMBRELLA_GRIP.y);
       tilt = Math.sin(p * Math.PI * 2) * 0.12;
       if (
         p >= 1 &&
@@ -336,18 +375,24 @@ export function createTheaterRenderer(
       }
     }
     wasLive = show.phase === "live" && !current.forceCurtain;
-    if (show.beat === "shelter") {
+    if (show.beat === "shelter" && !isParcel) {
       ux =
-        show.preset.ending === "playful-chase" && !calm
-          ? 960 + Math.sin(t * 1.2) * 100
+        show.preset.ending === "playful-chase"
+          ? calm
+            ? 1180
+            : 960 + Math.sin(t * 0.95) * 280
           : 960;
       uy = 485 + UMBRELLA_GRIP.y;
       tilt = 0;
     }
     lastUmbrellaPosition = { x: ux, y: uy };
-    umbrella.group.position.set(ux, uy, 90);
-    umbrella.group.rotation.z = tilt + (calm ? 0 : Math.sin(t * 0.9) * 0.012);
-    umbrella.group.visible = show.phase === "live" && !current.forceCurtain;
+    const prop = isParcel ? parcel.group : umbrella.group;
+    prop.position.set(ux, uy, 90);
+    prop.rotation.z = tilt + (calm ? 0 : Math.sin(t * 0.9) * 0.012);
+    umbrella.group.visible =
+      !isParcel && show.phase === "live" && !current.forceCurtain;
+    parcel.group.visible =
+      isParcel && show.phase === "live" && !current.forceCurtain;
     umbrella.droplets.children.forEach((drop, i) => {
       drop.visible = show.umbrella.wetness > i / 12;
       drop.position.y = -12 - (calm ? i * 2 : (t * (18 + i) + i * 16) % 60);
@@ -362,6 +407,7 @@ export function createTheaterRenderer(
       show.beat === "shelter" && show.preset.ending === "shared-shelter"
         ? 960
         : ux +
+          (show.beat === "shelter" ? -90 : 0) +
           (lively
             ? Math.sin(t * 2.4) * (45 + show.preset.creatureCuriosity * 80)
             : Math.sin(t * 0.8) * 15);
@@ -371,37 +417,53 @@ export function createTheaterRenderer(
       (calm
         ? 0
         : Math.abs(Math.sin(t * (lively ? 5 : 1.6))) * (lively ? 25 : 5));
+    if (!calm)
+      pip.position.y += Math.max(
+        0,
+        ...(show.presenceEffects || [])
+          .filter(
+            (event) =>
+              event.effect === "cheer" &&
+              now >= event.at &&
+              now - event.at < 2200,
+          )
+          .map((event) => Math.sin(((now - event.at) / 2200) * Math.PI) * 35),
+      );
     pip.scale.setScalar(Math.max(0.001, hatch));
     pip.rotation.z = calm
       ? 0
       : Math.sin(t * (lively ? 4 : 1.1)) * (lively ? 0.08 : 0.025);
     pip.visible =
-      show.creature.hatched && show.phase === "live" && !current.forceCurtain;
+      !isParcel &&
+      show.creature.hatched &&
+      show.phase === "live" &&
+      !current.forceCurtain;
     puddle.position.x = show.creature.hatched ? pip.position.x : ux;
     puddle.visible =
-      !!show.weather && show.phase === "live" && !current.forceCurtain;
+      !isParcel &&
+      !!show.weather &&
+      show.phase === "live" &&
+      !current.forceCurtain;
     orbit.rotation.z = calm ? 0 : t * 0.035;
     const visibleRain =
       !!show.weather && !calm && show.phase === "live" && !current.forceCurtain;
     rain.visible = visibleRain;
     if (visibleRain) {
-      const count = Math.min(
-        rainCount,
-        Math.floor((lively ? 350 : 145) * show.preset.rainIntensity),
-      );
+      const parameters = rainPresentation(show);
+      const { count } = parameters;
       rainGeometry.setDrawRange(0, count * 2);
-      rainMaterial.opacity = lively ? 0.42 : 0.3;
+      rainMaterial.opacity = parameters.opacity;
       for (let i = 0; i < count; i++) {
         const slot: Slot = i % 2 ? "A" : "B",
           r = ROOMS[slot],
           x = r.x + 38 + ((i * 137) % (r.w - 76)),
-          y = r.y + 25 + ((t * (lively ? 360 : 180) + i * 71) % (r.h - 40)),
+          y = r.y + 25 + ((t * parameters.speed + i * 71) % (r.h - 40)),
           j = i * 6;
         rainPositions[j] = x;
         rainPositions[j + 1] = STAGE_HEIGHT - y;
         rainPositions[j + 2] = 0;
-        rainPositions[j + 3] = x - (lively ? 8 : 2);
-        rainPositions[j + 4] = STAGE_HEIGHT - y - (lively ? 23 : 15);
+        rainPositions[j + 3] = x - parameters.slant;
+        rainPositions[j + 4] = STAGE_HEIGHT - y - parameters.length;
         rainPositions[j + 5] = 0;
       }
       rainGeometry.attributes.position.needsUpdate = true;

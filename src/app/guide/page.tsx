@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { SiteFooter, SiteHeader } from "@/components/brand";
 import { NewShowButton } from "@/components/new-show-button";
 export const metadata: Metadata = {
   title: "A performer’s field guide",
   description:
-    "Your first entrance, the Borrowed Weather cues, private camera setup, Twitch choices, and a clean Program for OBS.",
+    "Public rehearsal, local camera and hand cues, solo Audience Room shows, both episodes, Twitch choices, and Program setup.",
 };
 export default function GuidePage() {
   return (
@@ -19,16 +20,19 @@ export default function GuidePage() {
             <em>the impossible.</em>
           </h1>
           <p>
-            You don’t need to be a magician. Bring a friend, headphones, and a
-            willingness to see what happens.
+            Start with your own rehearsal. Bring your community to a solo show,
+            or invite a friend for a duet.
           </p>
         </section>
         <div className="guide-content">
           <nav className="guide-toc" aria-label="Guide sections">
             <a href="#rehearsal">Your first rehearsal</a>
+            <a href="#local-camera">A local camera rehearsal</a>
+            <a href="#solo">Solo with your community</a>
             <a href="#cast">Who’s on the stage?</a>
             <a href="#entrance">A guest’s entrance</a>
             <a href="#story">Borrowed Weather</a>
+            <a href="#parcel">The Midnight Parcel</a>
             <a href="#controls">Buttons & hand cues</a>
             <a href="#twitch">Your Twitch community</a>
             <a href="#program">Program & OBS</a>
@@ -46,29 +50,109 @@ export default function GuidePage() {
               </p>
               <ol>
                 <li>
-                  Open the studio and choose <strong>Start a rehearsal</strong>.
+                  Open the studio, select either episode, and choose{" "}
+                  <strong>Start a rehearsal</strong>.
                 </li>
                 <li>
-                  Follow <strong>Your next cue</strong>. Open the curtain, open
-                  a weather choice, and add a labeled test ballot if you like.
+                  Follow <strong>Your next cue</strong>. Open a choice and add
+                  labeled test ballots.
                 </li>
                 <li>
-                  Close the choice, let it rain, offer the umbrella, and accept
-                  as the other performer.
+                  Close the choice. A tie or empty result asks you to select an
+                  explicit <strong>Director’s choice</strong>, then apply it.
                 </li>
                 <li>
-                  Meet Pip, offer the umbrella back, then share the shelter.
+                  Offer and accept as the two illustrated parts. The same prop
+                  keeps its traits across the crossing.
                 </li>
                 <li>
-                  Choose <strong>Make it yours</strong>, save a variation, and
-                  load it onto the stage. Hold or end before resetting for a new
-                  episode.
+                  Follow the remaining choices and consequences, then end.{" "}
+                  <strong>New rehearsal</strong> and <strong>New show</strong>{" "}
+                  remain available after the curtain closes.
                 </li>
               </ol>
               <div className="guide-callout">
                 Rehearsal demonstrates controls and prop continuity. Real remote
                 cameras, Twitch input, and observed media latency need a live
                 run.
+              </div>
+            </section>
+            <section id="local-camera">
+              <h2>Put yourself in the rehearsal.</h2>
+              <p>
+                In a public rehearsal, choose{" "}
+                <strong>Try a local camera &amp; hand cues</strong>. Check the
+                local preview permission, then select{" "}
+                <strong>Enable local camera</strong>. No microphone is requested
+                and no media room is joined.
+              </p>
+              <p>
+                Camera frames and hand landmarks stay in this browser. The hand
+                model downloads from this site only when you enable tracking.
+                Offer and Accept commands still go to the show server; local
+                framing and hand positions do not.
+              </p>
+              <ol>
+                <li>
+                  Move the anchor with a pointer or arrow keys and confirm
+                  camera framing.
+                </li>
+                <li>
+                  Optionally enable local hand cues, then explicitly arm them.
+                </li>
+                <li>
+                  Lower the hand once, then deliberately hold an open palm in
+                  the marked region. Use the buttons whenever tracking is
+                  unavailable.
+                </li>
+              </ol>
+              <p>
+                You can cancel a pending camera request. The browser may leave
+                its own permission dialog open; any late grant is stopped.
+                Turning the camera off, leaving the page, or ending the show
+                closes this local capture. A rehearsal scene preview in another
+                window uses illustrations and does not receive your private
+                camera.
+              </p>
+            </section>
+            <section id="solo">
+              <h2>Let chat hold the other portal.</h2>
+              <p>
+                A solo Twitch show has one consenting streamer in room A and an
+                original illustrated Audience Room in B. It needs no guest
+                invitation. The studio shows the server’s available starts and
+                media-session limit before creation.
+              </p>
+              <ol>
+                <li>
+                  Sign in with Twitch and create a solo show for either episode.
+                </li>
+                <li>
+                  Open your camera and consent setup, connect the media room,
+                  confirm your framing and broadcast consent, mark yourself
+                  ready, and admit A.
+                </li>
+                <li>
+                  Connect Twitch chat and open the curtain. Your browser relays
+                  EventSub commands to the server.
+                </li>
+                <li>
+                  Offer the prop. The Audience Room chooses{" "}
+                  <strong>!accept</strong> or <strong>!wait</strong>. With no
+                  unique winner, you must make an explicit Director’s choice.
+                </li>
+                <li>
+                  When the room holds it, <strong>!giveback</strong> or{" "}
+                  <strong>!keep</strong> decides the return offer. You still
+                  accept the prop back as A.
+                </li>
+              </ol>
+              <div className="guide-callout">
+                Solo sessions reserve bounded shared media capacity. The studio
+                displays the deadline. New live access stops after it. Keep the
+                director window open, and use End show to close sooner. A new
+                show cannot extend an old media grant. Public local-camera
+                rehearsal remains available separately.
               </div>
             </section>
             <section id="cast">
@@ -100,8 +184,10 @@ export default function GuidePage() {
                   <tr>
                     <td>Twitch audience</td>
                     <td>
-                      Watches on Twitch and chooses the weather during an open
-                      choice.
+                      Watches on Twitch, chooses the story during each open
+                      window, and adds bounded presence effects. In solo mode it
+                      also receives and offers the prop through the illustrated
+                      Audience Room.
                     </td>
                   </tr>
                   <tr>
@@ -114,7 +200,7 @@ export default function GuidePage() {
                 </tbody>
               </table>
               <p>
-                A live show needs two consenting performers with cameras,
+                A duet show needs two consenting performers with cameras,
                 headphones, a supported desktop browser, a configured LiveKit
                 service, an approved Twitch host account, and OBS or another
                 verified capture setup. Public rehearsal stays available
@@ -172,16 +258,36 @@ export default function GuidePage() {
                 luminous iris. Its patch, wetness, and identity stay with it.
               </p>
               <p>
-                A drip becomes Pip, an original small creature with a fondness
-                for shelter. Gentle rain makes a shy companion; wild weather
-                makes a bouncing umbrella-chaser. Pass the umbrella back and Pip
-                follows. Find a shared shelter, or save a version with a playful
-                chase ending.
+                A drip becomes a small original creature. The room chooses its
+                safe name, then its curious or shy mood. Pass the umbrella back
+                and it follows. A final choice creates a shared shelter or a
+                visibly playful chase.
               </p>
               <div className="guide-callout">
                 The umbrella is virtual. No physical umbrella is required. The
                 scene does not recognize or teleport physical objects.
               </div>
+            </section>
+            <section id="parcel">
+              <h2>The Midnight Parcel.</h2>
+              <p>
+                A moonlit sorting office receives a gift for the other side.
+                Choose <strong>!stars</strong> or <strong>!garden</strong>,
+                stamp the parcel, and offer it across the portal. Its tag and
+                handling marks persist.
+              </p>
+              <p>
+                Opening it in B creates a constellation or a luminous garden in
+                that room. Return the same marked parcel, then choose{" "}
+                <strong>!deliver</strong> to leave the gift in B or{" "}
+                <strong>!keep</strong> to bring its magic home to A. The room
+                visibly changes with that ending.
+              </p>
+              <p>
+                Its eight story stages are opening, contents, stamp, crossing,
+                unpacking, return, the gift’s home, and curtain. Choose it in
+                the studio for rehearsal or solo.
+              </p>
             </section>
             <section id="controls">
               <h2>Buttons belong in the performance.</h2>
@@ -209,7 +315,7 @@ export default function GuidePage() {
                     <td>
                       <kbd>O</kbd>
                     </td>
-                    <td>Offer the umbrella you currently hold.</td>
+                    <td>Offer the virtual prop you currently hold.</td>
                   </tr>
                   <tr>
                     <td>
@@ -251,32 +357,76 @@ export default function GuidePage() {
             <section id="twitch">
               <h2>Let your community set the scene.</h2>
               <p>
-                The approved host signs in with Twitch, then connects chat from
-                the studio. Account sign-in and an active chat connection are
-                separate states. A live audience choice requires a healthy chat
-                connection.
+                Sign-in and an active chat connection are separate steps. The
+                host connects Twitch chat in the studio; EventSub notifications
+                are relayed through that host’s browser. A live choice requires
+                a healthy connection.
+              </p>
+              <table>
+                <thead>
+                  <tr>
+                    <th>CHOICE WINDOW</th>
+                    <th>COMMANDS</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Weather</td>
+                    <td>!gentle · !wild</td>
+                  </tr>
+                  <tr>
+                    <td>Creature’s name</td>
+                    <td>!pip1 (Pip) · !pip2 (Sprig) · !pip3 (Moth)</td>
+                  </tr>
+                  <tr>
+                    <td>Mood</td>
+                    <td>!curious · !shy</td>
+                  </tr>
+                  <tr>
+                    <td>Weather ending</td>
+                    <td>!share · !chase</td>
+                  </tr>
+                  <tr>
+                    <td>Audience Room handoff</td>
+                    <td>!accept · !wait, then !giveback · !keep</td>
+                  </tr>
+                  <tr>
+                    <td>Parcel contents and ending</td>
+                    <td>!stars · !garden, then !deliver · !keep</td>
+                  </tr>
+                </tbody>
+              </table>
+              <p>
+                Only commands for the current window count. One account has one
+                replaceable ballot. Duplicate delivery adds no votes. Messages
+                sent inside the window have a brief delivery grace period after
+                close. Empty or tied results wait for your deliberate{" "}
+                <strong>Director’s choice</strong>; they never silently accept
+                an offer.
               </p>
               <p>
-                During an open choice, viewers type <strong>!gentle</strong> or{" "}
-                <strong>!wild</strong>. One current choice counts per eligible
-                viewer; a later valid selection replaces it until close.
-                Repeated delivery and late messages do not add votes.
+                Between choices, <strong>!rain</strong>,{" "}
+                <strong>!thunder</strong>, and <strong>!cheer</strong> add
+                gentle visual presence. Effects have per-account cooldowns and
+                shared bounds. Reduced motion keeps their quieter presentation.
+                The stage shows live tally bars and brief credits using
+                sanitized display names.
               </p>
               <p>
-                The director closes the choice and activates the result. With no
-                ballots, the stage uses <strong>Director’s choice</strong>.
-                Rehearsal ballots are labeled as tests. Performers use the stage
-                return, so ordinary Twitch playback delay stays outside the
-                handoff.
+                Rehearsal ballots and effects are labeled tests. They are never
+                credited as real audience participation.
               </p>
             </section>
             <section id="program">
               <h2>One clean Program.</h2>
               <p>
-                The director’s studio combines both admitted camera feeds, the
-                umbrella, the creature, and the scenery into one 1920 × 1080
-                composition. Keep that studio open on a capable computer. Only
-                one director holds its publishing lease.
+                The director’s studio combines admitted cameras, the virtual
+                prop, and original scenery into one 1920 × 1080 composition. In
+                solo, B is the illustrated Audience Room. Keep that studio open
+                in a dedicated, uncovered Chrome window. Only one director holds
+                its publishing lease. Hidden or covered windows can pause
+                frames; after returning, check the Program picture before
+                acknowledging the warning.
               </p>
               <ol>
                 <li>
@@ -305,16 +455,19 @@ export default function GuidePage() {
                 credentials and host controls out of source URLs.
               </p>
               <div className="guide-callout">
-                Rehearsal Program is a labeled local scene preview. Verify the
-                real camera, audio, OBS, and Twitch path with the devices and
-                software you will use.
+                Ordinary rehearsal Program is a labeled illustrated scene
+                preview. Its optional local camera stays private to the director
+                window. A full two-human performance on separate networks with
+                microphones and an OBS broadcast remains a separate physical
+                acceptance task. Verify your own capture and audio route before
+                broadcasting.
               </div>
             </section>
             <section id="recovery">
               <h2>The story can wait.</h2>
               <p>
                 <strong>Hold stage</strong> closes the scene while preserving
-                committed prop ownership. <strong>Return umbrella</strong>{" "}
+                committed prop ownership. <strong>Return prop</strong>{" "}
                 explicitly returns it to the host. <strong>Hide guest</strong>{" "}
                 closes their aperture and requires readiness and admission
                 again.
@@ -361,6 +514,12 @@ export default function GuidePage() {
                 the configured media service when you explicitly join.
               </p>
             </section>
+            <p>
+              <Link className="underlined-link" href="/how-built">
+                How this was built: code, tests, and the Codex development
+                record ↗
+              </Link>
+            </p>
             <div className="guide-action">
               <div>
                 <h3>Your entrance is waiting.</h3>

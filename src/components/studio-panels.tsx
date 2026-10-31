@@ -211,6 +211,7 @@ export function OutputPanel({
   publishing,
   transportTesting = false,
   onChanged,
+  localCameraActive = false,
 }: {
   show: ShowState;
   open: boolean;
@@ -218,6 +219,7 @@ export function OutputPanel({
   publishing: boolean;
   transportTesting?: boolean;
   onChanged?: () => void;
+  localCameraActive?: boolean;
 }) {
   const [grant, setGrant] = useState<{
       code: string;
@@ -289,13 +291,15 @@ export function OutputPanel({
         <span className={`output-light ${publishing ? "is-on" : ""}`} />
       </div>
       <p className="dialog-copy">
-        {show.mode === "rehearsal" && !transportTesting
-          ? "This is a labeled local scene preview. Live Program receives the director’s published media stream."
-          : transportTesting
-            ? "This local synthetic transport test receives the director’s actual published WebRTC stream. It contains no real performers."
-            : publishing
-              ? "The director is publishing one Program stream. The output page receives that stream without rendering a second stage."
-              : "Connect the media room in your camera setup to publish the canonical stage. A receive-only output page can then subscribe."}
+        {show.mode === "rehearsal" && localCameraActive
+          ? "The camera is private to the director’s current browser. A scene preview in another window uses the illustrated test plates; it does not receive this local camera."
+          : show.mode === "rehearsal" && !transportTesting
+            ? "This is a labeled local scene preview. Live Program receives the director’s published media stream."
+            : transportTesting
+              ? "This local synthetic transport test receives the director’s actual published WebRTC stream. It contains no real performers."
+              : publishing
+                ? "The director is publishing one Program stream. The output page receives that stream without rendering a second stage."
+                : "Connect the media room in your camera setup to publish the canonical stage. A receive-only output page can then subscribe."}
       </p>
       <ol className="setup-list">
         <li>Open Program in the browser you will capture.</li>
@@ -337,6 +341,18 @@ export function OutputPanel({
           >
             Open Program <ExternalLink size={16} />
           </a>
+          <button
+            className="button button-dark"
+            disabled={busy}
+            onClick={() => void prepare()}
+          >
+            <RefreshCw size={16} />
+            {busy ? "Preparing access…" : "Generate another pairing code"}
+          </button>
+          <p className="field-help">
+            A fresh code leaves existing Program outputs paired. Use Unpair
+            separately to close their access.
+          </p>
         </div>
       ) : (
         <button
@@ -398,7 +414,11 @@ export function EvidencePanel({
             mode: show.mode,
             showId: show.id,
             sequence: show.sequence,
+            episode: show.episode,
             umbrella: show.umbrella,
+            parcel: show.parcel,
+            decisions: show.decisions,
+            presenceEffects: show.presenceEffects,
             creature: show.creature,
             round: show.round,
             events: show.events,
@@ -439,7 +459,11 @@ export function EvidencePanel({
         </div>
         <div>
           <span>ONE OWNER</span>
-          <strong>Performer {show.umbrella.owner}</strong>
+          <strong>
+            {show.mode === "solo" && show.umbrella.owner === "B"
+              ? "Audience Room"
+              : `Performer ${show.umbrella.owner}`}
+          </strong>
         </div>
         <div>
           <span>PROP VERSION</span>
@@ -448,19 +472,25 @@ export function EvidencePanel({
         <div>
           <span>RETAINED TRAITS</span>
           <strong>
-            <i className="coral-swatch" /> Coral patch ·{" "}
-            {Math.round(show.umbrella.wetness * 100)}% wet
+            <i className="coral-swatch" />{" "}
+            {show.parcel
+              ? `Tag ${show.parcel.tag} · ${Math.round(show.parcel.damage * 100)}% handling marks`
+              : `Coral patch · ${Math.round(show.umbrella.wetness * 100)}% wet`}
           </strong>
         </div>
       </div>
       <dl className="evidence-identities">
         <div>
-          <dt>Umbrella identity</dt>
+          <dt>{show.parcel ? "Parcel identity" : "Umbrella identity"}</dt>
           <dd>{show.umbrella.id}</dd>
         </div>
         <div>
-          <dt>Creature identity</dt>
-          <dd>{show.creature.id}</dd>
+          <dt>{show.parcel ? "Parcel consequence" : "Creature identity"}</dt>
+          <dd>
+            {show.parcel
+              ? `${show.parcel.contents || "Contents unchosen"} · ${show.parcel.transformedRoom ? `room ${show.parcel.transformedRoom}` : "not opened"}`
+              : show.creature.id}
+          </dd>
         </div>
         <div>
           <dt>Current transfer</dt>
@@ -530,6 +560,7 @@ export function PresetPanel({
     if (open) {
       setDraft({
         ...show.preset,
+        episode: show.episode,
         id: `version-${crypto.randomUUID()}`,
         name: `${show.preset.name} — my version`,
       });
@@ -549,12 +580,16 @@ export function PresetPanel({
       open={open}
       onClose={onClose}
       title="Make the story your own."
-      eyebrow="YOUR VERSION OF BORROWED WEATHER"
+      eyebrow={
+        show.episode === "midnight-parcel"
+          ? "YOUR VERSION OF THE MIDNIGHT PARCEL"
+          : "YOUR VERSION OF BORROWED WEATHER"
+      }
       wide
     >
       <p className="dialog-copy">
-        Save a version, then load it onto the stage. The episode title,
-        rainfall, Pip’s behavior, and ending all use these saved settings.
+        Save a version, then load it onto this episode. Title, pacing, and
+        motion stay with the version. Audience choices still shape each run.
       </p>
       <div className="preset-layout">
         <form
@@ -583,75 +618,85 @@ export function PresetPanel({
                 required
               />
             </label>
-            <label className="field-label">
-              Little creature’s name
+            {show.episode !== "midnight-parcel" ? (
+              <label className="field-label">
+                Little creature’s name
+                <input
+                  value={draft.creatureName}
+                  maxLength={24}
+                  onChange={(e) => update("creatureName", e.target.value)}
+                  required
+                />
+              </label>
+            ) : null}
+          </div>
+          {show.episode !== "midnight-parcel" ? (
+            <div className="field-two-columns">
+              <label className="field-label">
+                Weather preference · audience may change it
+                <select
+                  value={draft.defaultWeather}
+                  onChange={(e) =>
+                    update(
+                      "defaultWeather",
+                      e.target.value as ShowPreset["defaultWeather"],
+                    )
+                  }
+                >
+                  <option value="gentle">Gentle · shy shelter-seeker</option>
+                  <option value="wild">Wild · a bouncing mischief-maker</option>
+                </select>
+              </label>
+              <label className="field-label">
+                Ending preference · audience may change it
+                <select
+                  value={draft.ending}
+                  onChange={(e) =>
+                    update("ending", e.target.value as ShowPreset["ending"])
+                  }
+                >
+                  <option value="shared-shelter">Shared shelter</option>
+                  <option value="playful-chase">Playful chase</option>
+                </select>
+              </label>
+            </div>
+          ) : null}
+          {show.episode !== "midnight-parcel" ? (
+            <label className="range-label">
+              <span>
+                Rain intensity{" "}
+                <strong>{Math.round(draft.rainIntensity * 100)}%</strong>
+              </span>
               <input
-                value={draft.creatureName}
-                maxLength={24}
-                onChange={(e) => update("creatureName", e.target.value)}
-                required
+                type="range"
+                min="0.2"
+                max="1"
+                step="0.05"
+                value={draft.rainIntensity}
+                onChange={(e) =>
+                  update("rainIntensity", Number(e.target.value))
+                }
               />
             </label>
-          </div>
-          <div className="field-two-columns">
-            <label className="field-label">
-              Director’s fallback weather
-              <select
-                value={draft.defaultWeather}
+          ) : null}
+          {show.episode !== "midnight-parcel" ? (
+            <label className="range-label">
+              <span>
+                Creature curiosity{" "}
+                <strong>{Math.round(draft.creatureCuriosity * 100)}%</strong>
+              </span>
+              <input
+                type="range"
+                min="0.1"
+                max="1"
+                step="0.05"
+                value={draft.creatureCuriosity}
                 onChange={(e) =>
-                  update(
-                    "defaultWeather",
-                    e.target.value as ShowPreset["defaultWeather"],
-                  )
+                  update("creatureCuriosity", Number(e.target.value))
                 }
-              >
-                <option value="gentle">Gentle · shy shelter-seeker</option>
-                <option value="wild">Wild · a bouncing mischief-maker</option>
-              </select>
+              />
             </label>
-            <label className="field-label">
-              The ending
-              <select
-                value={draft.ending}
-                onChange={(e) =>
-                  update("ending", e.target.value as ShowPreset["ending"])
-                }
-              >
-                <option value="shared-shelter">Shared shelter</option>
-                <option value="playful-chase">Playful chase</option>
-              </select>
-            </label>
-          </div>
-          <label className="range-label">
-            <span>
-              Rain intensity{" "}
-              <strong>{Math.round(draft.rainIntensity * 100)}%</strong>
-            </span>
-            <input
-              type="range"
-              min="0.2"
-              max="1"
-              step="0.05"
-              value={draft.rainIntensity}
-              onChange={(e) => update("rainIntensity", Number(e.target.value))}
-            />
-          </label>
-          <label className="range-label">
-            <span>
-              Creature curiosity{" "}
-              <strong>{Math.round(draft.creatureCuriosity * 100)}%</strong>
-            </span>
-            <input
-              type="range"
-              min="0.1"
-              max="1"
-              step="0.05"
-              value={draft.creatureCuriosity}
-              onChange={(e) =>
-                update("creatureCuriosity", Number(e.target.value))
-              }
-            />
-          </label>
+          ) : null}
           <label className="range-label">
             <span>
               Crossing time <strong>{draft.crossingMs} ms</strong>
@@ -681,7 +726,9 @@ export function PresetPanel({
               checked={draft.reducedMotion}
               onChange={(e) => update("reducedMotion", e.target.checked)}
             />
-            <span>Gentler motion · keep the crossing, remove ambient rain</span>
+            <span>
+              Gentler motion · keep the story, quiet the ambient effects
+            </span>
           </label>
           <button
             className="button button-gold full-width"
@@ -700,10 +747,16 @@ export function PresetPanel({
               <div>
                 <strong>{preset.name}</strong>
                 <span>
-                  {preset.defaultWeather} rain ·{" "}
-                  {preset.ending === "playful-chase"
-                    ? "playful chase"
-                    : "shared shelter"}
+                  {show.episode === "midnight-parcel" ? (
+                    "Parcel · saved pacing and motion"
+                  ) : (
+                    <>
+                      {preset.defaultWeather} rain ·{" "}
+                      {preset.ending === "playful-chase"
+                        ? "playful chase"
+                        : "shared shelter"}
+                    </>
+                  )}
                 </span>
               </div>
               <button
@@ -726,11 +779,18 @@ export function PresetPanel({
           <div className="preset-tip">
             <ShieldCheck size={20} />
             <p>
-              Loading changes the stage’s rules and title. Use{" "}
-              <strong>Reset scene</strong> to run a fresh version from the first
-              cue.
+              Hold the stage before restarting with a saved version. Restarting
+              begins a fresh scene and keeps this show’s saved versions.
             </p>
           </div>
+          <button
+            className="button button-dark full-width"
+            disabled={busy || show.phase !== "hold"}
+            onClick={() => void run({ type: "reset" })}
+          >
+            <RefreshCw size={16} />
+            Restart the held scene
+          </button>
         </div>
       </div>
     </Modal>

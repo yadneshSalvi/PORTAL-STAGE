@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     template: "%s · PORTAL STAGE",
   },
   description:
-    "A traveling theater for two creators and one curious community. Pass a persistent virtual umbrella between rooms, borrow a little weather, and let your audience help write the scene.",
+    "A live theater for a creator, a partner or illustrated Audience Room, and a curious community. Pass a persistent prop between rooms and let Twitch choices shape two original stories.",
   applicationName: "PORTAL STAGE",
   robots: { index: true, follow: true },
 };

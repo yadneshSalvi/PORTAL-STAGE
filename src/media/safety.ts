@@ -31,8 +31,11 @@ export function hasRenderAuthority(
   const { show, role, rendererId, epoch } = options;
   return (
     role === "director" &&
-    (show.mode === "live" || !!options.allowSyntheticMedia) &&
+    (show.mode === "live" ||
+      show.mode === "solo" ||
+      !!options.allowSyntheticMedia) &&
     show.phase !== "ended" &&
+    !soloMediaClosed(show, serverNow) &&
     !!rendererId &&
     epoch === show.epoch &&
     epoch === show.renderLease.epoch &&
@@ -51,10 +54,23 @@ export function mayMixSlot(show: ShowState, slot: Slot): boolean {
   const participant = show.participants[slot];
   return (
     show.phase === "live" &&
+    (show.mode !== "solo" || slot === "A") &&
     participant.connected &&
     participant.admitted &&
     participant.consentBroadcast &&
     participant.microphone
+  );
+}
+
+/** Public solo media has a server-owned immutable window; local rehearsal does not. */
+export function soloMediaClosed(show: ShowState, serverNow: number): boolean {
+  return (
+    show.mode === "solo" &&
+    (!show.solo ||
+      !Number.isFinite(show.solo.endsAt) ||
+      show.solo.endsAt <= serverNow ||
+      show.solo.status === "closing" ||
+      show.solo.status === "closed")
   );
 }
 
@@ -99,6 +115,7 @@ export function mayReceiveRendererMedia(
 ): boolean {
   return (
     show.phase !== "ended" &&
+    !soloMediaClosed(show, serverNow) &&
     !!show.renderLease.clientId &&
     !show.renderLease.releasedAt &&
     show.renderLease.expiresAt > serverNow &&

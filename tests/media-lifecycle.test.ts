@@ -227,6 +227,17 @@ function options(overrides: Partial<MediaRoomOptions> = {}): MediaRoomOptions {
     ...overrides,
   };
 }
+function soloOptions(
+  overrides: Partial<MediaRoomOptions> = {},
+): MediaRoomOptions {
+  const initial = options(overrides);
+  initial.show = {
+    ...initial.show,
+    mode: "solo",
+    solo: { endsAt: Date.now() + 60_000, status: "scheduled" },
+  };
+  return initial;
+}
 function controller(
   overrides: Partial<MediaRoomOptions> = {},
   runtime: Partial<MediaRuntime> = {},
@@ -726,6 +737,222 @@ describe("LiveKit browser lifecycle", () => {
     expect(track.stop).toHaveBeenCalledOnce();
     expect(track.attach).not.toHaveBeenCalled();
     expect(media.getSnapshot().microphoneEnabled).toBe(false);
+  });
+  it("connects real solo A to the separate Program room and excludes all software B media", async () => {
+    const initial = soloOptions();
+    const media = controller(initial);
+    await media.enableCamera();
+    await media.connect();
+    await media.enableMicrophone();
+    const rawB = publication("portal-camera", "camera");
+    const voiceB = publication(
+      "portal-microphone",
+      "microphone",
+      new TestTrack(new TestMediaTrack("audio")),
+    );
+    rooms[0].emit("TrackSubscribed", rawB.track, rawB.value, rawB.participant);
+    rooms[0].emit(
+      "TrackSubscribed",
+      voiceB.track,
+      voiceB.value,
+      voiceB.participant,
+    );
+    expect(rawB.value.setSubscribed).toHaveBeenLastCalledWith(false);
+    expect(voiceB.track.attach).not.toHaveBeenCalled();
+    expect(media.getSnapshot().videos.B).toBeNull();
+    await media.publishProgram({
+      captureStream: () => new TestStream([new TestMediaTrack()]),
+    } as unknown as HTMLCanvasElement);
+    expect(requestToken.mock.calls.map(([, purpose]) => purpose)).toEqual([
+      "director",
+      "output-publish",
+    ]);
+    expect(media.getSnapshot().programPublishing).toBe(true);
+    expect(mixer.setAdmitted).toHaveBeenCalledWith("A", true);
+    expect(mixer.setAdmitted).not.toHaveBeenCalledWith("B", true);
+    media.sendAnchor({ x: 0.6, y: 0.5 });
+    await flush();
+    expect(media.getSnapshot().transientAnchors.A).toEqual({ x: 0.6, y: 0.5 });
+    expect(rooms[0].localParticipant.publishData).not.toHaveBeenCalled();
+  });
+  it.each([
+    { role: "performer", slot: "B" },
+    { role: "director", slot: "B" },
+  ] as const)(
+    "refuses a solo B device or participant connection before SDK/token access: %o",
+    async (role) => {
+      const media = controller(soloOptions(role));
+      await media.enableCamera();
+      await media.enableMicrophone();
+      await media.connect();
+      expect(loadSDK).not.toHaveBeenCalled();
+      expect(createVideo).not.toHaveBeenCalled();
+      expect(createAudio).not.toHaveBeenCalled();
+      expect(requestToken).not.toHaveBeenCalled();
+      expect(rooms).toHaveLength(0);
+      expect(media.getSnapshot().error?.code).toBe("authorization");
+    },
+  );
+  it("stops active solo capture and output at the server-offset deadline and cannot reopen by extending a local snapshot", async () => {
+    const serverNow = Date.now() - 5 * 60_000;
+    const initial = soloOptions({ serverNow });
+    initial.show.solo!.endsAt = serverNow + 1000;
+    initial.show.renderLease.expiresAt = serverNow + 60_000;
+    const media = controller(initial);
+    await media.enableCamera();
+    await media.connect();
+    await media.enableMicrophone();
+    const captured = new TestMediaTrack();
+    await media.publishProgram({
+      captureStream: () => new TestStream([captured]),
+    } as unknown as HTMLCanvasElement);
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(media.getSnapshot()).toMatchObject({
+      connected: false,
+      cameraEnabled: false,
+      microphoneEnabled: false,
+      programPublishing: false,
+      error: { code: "authorization" },
+    });
+    expect(captured.stop).toHaveBeenCalled();
+    expect(cameras[0].stop).toHaveBeenCalled();
+    expect(microphones[0].stop).toHaveBeenCalled();
+    const requests = requestToken.mock.calls.length;
+    media.updateOptions({
+      ...initial,
+      show: {
+        ...initial.show,
+        solo: { endsAt: serverNow + 60_000, status: "scheduled" },
+      },
+    });
+    await media.connect();
+    await media.enableCamera();
+    await media.enableMicrophone();
+    expect(requestToken).toHaveBeenCalledTimes(requests);
+    expect(createVideo).toHaveBeenCalledTimes(1);
+    expect(initial.show.phase).toBe("live");
+  });
+  it.each(["camera", "microphone"] as const)(
+    "stops a late solo %s grant at expiry even before a watchdog timer runs",
+    async (device) => {
+      let resolve!: (track: TestTrack) => void;
+      const create = device === "camera" ? createVideo : createAudio;
+      create.mockImplementationOnce(
+        () =>
+          new Promise<TestTrack>((done) => {
+            resolve = done;
+          }),
+      );
+      const initial = soloOptions();
+      initial.show.solo!.endsAt = Date.now() + 1000;
+      const media = controller(initial);
+      const enabling =
+        device === "camera" ? media.enableCamera() : media.enableMicrophone();
+      await flush();
+      vi.setSystemTime(Date.now() + 1001);
+      const track = new TestTrack(
+        new TestMediaTrack(device === "camera" ? "video" : "audio"),
+      );
+      resolve(track);
+      await enabling;
+      expect(track.stop).toHaveBeenCalledOnce();
+      expect(track.attach).not.toHaveBeenCalled();
+      expect(media.getSnapshot()).toMatchObject({
+        connected: false,
+        cameraEnabled: false,
+        cameraRequestPending: false,
+        microphoneEnabled: false,
+      });
+      expect(requestToken).not.toHaveBeenCalled();
+    },
+  );
+  it("drops a late solo backstage token when the media window expired before any room existed", async () => {
+    let release!: () => void;
+    const gate = new Promise<void>((done) => {
+      release = done;
+    });
+    const initial = soloOptions();
+    initial.show.solo!.endsAt = Date.now() + 1000;
+    const media = controller(initial, {
+      requestToken: async (value, purpose) => {
+        await gate;
+        return requestToken(value, purpose);
+      },
+    });
+    const joining = media.connect();
+    await flush();
+    vi.setSystemTime(Date.now() + 1001);
+    release();
+    await joining;
+    expect(rooms).toHaveLength(0);
+    expect(media.getSnapshot()).toMatchObject({
+      connected: false,
+      status: "disconnected",
+    });
+  });
+  it("drops a late solo Program token and stops backstage capture before creating output transport", async () => {
+    let release!: () => void;
+    const gate = new Promise<void>((done) => {
+      release = done;
+    });
+    const initial = soloOptions();
+    initial.show.solo!.endsAt = Date.now() + 1000;
+    const media = controller(initial, {
+      requestToken: async (value, purpose) => {
+        if (purpose === "output-publish") await gate;
+        return requestToken(value, purpose);
+      },
+    });
+    await media.enableCamera();
+    await media.connect();
+    const captureStream = vi.fn(() => new TestStream([new TestMediaTrack()]));
+    const publishing = media.publishProgram({
+      captureStream,
+    } as unknown as HTMLCanvasElement);
+    await flush();
+    vi.setSystemTime(Date.now() + 1001);
+    release();
+    await publishing;
+    expect(rooms).toHaveLength(1);
+    expect(captureStream).not.toHaveBeenCalled();
+    expect(media.getSnapshot()).toMatchObject({
+      connected: false,
+      cameraEnabled: false,
+      programPublishing: false,
+    });
+  });
+  it("independently disconnects solo Program picture and audio at the cap while the show lease is still current", async () => {
+    const initial = soloOptions({ role: "program", slot: null });
+    initial.show.solo!.endsAt = Date.now() + 1000;
+    Object.assign(initial.show.renderLease, {
+      incarnationId: "solo-mount",
+      incarnationSequence: 1,
+    });
+    const media = controller(initial);
+    await media.connect();
+    const source = rendererTracks("output-publisher", "solo-mount", 1);
+    rooms[0].remoteParticipants.set(source.peer.identity, source.peer);
+    rooms[0].emit(
+      "TrackSubscribed",
+      source.video.track,
+      source.video.value,
+      source.peer,
+    );
+    rooms[0].emit(
+      "TrackSubscribed",
+      source.audio.track,
+      source.audio.value,
+      source.peer,
+    );
+    expect(source.audio.track.attached).toHaveLength(1);
+    expect(media.getSnapshot().programVideo).not.toBeNull();
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(source.audio.track.attached).toHaveLength(0);
+    expect(source.video.track.attached).toHaveLength(0);
+    expect(media.getSnapshot()).toMatchObject({
+      connected: false,
+      programVideo: null,
+    });
   });
   it("switches only an already enabled input and leaves disabled inputs private", async () => {
     const media = controller();

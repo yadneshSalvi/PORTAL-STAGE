@@ -135,7 +135,7 @@ export function DeviceSetup({
         <button
           className="anchor-marker"
           style={{ left: `${point.x * 100}%`, top: `${point.y * 100}%` }}
-          aria-label="Umbrella anchor. Drag or use arrow keys to position."
+          aria-label={`${show.parcel ? "Parcel" : "Umbrella"} anchor. Drag or use arrow keys to position.`}
           onPointerDown={(e) => {
             e.currentTarget.setPointerCapture(e.pointerId);
             movePoint(e);

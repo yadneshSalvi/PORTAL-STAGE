@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { TheaterPoster } from "@/components/theater-poster";
 import { createTheaterRenderer, type RenderInput } from "./renderer";
+import { propLabel } from "@/lib/show-grammar";
 export type StageCanvasProps = RenderInput;
 export default function StageCanvas(props: StageCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null),
@@ -45,7 +46,7 @@ export default function StageCanvas(props: StageCanvasProps) {
       width="1920"
       height="1080"
       className="canonical-canvas"
-      aria-label={`Canonical ${props.show.mode} stage for ${props.show.preset.episodeTitle}. Umbrella owned by performer ${props.show.umbrella.owner}.`}
+      aria-label={`Canonical ${props.show.mode} stage for ${props.show.preset.episodeTitle}. The ${propLabel(props.show)} is in ${props.show.mode === "solo" && props.show.umbrella.owner === "B" ? "the illustrated Audience Room" : `performer ${props.show.umbrella.owner}`}’s care.${props.localPreviewA ? " Camera A is local to this browser and is not uploaded." : ""}`}
     />
   );
 }

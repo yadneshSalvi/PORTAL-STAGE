@@ -1,5 +1,5 @@
 import type { Point, ShowState, Slot } from "../lib/contracts";
-import { rendererParticipantMatches } from "./safety";
+import { rendererParticipantMatches, soloMediaClosed } from "./safety";
 
 export const ANCHOR_TOPIC = "portal-anchor/v1";
 export const ANCHOR_LIMITS = {
@@ -48,7 +48,11 @@ export function activeAnchorSlot(
 ): boolean {
   const person = show.participants[slot];
   return (
-    (show.mode === "live" || show.transport === "livekit") &&
+    (show.mode === "live" ||
+      show.mode === "solo" ||
+      show.transport === "livekit") &&
+    (show.mode !== "solo" || slot === "A") &&
+    !soloMediaClosed(show, serverNow) &&
     show.phase === "live" &&
     show.umbrella.owner === slot &&
     !!show.renderLease.clientId &&
@@ -90,6 +94,7 @@ export function anchorSenderSlot(
     // packet still needs the current epoch and fresh server admission below.
     if (
       data.role === "performer" &&
+      show.mode !== "solo" &&
       data.slot === "B" &&
       sender.identity === `performer-${show.id}-B`
     )

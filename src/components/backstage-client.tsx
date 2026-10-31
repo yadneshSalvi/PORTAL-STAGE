@@ -13,12 +13,14 @@ import {
   Radio,
   ShieldCheck,
   Umbrella,
+  Package,
   Video,
   X,
 } from "lucide-react";
 import { api, getSession, join } from "@/lib/client";
 import type { ShowEnvelope } from "@/lib/contracts";
 import { useMediaRoom } from "@/media/use-media-room";
+import { propLabel } from "@/lib/show-grammar";
 import { VideoSurface } from "@/media/video-surface";
 import { LocalVideoDiagnostics } from "@/media/local-video-diagnostics";
 import type { GestureCalibration } from "@/vision/calibration";
@@ -28,6 +30,7 @@ import { CameraPermissionNotice } from "./camera-permission-notice";
 import { Wordmark } from "./brand";
 import { EmptyRoom, ErrorNotice, LoadingScreen, StatusPill } from "./ui";
 import { useShowController } from "./use-show-controller";
+import { GuestEnded } from "./guest-ended";
 
 type InvitationInfo = {
   showId: string;
@@ -253,6 +256,7 @@ function GuestWorkspace({
 }) {
   const { show, slot: assignedSlot } = envelope,
     slot = assignedSlot!;
+  const prop = propLabel(show);
   const participant = show.participants[slot],
     otherSlot = slot === "A" ? "B" : "A";
   const { run, busy, error, setError } = controller;
@@ -314,7 +318,7 @@ function GuestWorkspace({
     [media.sendAnchor],
   );
   const gesture = useGestureInput(media.localPreview, {
-    armed,
+    armed: armed && show.phase === "live",
     calibration,
     slot,
     owner: show.umbrella.owner,
@@ -329,6 +333,12 @@ function GuestWorkspace({
     onAccept: accept,
     onAnchor: anchor,
   });
+  useEffect(() => {
+    if (show.phase === "ended") {
+      setArmed(false);
+      gesture.disable();
+    }
+  }, [show.phase, gesture.disable]);
   const withdraw = useCallback(async () => {
     setArmed(false);
     gesture.disable();
@@ -338,6 +348,7 @@ function GuestWorkspace({
   }, [gesture.disable, media.disconnect, run, slot]);
   useEffect(() => {
     function keyboard(e: KeyboardEvent) {
+      if (show.phase === "ended") return;
       if (document.querySelector("dialog[open]")) return;
       if (e.code === "Escape") {
         e.preventDefault();
@@ -405,21 +416,21 @@ function GuestWorkspace({
   }
   if (onAir) {
     cueTitle = "You’re part of the scene.";
-    cueCopy =
-      "You’re on stage. Enjoy the moment and watch for an umbrella offer from your scene partner.";
+    cueCopy = `You’re on stage. Watch for a ${prop} offer from your scene partner.`;
   }
   if (onAir && holding) {
-    cueTitle = "You’ve got the shelter.";
-    cueCopy = `Offer the umbrella to ${show.participants[otherSlot].name || "your scene partner"} when the moment feels right. Its patch and droplets go with it.`;
+    cueTitle = show.parcel
+      ? "You’ve got the delivery."
+      : "You’ve got the shelter.";
+    cueCopy = `Offer the same ${prop} to ${show.participants[otherSlot].name || "your scene partner"}. Its retained marks travel with it.`;
   }
   if (offeredToMe) {
     cueTitle = "Could you hold this?";
-    cueCopy =
-      "An umbrella is waiting at the portal. Choose Accept when you’re ready, or decline. The crossing starts after you accept.";
+    cueCopy = `The ${prop} is waiting at the portal. Choose Accept when you’re ready, or decline. The crossing starts after you accept.`;
   }
   if (transfer?.status === "accepted" && transfer.to === slot) {
     cueTitle = "Coming your way.";
-    cueCopy = "The same patched umbrella is crossing. Get ready to catch it.";
+    cueCopy = `The same ${prop} is crossing. Get ready to catch it.`;
   }
   if (offeredByMe) {
     cueTitle = "An invitation, not a race.";
@@ -428,14 +439,14 @@ function GuestWorkspace({
   }
   if (show.phase === "hold") {
     cueTitle = "A moment in the wings.";
-    cueCopy =
-      "The director has held the stage. Your story and umbrella are safe. If you were hidden, confirm Ready again before the director re-admits you.";
+    cueCopy = `The director has held the stage. Your story and ${prop} are safe. If you were hidden, confirm Ready again before the director re-admits you.`;
   }
   if (left) {
     cueTitle = "You’re safely backstage.";
     cueCopy =
       "Your media room is disconnected. To return, enable your camera, join again, and mark yourself ready. Your director admits you separately.";
   }
+  if (show.phase === "ended") return <GuestEnded episode={show.episode} />;
   return (
     <div className="studio-shell guest-shell">
       <header className="studio-header">
@@ -572,6 +583,8 @@ function GuestWorkspace({
               <div className="guest-cue-icon">
                 {offeredToMe ? (
                   <HeartHandshake size={28} strokeWidth={1.2} />
+                ) : show.parcel ? (
+                  <Package size={28} strokeWidth={1.2} />
                 ) : (
                   <Umbrella size={28} strokeWidth={1.2} />
                 )}
@@ -589,7 +602,7 @@ function GuestWorkspace({
                       disabled={busy || show.phase !== "live"}
                       onClick={() => void accept()}
                     >
-                      <Check size={18} /> Accept the umbrella <kbd>A</kbd>
+                      <Check size={18} /> Accept the {prop} <kbd>A</kbd>
                     </button>
                     <button
                       className="button button-dark"
@@ -631,7 +644,7 @@ function GuestWorkspace({
                     }
                     onClick={() => void offer()}
                   >
-                    <Hand size={18} /> Offer the umbrella <kbd>O</kbd>
+                    <Hand size={18} /> Offer the {prop} <kbd>O</kbd>
                   </button>
                 )}
               </div>

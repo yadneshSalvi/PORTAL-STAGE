@@ -1,4 +1,5 @@
 import type { ShowState } from "../lib/contracts";
+import { soloMediaClosed } from "./safety";
 
 export function rejectedProgramGrant(error: unknown): boolean {
   if (!error || typeof error !== "object" || !("status" in error)) return false;
@@ -11,6 +12,8 @@ export function programAuthorityIssue(
   serverNow: number,
 ): string | null {
   if (show.phase === "ended") return null;
+  if (soloMediaClosed(show, serverNow))
+    return "This solo media session has closed. Program picture and audio are held; open a new session to continue.";
   if (show.renderLease.releasedAt)
     return "The director left the stage. Program picture and audio are held until the director returns.";
   if (

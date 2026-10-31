@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import type { ShowState, Slot } from "@/lib/contracts";
+import { drawStageCaption } from "./program-caption";
 
 export const STAGE_WIDTH = 1920;
 export const STAGE_HEIGHT = 1080;
@@ -254,6 +255,7 @@ export function drawProgramText(
   show: ShowState,
   now: number,
   available: Record<Slot, boolean> = { A: true, B: true },
+  options: { localCameraA?: boolean } = {},
 ) {
   ctx.clearRect(0, 0, 1920, 1080);
   text(ctx, show.preset.episodeTitle, 960, 151, 50, PAPER, "Fraunces");
@@ -267,11 +269,13 @@ export function drawProgramText(
   );
   if (show.mode === "rehearsal") {
     ctx.fillStyle = "#111827CC";
-    ctx.roundRect(660, 174, 600, 40, 5);
+    ctx.roundRect(510, 174, 900, 40, 5);
     ctx.fill();
     text(
       ctx,
-      "SYNTHETIC REHEARSAL · NO LIVE CAMERAS OR AUDIENCE",
+      options.localCameraA
+        ? "LOCAL CAMERA REHEARSAL · ILLUSTRATED ROOM B · TEST BALLOTS"
+        : "SYNTHETIC REHEARSAL · NO LIVE CAMERAS OR AUDIENCE",
       960,
       201,
       17,
@@ -286,15 +290,20 @@ export function drawProgramText(
     text(
       ctx,
       show.mode === "rehearsal"
-        ? `TEST PLATE ${slot} · ${slot === "A" ? "MOON GARDEN" : "ROOFTOP AT DUSK"}`
-        : p.name,
+        ? options.localCameraA && slot === "A"
+          ? "LOCAL CAMERA A · THIS BROWSER ONLY"
+          : `TEST PLATE ${slot} · ${slot === "A" ? "MOON GARDEN" : "ROOFTOP AT DUSK"}`
+        : show.mode === "solo" && slot === "B"
+          ? "THE AUDIENCE ROOM · ILLUSTRATED"
+          : p.name,
       room.x + room.w / 2,
       855,
       23,
       show.umbrella.owner === slot ? GOLD : "#D5D0CC",
     );
     if (
-      show.mode === "live" &&
+      show.mode !== "rehearsal" &&
+      !(show.mode === "solo" && slot === "B") &&
       (!p.admitted ||
         !p.connected ||
         !p.camera ||
@@ -335,47 +344,7 @@ export function drawProgramText(
       ctx.restore();
     }
   }
-  const transfer = show.umbrella.transfer;
-  let title = "A little weather. A little wonder.";
-  let sub = "Two rooms. One impossible stage.";
-  if (show.round?.status === "open") {
-    title = "What kind of storm shall we borrow?";
-    const seconds = Math.max(0, Math.ceil((show.round.closesAt - now) / 1000));
-    sub = `!gentle  or  !wild    ·    ${seconds}s remaining${show.mode === "rehearsal" ? " · TEST BALLOTS" : ""}`;
-  } else if (transfer?.status === "offered") {
-    title = `${show.mode === "rehearsal" ? `Performer ${transfer.to}` : show.participants[transfer.to].name}, could you hold this?`;
-    sub = "AN OFFER IS WAITING · THE RECEIVER CHOOSES WHEN TO ACCEPT";
-  } else if (transfer?.status === "accepted") {
-    title = "Coming your way.";
-    sub = "THE SAME UMBRELLA. A NEW PAIR OF HANDS.";
-  } else if (show.beat === "shelter") {
-    title =
-      show.preset.ending === "playful-chase"
-        ? "A little rain. A little mischief."
-        : "There’s room for one more.";
-    sub = `${show.preset.creatureName.toUpperCase()} FOUND THE SHELTER · THE REST OF THE STORY IS YOURS`;
-  } else if (show.creature.hatched) {
-    title = `Meet ${show.preset.creatureName}. ${show.weather === "wild" ? "A little wild at heart." : "A small friend in the rain."}`;
-    sub = "BORN FROM THE RUNOFF · FOLLOWING THE SAME UMBRELLA";
-  } else if (show.weather) {
-    title =
-      show.weather === "wild"
-        ? "A wonderfully wild storm."
-        : "A gentler kind of rain.";
-    const source =
-      show.round?.source === "audience"
-        ? "THE AUDIENCE CHOSE"
-        : show.round?.source === "rehearsal"
-          ? "REHEARSAL TEST CHOICE"
-          : "DIRECTOR’S CHOICE";
-    sub = `${source} · WATCH WHAT THE WEATHER WAKES UP`;
-  }
-  ctx.fillStyle = "#111827C9";
-  ctx.beginPath();
-  ctx.roundRect(350, 918, 1220, 112, 10);
-  ctx.fill();
-  text(ctx, title, 960, 964, 34, PAPER, "Fraunces");
-  text(ctx, sub, 960, 1001, 15, "#C8B7A0");
+  drawStageCaption(ctx, show, now);
   if (show.phase !== "live") {
     const title =
       show.phase === "ended"
@@ -413,7 +382,9 @@ export function drawProgramText(
     if (show.mode === "rehearsal")
       text(
         ctx,
-        "SYNTHETIC REHEARSAL · NO LIVE CAMERAS OR AUDIENCE",
+        options.localCameraA
+          ? "LOCAL CAMERA REHEARSAL · NO MEDIA UPLOAD · TEST BALLOTS"
+          : "SYNTHETIC REHEARSAL · NO LIVE CAMERAS OR AUDIENCE",
         960,
         954,
         17,

@@ -19,6 +19,7 @@ import {
   mediaIssue,
   MEDIA_TRACKS,
   participantSlot,
+  soloMediaClosed,
 } from "./safety";
 import { createSyntheticCamera } from "./synthetic-camera";
 import type {
@@ -148,6 +149,7 @@ export class MediaRoomController {
   private serverOffset = 0;
   private lastServerSample: number | undefined;
   private mounted = false;
+  private soloClosed = false;
   private tick: ReturnType<typeof setInterval> | null = null;
   private heartbeat: ReturnType<typeof setInterval> | null = null;
   private permissionCleanups: Array<() => void> = [];
@@ -207,6 +209,21 @@ export class MediaRoomController {
   private authority() {
     return hasRenderAuthority(this.options, this.now());
   }
+  private enforceSoloWindow() {
+    if (!this.soloClosed && !soloMediaClosed(this.options.show, this.now()))
+      return false;
+    if (!this.soloClosed) {
+      this.soloClosed = true;
+      void this.disconnect();
+      this.issue({
+        code: "authorization",
+        recoverable: false,
+        message:
+          "This solo media session has closed. Camera, microphone and Program are off; start a new session or use the local rehearsal.",
+      });
+    }
+    return true;
+  }
   private fail(error: unknown, device?: "camera" | "microphone") {
     const issue = mediaIssue(error, device);
     this.patch({ error: issue });
@@ -232,6 +249,7 @@ export class MediaRoomController {
     void this.observePermission("camera");
     void this.observePermission("microphone");
     this.tick = setInterval(() => {
+      if (this.enforceSoloWindow()) return;
       if ((this.outputRoom || this.programTask) && !this.authority()) {
         void this.stopProgram();
         this.hint(
@@ -264,6 +282,7 @@ export class MediaRoomController {
         options.rendererIncarnationSequence;
     this.options = options;
     this.updateClock(options.serverNow);
+    if (this.enforceSoloWindow()) return;
     if (scopeChanged) this.clearAnchors();
     if (
       options.role === "director" &&
@@ -299,6 +318,7 @@ export class MediaRoomController {
     void this.disconnect();
   };
   private onVisibilityChange = () => {
+    if (this.enforceSoloWindow()) return;
     if ((this.outputRoom || this.programTask) && !this.authority()) {
       void this.stopProgram();
       this.hint(
@@ -347,7 +367,12 @@ export class MediaRoomController {
   };
 
   private activeShow() {
-    return this.mounted && this.options.show.phase !== "ended";
+    return (
+      this.mounted &&
+      this.options.show.phase !== "ended" &&
+      !this.soloClosed &&
+      !soloMediaClosed(this.options.show, this.now())
+    );
   }
   private ensureCaptureAllowed() {
     const caps = mediaCapabilities();
@@ -356,7 +381,10 @@ export class MediaRoomController {
         code: "authorization",
         recoverable: false,
         message:
-          "This show has ended. Start a new show before enabling a device.",
+          this.options.show.mode === "solo" &&
+          (this.soloClosed || soloMediaClosed(this.options.show, this.now()))
+            ? "This solo media session has closed. Open a new session or use local camera rehearsal."
+            : "This show has ended. Start a new show before enabling a device.",
       });
       return false;
     }
@@ -366,6 +394,18 @@ export class MediaRoomController {
         recoverable: false,
         message:
           "Program is a read-only media receiver and cannot enable devices.",
+      });
+      return false;
+    }
+    if (
+      this.options.show.mode === "solo" &&
+      (this.options.role !== "director" || this.options.slot !== "A")
+    ) {
+      this.issue({
+        code: "authorization",
+        recoverable: false,
+        message:
+          "The Audience Room is illustrated software. Only the consenting streamer in room A can enable devices in a solo show.",
       });
       return false;
     }
@@ -391,6 +431,7 @@ export class MediaRoomController {
   }
 
   enableCamera = async () => {
+    if (this.enforceSoloWindow()) return;
     if (
       this.camera ||
       this.snapshot.cameraRequestPending ||
@@ -401,15 +442,19 @@ export class MediaRoomController {
     this.patch({ cameraRequestPending: true, error: null });
     try {
       const sdk = await this.sdk();
-      if (generation !== this.cameraGeneration) return;
+      if (generation !== this.cameraGeneration || !this.activeShow()) {
+        this.enforceSoloWindow();
+        return;
+      }
       const deviceId = this.snapshot.selectedDevices.videoinput;
       const track = await sdk.createLocalVideoTrack({
         resolution: { width: 1280, height: 720, frameRate: 30 },
         deviceId: deviceId ? { exact: deviceId } : undefined,
         facingMode: "user",
       });
-      if (generation !== this.cameraGeneration) {
+      if (generation !== this.cameraGeneration || !this.activeShow()) {
         track.stop();
+        this.enforceSoloWindow();
         return;
       }
       this.installCamera(track, false);
@@ -504,15 +549,32 @@ export class MediaRoomController {
   }
   private async publishCamera(track: LocalVideoTrack) {
     const room = this.room;
-    if (!room || !this.snapshot.connected || this.camera !== track) return;
+    if (
+      !room ||
+      !this.snapshot.connected ||
+      this.camera !== track ||
+      !this.activeShow()
+    ) {
+      this.enforceSoloWindow();
+      return;
+    }
     const sdk = await this.sdk();
+    if (!this.activeShow() || room !== this.room || this.camera !== track) {
+      this.enforceSoloWindow();
+      return;
+    }
     await room.localParticipant.publishTrack(track, {
       name: MEDIA_TRACKS.camera,
       source: sdk.Track.Source.Camera,
       simulcast: true,
       videoEncoding: { maxBitrate: 1_800_000, maxFramerate: 30 },
     });
-    if (room === this.room && this.camera === track && this.snapshot.connected)
+    if (
+      room === this.room &&
+      this.camera === track &&
+      this.snapshot.connected &&
+      this.activeShow()
+    )
       this.patch({ cameraPublished: true });
     else {
       track.stop();
@@ -552,11 +614,15 @@ export class MediaRoomController {
   };
 
   enableMicrophone = async () => {
+    if (this.enforceSoloWindow()) return;
     if (this.microphone || !this.ensureCaptureAllowed()) return;
     const generation = ++this.microphoneGeneration;
     try {
       const sdk = await this.sdk();
-      if (generation !== this.microphoneGeneration) return;
+      if (generation !== this.microphoneGeneration || !this.activeShow()) {
+        this.enforceSoloWindow();
+        return;
+      }
       const deviceId = this.snapshot.selectedDevices.audioinput;
       const track = await sdk.createLocalAudioTrack({
         deviceId: deviceId ? { exact: deviceId } : undefined,
@@ -564,8 +630,9 @@ export class MediaRoomController {
         noiseSuppression: true,
         autoGainControl: true,
       });
-      if (generation !== this.microphoneGeneration) {
+      if (generation !== this.microphoneGeneration || !this.activeShow()) {
         track.stop();
+        this.enforceSoloWindow();
         return;
       }
       this.microphone = track;
@@ -599,7 +666,8 @@ export class MediaRoomController {
         if (
           this.microphone === track &&
           this.snapshot.connected &&
-          this.room === room
+          this.room === room &&
+          this.activeShow()
         )
           this.patch({ microphonePublished: true });
         else {
@@ -635,6 +703,7 @@ export class MediaRoomController {
   };
 
   selectDevice = async (kind: MediaDeviceKind, deviceId: string) => {
+    if (this.enforceSoloWindow()) return;
     this.patch({
       selectedDevices: { ...this.snapshot.selectedDevices, [kind]: deviceId },
     });
@@ -677,6 +746,7 @@ export class MediaRoomController {
   };
 
   connect = (): Promise<void> => {
+    if (this.enforceSoloWindow()) return Promise.resolve();
     if (this.snapshot.connected) return Promise.resolve();
     if (this.connectTask) {
       if (this.snapshot.status === "connecting") return this.connectTask;
@@ -689,7 +759,21 @@ export class MediaRoomController {
     return this.connectTask;
   };
   private async doConnect() {
+    if (this.enforceSoloWindow()) return;
     if (!this.activeShow()) return;
+    if (
+      this.options.show.mode === "solo" &&
+      this.options.role !== "program" &&
+      (this.options.role !== "director" || this.options.slot !== "A")
+    ) {
+      this.issue({
+        code: "authorization",
+        recoverable: false,
+        message:
+          "Solo media belongs to the consenting streamer in room A. The Audience Room does not join a media call.",
+      });
+      return;
+    }
     if (
       this.options.show.mode === "rehearsal" &&
       !this.options.allowSyntheticMedia
@@ -718,7 +802,10 @@ export class MediaRoomController {
         this.sdk(),
         this.runtime.requestToken(this.options, purpose),
       ]);
-      if (generation !== this.generation) return;
+      if (generation !== this.generation || !this.activeShow()) {
+        this.enforceSoloWindow();
+        return;
+      }
       const room = new sdk.Room({
         adaptiveStream: false,
         dynacast: true,
@@ -729,6 +816,10 @@ export class MediaRoomController {
       this.room = room;
       this.bindRoom(room, sdk);
       await room.connect(grant.url, grant.token, { autoSubscribe: false });
+      if (!this.activeShow()) {
+        this.enforceSoloWindow();
+        return;
+      }
       if (generation !== this.generation || room !== this.room) {
         room.removeAllListeners();
         await room.disconnect(true);
@@ -914,6 +1005,7 @@ export class MediaRoomController {
     participant: RemoteParticipant,
   ) {
     const slot = participantSlot(participant.metadata);
+    if (this.options.show.mode === "solo" && slot === "B") return false;
     let allowed = false;
     if (this.options.role === "program")
       allowed =
@@ -1077,7 +1169,12 @@ export class MediaRoomController {
   private rebuildVideos() {
     const videos: Record<Slot, HTMLVideoElement | null> = { A: null, B: null };
     let programVideo: HTMLVideoElement | null = null;
-    if (this.options.slot && this.camera)
+    if (
+      this.options.slot &&
+      this.camera &&
+      (this.options.show.mode !== "solo" ||
+        (this.options.role === "director" && this.options.slot === "A"))
+    )
       videos[this.options.slot] = this.snapshot.localPreview;
     for (const {
       video,
@@ -1174,6 +1271,7 @@ export class MediaRoomController {
       this.runtime.now(),
     );
     this.updateAnchors();
+    if (this.options.show.mode === "solo") return;
     this.anchorPending = {
       point: { ...point },
       epoch: this.options.show.epoch,
@@ -1340,6 +1438,7 @@ export class MediaRoomController {
   }
 
   startAudio = async () => {
+    if (this.enforceSoloWindow()) return;
     this.syncRemoteAudioGates();
     try {
       const [, , localPlayback] = await Promise.all([
@@ -1365,6 +1464,7 @@ export class MediaRoomController {
   };
 
   publishProgram = (canvas: HTMLCanvasElement): Promise<void> => {
+    if (this.enforceSoloWindow()) return Promise.resolve();
     if (
       this.programCanvas === canvas &&
       (this.programTask || this.snapshot.programPublishing)
@@ -1410,7 +1510,10 @@ export class MediaRoomController {
         this.sdk(),
         this.runtime.requestToken(this.options, "output-publish"),
       ]);
-      if (generation !== this.programGeneration || !this.authority()) return;
+      if (generation !== this.programGeneration || !this.authority()) {
+        this.enforceSoloWindow();
+        return;
+      }
       const output = new sdk.Room({
         adaptiveStream: false,
         stopLocalTrackOnUnpublish: false,

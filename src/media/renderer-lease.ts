@@ -60,6 +60,7 @@ export function rendererLeaseStatus(
   enabled: boolean,
   error: string,
   identity?: RendererLeaseIdentity | null,
+  initialClaim = false,
 ): RendererLeaseStatus {
   if (!envelope) return "loading";
   const { show, role } = envelope;
@@ -77,6 +78,7 @@ export function rendererLeaseStatus(
     lease.expiresAt > serverNow
   )
     return "active";
+  if (initialClaim && !error) return "acquiring";
   return error || lease.clientId ? "lost" : "acquiring";
 }
 

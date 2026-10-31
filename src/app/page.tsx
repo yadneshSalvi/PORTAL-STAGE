@@ -14,6 +14,7 @@ import {
 import { SiteFooter, SiteHeader } from "@/components/brand";
 import { LandingStage } from "@/components/landing-stage";
 import { NewShowButton } from "@/components/new-show-button";
+import { ParcelPoster } from "@/components/parcel-poster";
 
 export default function Home() {
   return (
@@ -31,7 +32,7 @@ export default function Home() {
             One <em>impossible</em> stage.
           </h1>
           <p className="hero-description">
-            Bring a friend. Borrow a little weather.
+            Perform with a friend, or let chat hold the other portal.
             <br className="desktop-break" /> Let your community help write what
             happens next.
           </p>
@@ -82,10 +83,10 @@ export default function Home() {
               <br />A stranger who turns out to be a friend.
             </p>
             <p>
-              In <em>Borrowed Weather</em>, two creators share one theatrical
-              world. Your audience chooses the rain. You offer an umbrella
-              through a glowing portal. Your friend accepts it. And something
-              small, curious, and a little damp comes to life.
+              In <em>Borrowed Weather</em>, your community chooses the rain,
+              names a small visitor, sets its mood, and writes the ending. Offer
+              a virtual umbrella through the portal to a consenting partner, or
+              let the illustrated Audience Room take the other side.
             </p>
             <p>
               The umbrella keeps its coral patch, its droplets, and its story.
@@ -100,11 +101,40 @@ export default function Home() {
               <Umbrella size={19} /> ONE PERSISTENT PROP
             </span>
             <span>
-              <Video size={19} /> TWO REAL CREATORS
+              <Video size={19} /> A HOST & COMMUNITY, OR A DUET
             </span>
             <span>
               <Sparkles size={19} /> ONE CURIOUS COMMUNITY
             </span>
+          </div>
+        </section>
+        <section
+          className="parcel-feature section-container"
+          aria-label="The second episode"
+        >
+          <div className="parcel-feature-art">
+            <ParcelPoster />
+            <span>Original illustrated preview · no live cameras</span>
+          </div>
+          <div>
+            <p className="eyebrow">THE SECOND SHOW · THE MIDNIGHT PARCEL</p>
+            <h2>
+              A gift for
+              <br />
+              <em>the other side.</em>
+            </h2>
+            <p>
+              One tagged parcel. A pocket of stars, or a midnight garden. Send
+              it through the portal and let your community change the room it
+              reaches. Its stamp and handling marks stay with it when it comes
+              home.
+            </p>
+            <NewShowButton
+              episode="midnight-parcel"
+              className="button button-ink"
+            >
+              Try the parcel rehearsal
+            </NewShowButton>
           </div>
         </section>
         <section className="how-section" id="how-it-works">
@@ -140,11 +170,11 @@ export default function Home() {
                   <span className="step-orbit" aria-hidden="true" />
                 </div>
                 <span className="step-number">ACT I</span>
-                <h3>Invite your favorite human.</h3>
+                <h3>Choose the other side of the portal.</h3>
                 <p>
-                  Send one private invitation. Preview your camera backstage,
-                  find your framing, and get comfortable before the curtain
-                  opens.
+                  Let chat run the illustrated Audience Room, or invite a second
+                  performer privately. Preview your own camera and choose your
+                  permissions before the curtain opens.
                 </p>
               </article>
               <article>
@@ -213,8 +243,9 @@ export default function Home() {
               <Radio size={25} strokeWidth={1.5} />
               <h3>One beautifully shared view.</h3>
               <p>
-                A director composes both cameras into one clean 16:9 Program for
-                OBS. Everyone performs against the same scene.
+                A director composes admitted cameras and original stagecraft
+                into one 16:9 Program for a capture setup you verify before
+                broadcasting.
               </p>
             </article>
             <article>
@@ -248,8 +279,8 @@ export default function Home() {
             <p>Start with a rehearsal. See where the story goes.</p>
             <NewShowButton className="button button-gold" />
             <span className="invitation-small">
-              A solo, illustrated rehearsal. Real media and Twitch connect
-              separately.
+              An illustrated rehearsal with optional local camera. Real media
+              and Twitch connect separately.
             </span>
           </div>
         </section>

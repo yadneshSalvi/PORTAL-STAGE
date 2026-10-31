@@ -35,6 +35,7 @@ export function useShowController(
     [serverOffset, setServerOffset] = useState(0),
     [leaseError, setLeaseError] = useState(""),
     [leaseRecovery, setLeaseRecovery] = useState(""),
+    [leaseAcquired, setLeaseAcquired] = useState(false),
     [documentHidden, setDocumentHidden] = useState(false);
   const leaseEnabled = options.lease !== false;
   const latest = useRef<ShowEnvelope | null>(null),
@@ -123,6 +124,7 @@ export function useShowController(
     setEnvelope(null);
     setError("");
     setLeaseError("");
+    setLeaseAcquired(false);
     setLeaseRecovery("");
     setDocumentHidden(document.hidden);
     let active = true;
@@ -395,6 +397,7 @@ export function useShowController(
         identityRef.current = identity;
         idRef.current = identity.clientId;
         setRendererId(identity.clientId);
+        setLeaseAcquired(false);
         foreground.current.splice(0).forEach((task) => task.resolve(null));
         samples.current.forEach((task) => task.resolve(null));
         samples.current.clear();
@@ -418,6 +421,7 @@ export function useShowController(
             return null;
           receive(next);
           setLeaseError("");
+          setLeaseAcquired(true);
           if (
             next.show.epoch !== current.show.epoch &&
             next.show.phase === "hold"
@@ -489,6 +493,7 @@ export function useShowController(
       leaseEnabled,
       leaseError,
       identityRef.current,
+      !leaseAcquired,
     ),
     claimLease,
   };

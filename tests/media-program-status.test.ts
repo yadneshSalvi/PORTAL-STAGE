@@ -57,4 +57,15 @@ describe("Program authority and access failure", () => {
     expect(programAuthorityIssue(state, 90_000)).toBeNull();
     expect(mayPlayProgramAudio(state, sender, 90_000)).toBe(false);
   });
+  it("independently closes a solo output when its media window ends before the renderer lease", () => {
+    const state = show();
+    state.mode = "solo";
+    state.solo = { endsAt: 1000, status: "scheduled" };
+    expect(programAuthorityIssue(state, 999)).toBeNull();
+    expect(mayPlayProgramAudio(state, sender, 999)).toBe(true);
+    expect(programAuthorityIssue(state, 1000)).toContain(
+      "solo media session has closed",
+    );
+    expect(mayPlayProgramAudio(state, sender, 1000)).toBe(false);
+  });
 });

@@ -22,6 +22,7 @@ import {
   Mic,
   Monitor,
   Pause,
+  Package,
   Play,
   Radio,
   RotateCcw,
@@ -33,16 +34,25 @@ import {
   Users,
   WandSparkles,
 } from "lucide-react";
-import type { ShowAction, ShowEnvelope, Slot } from "@/lib/contracts";
+import type {
+  EpisodeId,
+  Point,
+  ShowAction,
+  ShowEnvelope,
+  Slot,
+} from "@/lib/contracts";
+import { isAudienceRoom, isStageReady, propLabel } from "@/lib/show-grammar";
 import { getSession } from "@/lib/client";
 import type { SessionInfo } from "@/lib/contracts";
 import { TwitchConnector } from "@/lib/twitch-client";
 import { useMediaRoom } from "@/media/use-media-room";
+import { useLocalRehearsalCamera } from "@/media/use-local-rehearsal-camera";
 import { LocalVideoDiagnostics } from "@/media/local-video-diagnostics";
 import { type GestureCalibration } from "@/vision/calibration";
 import { useGestureInput } from "@/vision/use-gesture-input";
 import { Wordmark, SiteHeader, SiteFooter } from "./brand";
 import { TheaterPoster } from "./theater-poster";
+import { ParcelPoster } from "./parcel-poster";
 import { NewShowButton } from "./new-show-button";
 import { EmptyRoom, ErrorNotice, LoadingScreen, Modal, StatusPill } from "./ui";
 import { CueDeck, AudienceChoice, nextCue } from "./cue-deck";
@@ -59,6 +69,7 @@ import {
   StudioVisibilityNotice,
 } from "./studio-notices";
 import { canIssueDirectorAction } from "./studio-controls";
+import { RehearsalCameraControls } from "./rehearsal-camera-controls";
 
 const StageCanvas = dynamic(() => import("@/stage/stage-canvas"), {
   ssr: false,
@@ -71,12 +82,20 @@ const StageCanvas = dynamic(() => import("@/stage/stage-canvas"), {
 });
 type Controller = ReturnType<typeof useShowController>;
 type Panel =
-  "invite" | "output" | "preset" | "evidence" | "devices" | "end" | null;
+  | "invite"
+  | "output"
+  | "preset"
+  | "evidence"
+  | "devices"
+  | "rehearsal-camera"
+  | "end"
+  | null;
 export function StudioClient({ showId }: { showId?: string }) {
   return showId ? <ConnectedStudio showId={showId} /> : <StudioLobby />;
 }
 function StudioLobby() {
   const [session, setSession] = useState<SessionInfo | null>(null);
+  const [episode, setEpisode] = useState<EpisodeId>("borrowed-weather");
   useEffect(() => {
     let active = true;
     void getSession()
@@ -100,28 +119,59 @@ function StudioLobby() {
             <em>something happen?</em>
           </h1>
           <p>
-            Start with an illustrated rehearsal, or bring two real cameras onto
-            the stage.
+            Rehearse on your own, let chat hold the other portal, or perform
+            with a friend.
           </p>
+        </div>
+        <div
+          className="episode-picker"
+          role="group"
+          aria-label="Choose your episode"
+        >
+          <button
+            aria-pressed={episode === "borrowed-weather"}
+            onClick={() => setEpisode("borrowed-weather")}
+          >
+            <Umbrella size={23} />
+            <span>
+              <strong>Borrowed Weather</strong>
+              <small>A storm, a patched umbrella, a curious visitor.</small>
+            </span>
+          </button>
+          <button
+            aria-pressed={episode === "midnight-parcel"}
+            onClick={() => setEpisode("midnight-parcel")}
+          >
+            <Package size={23} />
+            <span>
+              <strong>The Midnight Parcel</strong>
+              <small>A tagged gift that changes the room it reaches.</small>
+            </span>
+          </button>
         </div>
         <div className="lobby-options">
           <article className="lobby-rehearsal">
             <div className="lobby-poster">
-              <TheaterPoster compact />
+              {episode === "midnight-parcel" ? (
+                <ParcelPoster />
+              ) : (
+                <TheaterPoster compact />
+              )}
             </div>
             <div className="lobby-option-copy">
               <span className="eyebrow">EXPLORE AT YOUR OWN PACE</span>
               <h2>A little dress rehearsal.</h2>
               <p>
-                Try the whole story with original test plates. Cue the rain,
-                pass the umbrella, meet Pip, and save your own version.
+                {episode === "midnight-parcel"
+                  ? "Choose the contents, stamp a parcel, and let its stars or garden change the other room. Its tag and handling marks stay with it."
+                  : "Try the whole story with illustrated rooms. Choose the weather, name a visitor, and let the room write the ending."}
               </p>
-              <NewShowButton className="button button-ink">
+              <NewShowButton episode={episode} className="button button-ink">
                 Start a rehearsal
               </NewShowButton>
               <span className="lobby-small">
-                Synthetic scenery and test ballots. No camera or Twitch
-                permission needed.
+                Illustrated scenery and labeled test ballots. Optional local
+                camera and hand cues inside. No Twitch sign-in needed.
               </span>
             </div>
           </article>
@@ -130,48 +180,77 @@ function StudioLobby() {
               <Radio size={34} strokeWidth={1.2} />
               <span aria-hidden="true">✦</span>
             </div>
-            <span className="eyebrow">BRING A FRIEND & YOUR COMMUNITY</span>
-            <h2>The real thing.</h2>
+            <span className="eyebrow">YOU, YOUR CHANNEL & THE OTHER SIDE</span>
+            <h2>Let chat hold the portal.</h2>
             <p>
-              Two consenting performers, one director, a Twitch channel, and a
-              clean Program for OBS.
+              Perform in room A. Your Twitch community runs an original
+              illustrated Audience Room, decides when to receive the prop, and
+              helps send it home.
             </p>
-            {session?.hostAllowed && session.services.mediaConfigured ? (
-              <NewShowButton mode="live" className="button button-gold">
-                Create a live show
+            {session?.soloAllowed &&
+            session.services.mediaConfigured &&
+            session.soloUsage?.available !== false ? (
+              <NewShowButton
+                mode="solo"
+                episode={episode}
+                className="button button-gold"
+              >
+                Create a solo Twitch show
               </NewShowButton>
-            ) : session?.hostAllowed ? (
-              <Link className="button button-dark" href="/guide#program">
-                Read the live setup guide <ArrowRight size={17} />
-              </Link>
+            ) : session?.authenticated ? (
+              <p className="lobby-small" role="status">
+                {session.soloUsage?.reason ||
+                  (!session.services.mediaConfigured
+                    ? "Live media is unavailable here. The public rehearsal and its local camera stay open."
+                    : "Solo hosting is unavailable for this account right now. Try the public rehearsal.")}
+              </p>
             ) : (
               <a className="button button-dark" href="/api/auth/twitch/login">
-                Connect your Twitch account <ArrowUpRight size={17} />
+                Sign in with Twitch for solo <ArrowUpRight size={17} />
               </a>
             )}
-            {session && !session.services.mediaConfigured ? (
-              <p className="lobby-small" role="status">
-                <strong>Live media setup is unavailable.</strong> Try the full
-                public rehearsal while live media is prepared. Twitch account
-                setup remains available.
-              </p>
-            ) : null}
-            {session?.authenticated && !session.hostAllowed ? (
-              <p className="lobby-small">
-                You’re signed in as {session.displayName}. Live hosting is
-                currently available to approved hosts. Rehearsal is open to
-                everyone.
-              </p>
+            {session?.authenticated && session.soloUsage ? (
+              <span className="lobby-small">
+                {session.soloUsage.remaining} of {session.soloUsage.limit} solo
+                starts remaining · up to {session.soloUsage.minutes} minutes of
+                media per show.
+              </span>
             ) : (
               <span className="lobby-small">
-                Broadcast setup stays backstage until you open the curtain.
+                Public solo hosting uses capped media sessions. Your camera and
+                broadcast consent remain separate choices.
               </span>
             )}
-            <Link className="text-link" href="/guide">
-              What you’ll need <ArrowRight size={15} />
+            <Link className="text-link" href="/guide#solo">
+              Solo setup & limits <ArrowRight size={15} />
             </Link>
           </article>
         </div>
+        <details className="duet-hosting">
+          <summary>
+            Bring a second performer instead <Users size={17} />
+          </summary>
+          <p>
+            Two consenting performers can share the stage through private
+            backstage media. Duet hosting currently uses invited host access.
+          </p>
+          {session?.hostAllowed && session.services.mediaConfigured ? (
+            <NewShowButton
+              mode="live"
+              episode={episode}
+              className="button button-ink"
+            >
+              Create a duet show
+            </NewShowButton>
+          ) : (
+            <a className="button button-ink" href="/api/auth/twitch/login">
+              Invited duet host sign-in <ArrowUpRight size={16} />
+            </a>
+          )}
+          <Link className="text-link" href="/guide#program">
+            Media and Program setup <ArrowRight size={15} />
+          </Link>
+        </details>
         {session?.currentShowId ? (
           <Link
             href={`/studio?show=${encodeURIComponent(session.currentShowId)}`}
@@ -241,8 +320,15 @@ function StudioWorkspace({
     [chatEnabled, setChatEnabled] = useState(false),
     [chatMessage, setChatMessage] = useState(""),
     [localTest, setLocalTest] = useState(false),
-    [localHost, setLocalHost] = useState(false);
+    [localHost, setLocalHost] = useState(false),
+    [visibilityReminder, setVisibilityReminder] = useState(false),
+    [localCameraConsent, setLocalCameraConsent] = useState(false),
+    [localAnchor, setLocalAnchor] = useState<Point | null>(null);
   const panicGeneration = useRef(0);
+  const stopGesture = useRef<(() => void) | null>(null);
+  useEffect(() => {
+    if (controller.documentHidden) setVisibilityReminder(true);
+  }, [controller.documentHidden]);
   const now = useNow(),
     leaseValid =
       controller.leaseStatus === "active" &&
@@ -251,24 +337,22 @@ function StudioWorkspace({
       !show.renderLease.releasedAt &&
       show.renderLease.expiresAt > now + serverOffset,
     isRehearsal = show.mode === "rehearsal",
-    solo = isRehearsal && show.transport !== "livekit";
+    fixtureRehearsal = isRehearsal && show.transport !== "livekit",
+    isSoloShow = show.mode === "solo",
+    isParcel = show.episode === "midnight-parcel",
+    propName = propLabel(show);
   const canOffer =
     leaseValid &&
     show.phase === "live" &&
-    (solo || show.umbrella.owner === "A") &&
+    (fixtureRehearsal || show.umbrella.owner === "A") &&
     !["offered", "accepted"].includes(show.umbrella.transfer?.status || "") &&
-    (["A", "B"] as Slot[]).every((slot) => {
-      const p = show.participants[slot];
-      return (
-        p.ready && p.admitted && p.connected && p.camera && p.consentBroadcast
-      );
-    });
+    (["A", "B"] as Slot[]).every((slot) => isStageReady(show, slot));
   const onPresence = useCallback(
     (presence: { connected: boolean; camera: boolean; microphone: boolean }) =>
-      solo && !localTest
+      fixtureRehearsal && !localTest
         ? Promise.resolve(null)
         : act({ type: "presence", ...presence, slot: "A" }, true),
-    [act, solo, localTest],
+    [act, fixtureRehearsal, localTest],
   );
   const media = useMediaRoom({
     show: forceCurtain ? { ...show, phase: "hold" } : show,
@@ -283,6 +367,12 @@ function StudioWorkspace({
     onStateHint: setHint,
     allowSyntheticMedia: localTest,
   });
+  const localCamera = useLocalRehearsalCamera({
+    showId: show.id,
+    available: fixtureRehearsal && !localTest,
+    ended: show.phase === "ended",
+    consented: localCameraConsent && leaseValid,
+  });
   useEffect(() => {
     setLocalHost(
       ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname),
@@ -290,6 +380,13 @@ function StudioWorkspace({
   }, []);
   const run = useCallback(
     async (action: ShowAction) => {
+      if (action.type === "end" || action.type === "leave") {
+        localCamera.disable();
+        stopGesture.current?.();
+        setLocalCameraConsent(false);
+        setLocalAnchor(null);
+        setGestureArmed(false);
+      }
       if (!canIssueDirectorAction(action, leaseValid)) {
         setError(
           "This director window does not control the stage. Recover the current stage before sending a cue.",
@@ -308,7 +405,7 @@ function StudioWorkspace({
         setForceCurtain(false);
       return result;
     },
-    [act, leaseValid, setError],
+    [act, leaseValid, setError, localCamera.disable],
   );
   const offer = useCallback(() => run({ type: "offer", from: "A" }), [run]);
   const accept = useCallback(() => {
@@ -318,27 +415,52 @@ function StudioWorkspace({
       : Promise.resolve(null);
   }, [run, show.umbrella.transfer, leaseValid]);
   const onAnchor = useCallback(
-    (anchor: { x: number; y: number }) => media.sendAnchor(anchor),
-    [media.sendAnchor],
+    (anchor: Point) => {
+      if (fixtureRehearsal && !localTest) setLocalAnchor(anchor);
+      else media.sendAnchor(anchor);
+    },
+    [media.sendAnchor, fixtureRehearsal, localTest],
   );
-  const gesture = useGestureInput(media.localPreview, {
-    armed: gestureArmed && show.phase === "live" && leaseValid,
-    calibration,
-    slot: "A",
-    owner: show.umbrella.owner,
-    expectedReceiver:
-      show.umbrella.transfer?.status === "offered"
-        ? show.umbrella.transfer.to
-        : null,
-    offerId:
-      show.umbrella.transfer?.status === "offered"
-        ? show.umbrella.transfer.id
-        : null,
-    canOffer: canOffer && !busy,
-    onOffer: offer,
-    onAccept: accept,
-    onAnchor,
-  });
+  const gesture = useGestureInput(
+    fixtureRehearsal && !localTest ? localCamera.preview : media.localPreview,
+    {
+      armed: gestureArmed && show.phase === "live" && leaseValid,
+      calibration,
+      slot: "A",
+      owner: show.umbrella.owner,
+      expectedReceiver:
+        show.umbrella.transfer?.status === "offered"
+          ? show.umbrella.transfer.to
+          : null,
+      offerId:
+        show.umbrella.transfer?.status === "offered"
+          ? show.umbrella.transfer.id
+          : null,
+      canOffer: canOffer && !busy,
+      onOffer: offer,
+      onAccept: accept,
+      onAnchor,
+    },
+  );
+  stopGesture.current = gesture.disable;
+  useEffect(() => {
+    if (
+      fixtureRehearsal &&
+      !localTest &&
+      (!localCamera.enabled || show.phase === "ended")
+    ) {
+      gesture.disable();
+      setGestureArmed(false);
+      setCalibration(null);
+      setLocalAnchor(null);
+    }
+  }, [
+    fixtureRehearsal,
+    localTest,
+    localCamera.enabled,
+    show.phase === "ended",
+    gesture.disable,
+  ]);
   const authority = useRef({
     rendererId,
     epoch: show.epoch,
@@ -426,7 +548,10 @@ function StudioWorkspace({
         canOffer
       ) {
         e.preventDefault();
-        void run({ type: "offer", from: solo ? show.umbrella.owner : "A" });
+        void run({
+          type: "offer",
+          from: fixtureRehearsal ? show.umbrella.owner : "A",
+        });
       } else if (
         e.key.toLowerCase() === "a" &&
         !e.repeat &&
@@ -435,19 +560,28 @@ function StudioWorkspace({
         show.umbrella.transfer?.status === "offered"
       ) {
         const t = show.umbrella.transfer;
-        if (solo || t.to === "A") {
+        if (fixtureRehearsal || t.to === "A") {
           e.preventDefault();
           void run({
             type: "accept",
             transferId: t.id,
-            slot: solo ? t.to : "A",
+            slot: fixtureRehearsal ? t.to : "A",
           });
         }
       }
     }
     window.addEventListener("keydown", key);
     return () => window.removeEventListener("keydown", key);
-  }, [show, busy, isRehearsal, solo, leaseValid, canOffer, panic, run]);
+  }, [
+    show,
+    busy,
+    isRehearsal,
+    fixtureRehearsal,
+    leaseValid,
+    canOffer,
+    panic,
+    run,
+  ]);
   const arrive = useCallback(
     async (transferId: string) =>
       Boolean(await act({ type: "arrive", transferId }, true)),
@@ -455,10 +589,13 @@ function StudioWorkspace({
   );
   const transfer = show.umbrella.transfer,
     currentOffer = transfer?.status === "offered",
-    liveReady = ["A", "B"].every(
-      (s) =>
-        show.participants[s as Slot].ready &&
-        show.participants[s as Slot].admitted,
+    liveReady = (["A", "B"] as Slot[]).every((slot) =>
+      isStageReady(show, slot),
+    ),
+    soloRemaining = Math.max(
+      0,
+      (show.solo?.endsAt || 0) -
+        (now ? now + serverOffset : envelope.serverNow),
     );
   return (
     <div className="studio-shell">
@@ -506,7 +643,7 @@ function StudioWorkspace({
             <div className="show-breadcrumb">
               <Link href="/studio">YOUR THEATER</Link>
               <span>/</span>
-              <span>EPISODE 001</span>
+              <span>{isParcel ? "EPISODE 002" : "EPISODE 001"}</span>
             </div>
             <h1>
               {show.preset.episodeTitle}
@@ -516,29 +653,33 @@ function StudioWorkspace({
             </h1>
             <p>
               {isRehearsal
-                ? solo
-                  ? "A private dress rehearsal. Play both parts. Create a live show to invite a performer."
+                ? fixtureRehearsal
+                  ? "A private dress rehearsal. Play both illustrated parts, or try a local camera and hand cues."
                   : "Synthetic media transport test. Each performer controls their own entrance."
-                : "Two rooms. One scene. Leave a little room for the unexpected."}
+                : isSoloShow
+                  ? "You perform in A. Your community holds the other portal in the illustrated Audience Room."
+                  : "Two rooms. One scene. Leave a little room for the unexpected."}
             </p>
           </div>
           <div className="studio-title-actions">
-            <button
-              className="button button-dark"
-              disabled={
-                show.phase === "ended" ||
-                (isRehearsal && !(localHost && localTest))
-              }
-              title={
-                isRehearsal && !(localHost && localTest)
-                  ? "Create a live show to invite a performer"
-                  : "Invite a performer backstage"
-              }
-              onClick={() => setPanel("invite")}
-            >
-              <Users size={16} />
-              <span>Invite a performer</span>
-            </button>
+            {!isSoloShow && (!isRehearsal || (localHost && localTest)) ? (
+              <button
+                className="button button-dark"
+                disabled={
+                  show.phase === "ended" ||
+                  (isRehearsal && !(localHost && localTest))
+                }
+                title={
+                  isRehearsal && !(localHost && localTest)
+                    ? "Create a live show to invite a performer"
+                    : "Invite a performer backstage"
+                }
+                onClick={() => setPanel("invite")}
+              >
+                <Users size={16} />
+                <span>Invite a performer</span>
+              </button>
+            ) : null}
             <button
               className="button button-gold"
               onClick={() => setPanel("output")}
@@ -566,7 +707,22 @@ function StudioWorkspace({
         <StudioVisibilityNotice
           hidden={controller.documentHidden}
           phase={show.phase}
+          wasHidden={visibilityReminder}
+          onAcknowledge={() => setVisibilityReminder(false)}
         />
+        {isSoloShow && show.solo && show.phase !== "ended" ? (
+          <div className="solo-session-note">
+            <ShieldCheck size={17} aria-hidden="true" />
+            <p>
+              <strong>
+                Solo show · one human camera, an illustrated Audience Room.
+              </strong>
+              <span>
+                {`${Math.floor(soloRemaining / 60_000)}:${String(Math.floor(soloRemaining / 1000) % 60).padStart(2, "0")} reserved media time remaining. No more live access is issued after this deadline; keep this window open to end cleanly.`}
+              </span>
+            </p>
+          </div>
+        ) : null}
         <div className="studio-grid">
           <aside className="studio-sidebar">
             <section className="cast-panel">
@@ -575,6 +731,25 @@ function StudioWorkspace({
                 <Users size={14} />
               </div>
               {(["A", "B"] as Slot[]).map((slot) => {
+                if (isAudienceRoom(show, slot))
+                  return (
+                    <article className="cast-member cast-audience" key={slot}>
+                      <div className="cast-avatar avatar-b">
+                        <Sparkles size={22} aria-hidden="true" />
+                      </div>
+                      <div className="cast-member-info">
+                        <strong>The Audience Room</strong>
+                        <span>
+                          Original illustrated room · controlled by chat
+                        </span>
+                        <small>
+                          {show.umbrella.owner === "B"
+                            ? `Holding the ${propName}`
+                            : "Decides when to receive an offer"}
+                        </small>
+                      </div>
+                    </article>
+                  );
                 const p = show.participants[slot];
                 return (
                   <article className="cast-member" key={slot}>
@@ -585,13 +760,17 @@ function StudioWorkspace({
                     <div className="cast-member-info">
                       <strong>
                         {isRehearsal
-                          ? `Test performer ${slot}`
+                          ? slot === "A" && localCamera.enabled
+                            ? "You, in this browser"
+                            : `Test performer ${slot}`
                           : p.name ||
                             (slot === "A" ? "You, the host" : "Your guest")}
                       </strong>
                       <span>
                         {isRehearsal
-                          ? "Original illustrated plate"
+                          ? slot === "A" && localCamera.enabled
+                            ? "Local camera · no media upload"
+                            : "Original illustrated plate"
                           : p.admitted
                             ? "Admitted to Program"
                             : p.ready
@@ -641,10 +820,23 @@ function StudioWorkspace({
                 );
               })}
               {isRehearsal && !localTest ? (
-                <p className="panel-footnote">
-                  These are synthetic camera plates. They let you rehearse the
-                  story without opening a camera.
-                </p>
+                <>
+                  <p className="panel-footnote">
+                    {localCamera.enabled
+                      ? "Your camera appears only in this browser. Room B and every rehearsal ballot remain illustrated tests."
+                      : "Original illustrated rooms let you rehearse the whole story. A local camera is optional."}
+                  </p>
+                  <button
+                    className="button button-dark button-small full-width"
+                    disabled={show.phase === "ended"}
+                    onClick={() => setPanel("rehearsal-camera")}
+                  >
+                    <Camera size={15} />
+                    {localCamera.enabled
+                      ? "Local camera & hand cues"
+                      : "Try a local camera & hand cues"}
+                  </button>
+                </>
               ) : (
                 <>
                   <button
@@ -687,7 +879,9 @@ function StudioWorkspace({
                 <span>Camera room</span>
                 <strong>
                   {isRehearsal && !localTest
-                    ? "Test plates"
+                    ? localCamera.enabled
+                      ? "Local camera A"
+                      : "Test plates"
                     : media.connected
                       ? media.quality === "poor"
                         ? "Poor connection"
@@ -766,7 +960,19 @@ function StudioWorkspace({
                 <StageCanvas
                   show={show}
                   videoA={!isRehearsal || localTest ? media.videos.A : null}
-                  videoB={!isRehearsal || localTest ? media.videos.B : null}
+                  videoB={
+                    isSoloShow
+                      ? null
+                      : !isRehearsal || localTest
+                        ? media.videos.B
+                        : null
+                  }
+                  localPreviewA={
+                    fixtureRehearsal && !localTest ? localCamera.preview : null
+                  }
+                  localAnchorA={
+                    fixtureRehearsal && !localTest ? localAnchor : null
+                  }
                   serverOffset={serverOffset}
                   anchors={media.anchors}
                   forceCurtain={forceCurtain}
@@ -785,7 +991,9 @@ function StudioWorkspace({
                 <span>
                   <Headphones size={13} />
                   {isRehearsal
-                    ? "Synthetic rehearsal · no live cameras or audience"
+                    ? localCamera.enabled
+                      ? "Local camera A · illustrated room B · test ballots"
+                      : "Synthetic rehearsal · no live cameras or audience"
                     : "Director preview · headphone monitoring"}
                 </span>
                 <span className={health.fps ? "render-health" : ""}>
@@ -801,25 +1009,29 @@ function StudioWorkspace({
                   title: "Open",
                   done: show.phase !== "backstage",
                 },
-                { icon: CloudRain, title: "Weather", done: !!show.weather },
                 {
-                  icon: Umbrella,
+                  icon: isParcel ? Package : CloudRain,
+                  title: isParcel ? "Contents" : "Weather",
+                  done: isParcel ? !!show.parcel?.contents : !!show.weather,
+                },
+                {
+                  icon: isParcel ? Package : Umbrella,
                   title: "Cross",
-                  done: show.events.some(
-                    (e) =>
-                      e.type === "action.accept" &&
-                      e.propId === show.umbrella.id,
-                  ),
+                  done: (show.umbrella.acceptedTransfers ?? 0) > 0,
                 },
                 {
                   icon: Sparkles,
-                  title: show.preset.creatureName,
-                  done: show.creature.hatched,
+                  title: isParcel ? "Unpack" : show.preset.creatureName,
+                  done: isParcel
+                    ? !!show.parcel?.opened
+                    : show.creature.hatched,
                 },
                 {
                   icon: Users,
-                  title: "Shelter",
-                  done: show.beat === "shelter",
+                  title: isParcel ? "Gift" : "Ending",
+                  done: isParcel
+                    ? show.beat === "delivery"
+                    : show.beat === "shelter",
                 },
               ].map((step, i) => (
                 <div className={step.done ? "step-done" : ""} key={step.title}>
@@ -833,23 +1045,48 @@ function StudioWorkspace({
             </div>
             <section className="prop-card">
               <div className="prop-emblem">
-                <Umbrella size={29} strokeWidth={1.3} />
+                {isParcel ? (
+                  <Package size={29} strokeWidth={1.3} />
+                ) : (
+                  <Umbrella size={29} strokeWidth={1.3} />
+                )}
                 <span className="prop-patch" />
               </div>
               <div className="prop-card-copy">
-                <span className="panel-eyebrow">THE SAME LITTLE UMBRELLA</span>
+                <span className="panel-eyebrow">
+                  {isParcel
+                    ? "THE SAME TAGGED PARCEL"
+                    : "THE SAME PATCHED UMBRELLA"}
+                </span>
                 <h3>
                   {currentOffer
-                    ? `Offered to performer ${transfer.to}`
+                    ? `Offered to ${isSoloShow && transfer.to === "B" ? "the Audience Room" : `performer ${transfer.to}`}`
                     : transfer?.status === "accepted"
-                      ? "The patched umbrella is crossing."
-                      : `In performer ${show.umbrella.owner}’s care.`}
+                      ? `The same ${propName} is crossing.`
+                      : isSoloShow && show.umbrella.owner === "B"
+                        ? "In the Audience Room’s care."
+                        : `In performer ${show.umbrella.owner}’s care.`}
                 </h3>
                 <p>
-                  <span className="coral-swatch" />
-                  Coral repair patch <span>·</span>{" "}
-                  {Math.round(show.umbrella.wetness * 100)}% wet <span>·</span>{" "}
-                  v{show.umbrella.version}
+                  {show.parcel ? (
+                    <>
+                      <span className="coral-swatch" />
+                      Tag {show.parcel.tag} <span>·</span>{" "}
+                      {show.parcel.stamped
+                        ? "Moon stamp kept"
+                        : "Waiting for its stamp"}{" "}
+                      <span>·</span>{" "}
+                      {show.parcel.damage > 0
+                        ? "Handling marks kept"
+                        : "Uncreased corners"}
+                    </>
+                  ) : (
+                    <>
+                      <span className="coral-swatch" />
+                      Coral repair patch <span>·</span>{" "}
+                      {Math.round(show.umbrella.wetness * 100)}% wet
+                    </>
+                  )}
                 </p>
               </div>
               <button
@@ -867,11 +1104,11 @@ function StudioWorkspace({
                 onClick={() =>
                   void run({
                     type: "offer",
-                    from: solo ? show.umbrella.owner : "A",
+                    from: fixtureRehearsal ? show.umbrella.owner : "A",
                   })
                 }
               >
-                <Hand size={16} /> Offer umbrella <kbd>O</kbd>
+                <Hand size={16} /> Offer {propName} <kbd>O</kbd>
               </button>
               <button
                 className="button button-dark"
@@ -879,14 +1116,14 @@ function StudioWorkspace({
                   busy ||
                   !leaseValid ||
                   !currentOffer ||
-                  (!solo && transfer.to !== "A")
+                  (!fixtureRehearsal && transfer.to !== "A")
                 }
                 onClick={() => {
                   if (transfer)
                     void run({
                       type: "accept",
                       transferId: transfer.id,
-                      slot: solo ? transfer.to : "A",
+                      slot: fixtureRehearsal ? transfer.to : "A",
                     });
                 }}
               >
@@ -900,11 +1137,11 @@ function StudioWorkspace({
                     if (transfer)
                       void run({
                         type:
-                          !solo && transfer.to === "A"
+                          !fixtureRehearsal && transfer.to === "A"
                             ? "decline"
                             : "cancel-offer",
                         transferId: transfer.id,
-                        slot: solo ? transfer.from : "A",
+                        slot: fixtureRehearsal ? transfer.from : "A",
                       });
                   }}
                 >
@@ -923,8 +1160,9 @@ function StudioWorkspace({
               <div className="rehearsal-truth">
                 <ShieldCheck size={16} />
                 <p>
-                  Practice the mechanics here. Real remote cameras, audience
-                  input, and latency need a live run.
+                  {localCamera.enabled
+                    ? "Your camera and hand landmarks stay in this browser. This run uses test ballots; real Twitch participation and broadcast capture need a live show."
+                    : "Practice the mechanics here. Real remote cameras, audience input, and latency need a live run."}
                 </p>
               </div>
             ) : null}
@@ -962,7 +1200,7 @@ function StudioWorkspace({
               onClick={() => void run({ type: "recall", to: "A" })}
               disabled={busy || !leaseValid || show.phase === "ended"}
             >
-              <RotateCcw size={15} /> Return umbrella
+              <RotateCcw size={15} /> Return {propName}
             </button>
             <button
               onClick={() => void run({ type: "hide", slot: "B" })}
@@ -1063,12 +1301,18 @@ function StudioWorkspace({
             ) : null}
           </details>
         ) : null}
-        {hint ? (
+        {show.phase === "ended" ? (
+          <p className="media-hint" role="status">
+            This show has ended. Media and chat connections have closed; use the
+            next-cue card to open a fresh theater.
+          </p>
+        ) : hint ? (
           <p className="media-hint" role="status">
             {hint}
           </p>
         ) : null}
-        {media.audioBlocked || media.videoBlocked ? (
+        {show.phase !== "ended" &&
+        (media.audioBlocked || media.videoBlocked) ? (
           <button
             className="audio-unlock button button-teal"
             onClick={() => {
@@ -1092,6 +1336,7 @@ function StudioWorkspace({
         onClose={() => setPanel(null)}
         publishing={media.programPublishing}
         transportTesting={localHost && localTest}
+        localCameraActive={localCamera.enabled}
         onChanged={() => void refresh()}
       />
       <EvidencePanel
@@ -1106,6 +1351,50 @@ function StudioWorkspace({
         run={run}
         busy={busy || !leaseValid}
       />
+      <Modal
+        open={
+          panel === "rehearsal-camera" &&
+          fixtureRehearsal &&
+          !localTest &&
+          show.phase !== "ended"
+        }
+        onClose={() => setPanel(null)}
+        title="Your own entrance into the scene."
+        eyebrow="LOCAL CAMERA REHEARSAL · OPTIONAL HAND CUES"
+      >
+        <RehearsalCameraControls
+          camera={localCamera}
+          consented={localCameraConsent}
+          onConsent={(value) => {
+            if (!value) localCamera.disable();
+            setLocalCameraConsent(value);
+          }}
+          anchor={localAnchor || show.participants.A.anchor}
+          onAnchor={setLocalAnchor}
+          calibration={calibration}
+          onCalibrated={setCalibration}
+          gesture={gesture}
+          armed={gestureArmed}
+          onArmed={setGestureArmed}
+          locked={!leaseValid || busy}
+          canOffer={canOffer && show.umbrella.owner === "A"}
+          canAccept={currentOffer}
+          onOffer={() => void offer()}
+          onAccept={() => {
+            if (transfer?.status === "offered")
+              void run({
+                type: "accept",
+                transferId: transfer.id,
+                slot: transfer.to,
+              });
+          }}
+          acceptLabel={
+            transfer?.to === "B"
+              ? "Accept as illustrated part B"
+              : "Accept as performer A"
+          }
+        />
+      </Modal>
       <Modal
         open={panel === "devices" && show.phase !== "ended"}
         onClose={() => setPanel(null)}

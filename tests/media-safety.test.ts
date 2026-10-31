@@ -7,6 +7,7 @@ import {
   participantSlot,
   mayReceiveRendererMedia,
   rendererParticipantMatches,
+  soloMediaClosed,
 } from "../src/media/safety";
 import type { MediaRoomOptions } from "../src/media/types";
 
@@ -83,6 +84,24 @@ describe("media privacy and renderer authority", () => {
     expect(
       hasRenderAuthority({ ...rehearsal, allowSyntheticMedia: true }, 10_000),
     ).toBe(true);
+  });
+  it("permits real solo A media only inside its server-owned window and never mixes software B", () => {
+    const initial = options();
+    initial.show.mode = "solo";
+    initial.show.solo = { endsAt: 15_000, status: "scheduled" };
+    initial.show.participants.B = { ...initial.show.participants.A };
+    expect(hasRenderAuthority(initial, 10_000)).toBe(true);
+    expect(mayMixSlot(initial.show, "A")).toBe(true);
+    expect(mayMixSlot(initial.show, "B")).toBe(false);
+    expect(hasRenderAuthority(initial, 15_000)).toBe(false);
+    expect(soloMediaClosed(initial.show, 15_000)).toBe(true);
+    initial.show.solo.status = "closing";
+    expect(hasRenderAuthority(initial, 10_000)).toBe(false);
+    initial.show.solo = null;
+    expect(hasRenderAuthority(initial, 10_000)).toBe(false);
+    expect(
+      soloMediaClosed({ ...initial.show, mode: "rehearsal" }, 90_000),
+    ).toBe(false);
   });
   it("fences a superseded mount even when a duplicate tab retained the same renderer ID", () => {
     const initial = options();

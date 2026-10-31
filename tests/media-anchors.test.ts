@@ -220,6 +220,18 @@ describe("disposable private-room anchors", () => {
       ),
     ).toBe(false);
   });
+  it("allows solo A anchors within the media window and rejects a software-room performer grant", () => {
+    const state = show();
+    state.mode = "solo";
+    state.solo = { endsAt: now + 1000, status: "scheduled" };
+    state.umbrella.owner = "A";
+    expect(activeAnchorSlot(state, "A", now)).toBe(true);
+    expect(anchorSenderSlot(sender, state)).toBeNull();
+    state.umbrella.owner = "B";
+    expect(activeAnchorSlot(state, "B", now)).toBe(false);
+    state.umbrella.owner = "A";
+    expect(activeAnchorSlot(state, "A", now + 1000)).toBe(false);
+  });
   it("expires to no transient value and clears on explicit epoch/peer reset", () => {
     const state = show();
     const receive = new TransientAnchorReceiver();

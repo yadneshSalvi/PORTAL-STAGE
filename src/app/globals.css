@@ -1887,3 +1887,48 @@ summary:focus-visible {
 .theater-dialog :focus-visible {
   outline-color: #64d8c8;
 }
+
+.parcel-feature {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 65px;
+  align-items: center;
+  padding-top: 30px;
+  padding-bottom: 95px;
+}
+.parcel-feature-art {
+  overflow: hidden;
+  border-radius: 7px;
+  background: #242636;
+  box-shadow: 0 15px 35px #30243a15;
+}
+.parcel-feature-art > span {
+  display: block;
+  padding: 12px 18px;
+  font-size: 12px;
+  color: #d6c8b4;
+  line-height: 1.5;
+  text-align: center;
+}
+.parcel-feature h2 {
+  font: 400 clamp(34px, 4vw, 52px)/1.1 var(--serif);
+  letter-spacing: -0.035em;
+  margin: 22px 0;
+}
+.parcel-feature h2 em {
+  color: #8a6d62;
+}
+.parcel-feature p:not(.eyebrow) {
+  font-size: 16px;
+  line-height: 1.85;
+  color: #7b7273;
+  margin-bottom: 28px;
+}
+@media (max-width: 740px) {
+  .parcel-feature {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding-top: 0;
+    padding-bottom: 65px;
+  }
+}

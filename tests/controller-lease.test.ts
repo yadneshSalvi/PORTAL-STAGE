@@ -195,6 +195,63 @@ describe("renderer reload lifecycle", () => {
       "ended",
     );
   });
+  it("shows acquisition during a first reload claim and loss only after conflict or confirmed authority changes", () => {
+    const current = envelope();
+    Object.assign(current.show.renderLease, {
+      incarnationId: "previous-mount",
+      incarnationSequence: 1,
+    });
+    const identity = {
+      clientId: "renderer-tab",
+      incarnationId: "reloaded-mount",
+      incarnationSequence: 2,
+    };
+    expect(
+      rendererLeaseStatus(
+        current,
+        identity.clientId,
+        1000,
+        true,
+        "",
+        identity,
+        true,
+      ),
+    ).toBe("acquiring");
+    expect(
+      rendererLeaseStatus(
+        current,
+        identity.clientId,
+        1000,
+        true,
+        "Another director owns the stage.",
+        identity,
+        true,
+      ),
+    ).toBe("lost");
+    expect(
+      rendererLeaseStatus(
+        current,
+        identity.clientId,
+        1000,
+        true,
+        "",
+        identity,
+        false,
+      ),
+    ).toBe("lost");
+    current.show.phase = "ended";
+    expect(
+      rendererLeaseStatus(
+        current,
+        identity.clientId,
+        90_000,
+        true,
+        "",
+        identity,
+        true,
+      ),
+    ).toBe("ended");
+  });
   it("reclaims a reload without an epoch and renews only its matching unreleased incarnation", () => {
     const current = envelope();
     const identity = {
