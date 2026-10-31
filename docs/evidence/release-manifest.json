@@ -1,23 +1,23 @@
 {
   "format": "portal-stage.release-evidence/v1",
-  "evidenceAsOf": "2026-10-31T16:42:38Z",
-  "sourceCommit": "12df783729263a051264ddeef88a29b7aa8ccae7",
+  "evidenceAsOf": "2026-10-31T16:47:35.065143+00:00",
+  "sourceCommit": "a9fd9242ef69a9b6b5052168c9564e4d5e5e63be",
   "repository": "https://github.com/yadneshSalvi/PORTAL-STAGE",
   "deployment": {
-    "id": "dpl_BQ2GG9TznHmoqatAx8YoBzT9nhTQ",
+    "id": "dpl_44zp8zqCqQFPLgxxP4Gofn8NdP6z",
     "url": "https://portal-stage-eight.vercel.app",
     "status": "Ready",
-    "verification": "Final deployment passed physical-camera LiveKit Cloud story, actual Twitch vote replacement, both receiver-owned handoffs, shelter, emergency curtain, camera withdrawal/re-admission, resume, and end with no remaining rooms. Production director/Program and isolated local development guest shared one camera/computer/network. Initial public synthetic rehearsal provenance is retained separately.",
-    "uniqueUrl": "https://portal-stage-ol7f5e7o6-yadneshsalvis-projects.vercel.app"
+    "verification": "Final pending-camera-on-end guard: 184 tests, typecheck/format/build, deployed landing reload and ended-Program reload with zero video elements passed. Full physical-camera Cloud walkthrough belongs to preceding source12df783 and is recorded separately.",
+    "uniqueUrl": "https://portal-stage-m7jqdtxki-yadneshsalvis-projects.vercel.app"
   },
   "checks": {
     "lastFullAutomatedRun": {
-      "passed": 183,
+      "passed": 184,
       "skipped": 3,
       "passedFiles": 20,
       "skippedFiles": 1,
-      "seconds": 2.06,
-      "condition": "Includes the camera permission pending/cancellation patch and prior vision status change."
+      "seconds": 1.69,
+      "condition": "Includes the final pending-camera-on-show-end guard and late-grant lifecycle regression."
     },
     "finalVisionRegression": {
       "passed": 35,
@@ -138,6 +138,26 @@
       "programVideoElements": 0,
       "twitchDisconnected": true,
       "console": "Intentional disconnect emitted user-initiated data-channel abort/closed-peer/already-unpublished warnings; preserved in shutdown observations."
+    },
+    "pendingCameraOnEnd": {
+      "focusedLifecyclePassed": 42,
+      "lateGrantStopped": true,
+      "previewAttached": false,
+      "mediaTokenRequested": false,
+      "roomCreated": false,
+      "sourceCommit": "a9fd9242ef69a9b6b5052168c9564e4d5e5e63be"
+    },
+    "finalDeploymentBrowser": {
+      "landingReload": "passed",
+      "endedProgramReload": "passed",
+      "endedProgramVideoElements": 0
+    },
+    "finalDeploymentErrorLogs": {
+      "deploymentId": "dpl_44zp8zqCqQFPLgxxP4Gofn8NdP6z",
+      "window": "last 10 minutes at inspection",
+      "limit": 20,
+      "errorRecords": 0,
+      "scope": "Short post-deploy observation, not ongoing monitoring"
     }
   },
   "pending": [
@@ -250,6 +270,21 @@
       "path": "browser/production-cloud-ended.jpg",
       "sha256": "27edafcdca629b04b7ea92ee42e97f787139f97ae06a2ab99436ef0e0d5d4c5f",
       "bytes": 26884
+    },
+    {
+      "path": "browser/production-final-ended.jpg",
+      "sha256": "692054ca35094b9f8570adc7be6dff413a47396e5f3d811faf0e1f89f0425bf0",
+      "bytes": 24920
+    },
+    {
+      "path": "browser/production-final-landing.jpg",
+      "sha256": "575e82cf16f4fce3c637e4e1050a96aa48a607172c68c03a006772c8d35a7f21",
+      "bytes": 71760
+    },
+    {
+      "path": "browser/production-final-deployment.json",
+      "sha256": "ee36aaef1e7a8087ff8391ff3ac308d49f6c7bed6968f208b4c3af83ee3d4535",
+      "bytes": 1169
     }
   ],
   "limits": "Observed physical-camera Cloud test uses two sessions sharing one device/computer/network, with microphones disabled. Actual Twitch commands came from the authorized host account. Neither this test nor synthetic tests establishes remote-human performance, voice quality, hand accuracy, or measured latency. Camera footage and private consent receipts are excluded from Git; trace derivatives omit consent events 6 and 14 and identify the redaction.",
@@ -263,5 +298,12 @@
       "Hosted vision asset byte matching",
       "Private no-store session response"
     ]
+  },
+  "productionCloudVerification": {
+    "sourceCommit": "12df783729263a051264ddeef88a29b7aa8ccae7",
+    "deploymentId": "dpl_BQ2GG9TznHmoqatAx8YoBzT9nhTQ",
+    "verification": "Final deployment passed physical-camera LiveKit Cloud story, actual Twitch vote replacement, both receiver-owned handoffs, shelter, emergency curtain, camera withdrawal/re-admission, resume, and end with no remaining rooms. Production director/Program and isolated local development guest shared one camera/computer/network. Initial public synthetic rehearsal provenance is retained separately.",
+    "evidenceCommit": "66b85e5",
+    "showId": "ps_fb3398cc6bde0434"
   }
 }

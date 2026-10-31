@@ -1,0 +1,32 @@
+{
+  "observedAt": "2026-10-31T16:47:35.065143+00:00",
+  "sourceCommit": "a9fd9242ef69a9b6b5052168c9564e4d5e5e63be",
+  "deploymentId": "dpl_44zp8zqCqQFPLgxxP4Gofn8NdP6z",
+  "canonicalUrl": "https://portal-stage-eight.vercel.app",
+  "uniqueUrl": "https://portal-stage-m7jqdtxki-yadneshsalvis-projects.vercel.app",
+  "vercelStatus": "Ready",
+  "browser": {
+    "landingReload": "Expected heading displayed",
+    "endedProgramReload": "Until the next impossible thing.",
+    "endedProgramVideoElements": 0
+  },
+  "automated": {
+    "passed": 184,
+    "skipped": 3,
+    "passedFiles": 20,
+    "skippedFiles": 1,
+    "seconds": 1.69,
+    "focusedLifecyclePassed": 42,
+    "typecheck": "passed",
+    "formatting": "passed",
+    "optimizedBuild": "passed"
+  },
+  "runtimeErrorLogScan": {
+    "deploymentId": "dpl_44zp8zqCqQFPLgxxP4Gofn8NdP6z",
+    "window": "last 10 minutes at inspection",
+    "limit": 20,
+    "errorRecords": 0,
+    "scope": "Short post-deploy observation, not ongoing monitoring"
+  },
+  "scope": "Only pending-camera-on-show-end lifecycle changed. Full physical-camera Cloud walkthrough retained from source12df783; not repeated after this narrow guard."
+}

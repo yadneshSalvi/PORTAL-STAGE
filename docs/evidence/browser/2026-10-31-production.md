@@ -2,7 +2,7 @@
 
 Observed on 31 October 2026 at [portal-stage-eight.vercel.app](https://portal-stage-eight.vercel.app). Initial production release: source `bf5cf4df746dff48c700e8548516b0cfdc2dbc66`, Vercel deployment `dpl_2SJnnjbvEHn5XhCbWtwPBXruvDnv`, reported Ready.
 
-The final camera-feedback update is source `12df783729263a051264ddeef88a29b7aa8ccae7`, deployment `dpl_BQ2GG9TznHmoqatAx8YoBzT9nhTQ`, also Ready on the same canonical URL. The public synthetic rehearsal below belongs to the initial release. The final deployment subsequently passed the physical-camera/LiveKit Cloud story, actual Twitch ballot replacement, emergency recovery, and shutdown described later in this record.
+The camera-feedback update is source `12df783729263a051264ddeef88a29b7aa8ccae7`, deployment `dpl_BQ2GG9TznHmoqatAx8YoBzT9nhTQ`, also Ready on the same canonical URL. The public synthetic rehearsal below belongs to the initial release. That deployment subsequently passed the physical-camera/LiveKit Cloud story, actual Twitch ballot replacement, emergency recovery, and shutdown described later in this record.
 
 ## Public experience
 
@@ -36,7 +36,7 @@ The user subsequently allowed camera access for production and the separate loca
 
 ## Physical camera and LiveKit Cloud walkthrough
 
-The final deployment hosted director A and the Program viewer. Performer B used an independent cookie on `http://127.0.0.1:3201`, served from the same source with a separate development cache and the same Neon database/signing configuration/LiveKit Cloud project. Both sessions captured the same MacBook Pro camera on one computer and network. No synthetic-source flag was enabled. This verifies the physical-camera/cloud-SFU path with independent participant sessions; it does not establish a performance by two remote humans or separate-network reliability.
+The camera-feedback deployment hosted director A and the Program viewer. Performer B used an independent cookie on `http://127.0.0.1:3201`, served from the same source with a separate development cache and the same Neon database/signing configuration/LiveKit Cloud project. Both sessions captured the same MacBook Pro camera on one computer and network. No synthetic-source flag was enabled. This verifies the physical-camera/cloud-SFU path with independent participant sessions; it does not establish a performance by two remote humans or separate-network reliability.
 
 Both private cameras decoded at 1280×720. The Program viewer decoded the director's composed 1920×1080 stream, and B decoded a video-only 1920×1080 return. The [playback measurements](production-cloud-playback.json) show readyState 4, paused false, and advancing media times. The [LiveKit room inspection](production-cloud-media-rooms.json) shows A's and B's camera tracks only in backstage, a separate output publisher with composed video/audio in the Program room, and a receive-only Program viewer with no published tracks. Microphones stayed disabled; the existence of the compositor's audio track is not evidence of a voice or echo test.
 
@@ -57,3 +57,11 @@ End the show committed sequence 42 and revoked invitations/output grants. Direct
 ![Cloud Program after shutdown](production-cloud-ended.jpg)
 
 No camera footage was recorded or committed, and no Twitch broadcast was started. Remaining checks are two consenting performers on separate devices/networks, physical hand-cue accuracy, microphone/echo/synchronization behavior, measured control/media delay, and OBS capture. The earlier independent-session synthetic SFU protocol check remains available in [local verification](2026-10-31-local.md).
+
+## Final pending-camera shutdown hardening
+
+Read-only cleanup review found a separate case outside the granted-camera walkthrough: ending an unjoined show while its camera permission request was still pending did not cancel that pending intent immediately. Source `a9fd9242ef69a9b6b5052168c9564e4d5e5e63be` adds the pending request to the end/disconnect guard. A focused regression proves that a late grant is stopped without attachment, token acquisition, or a media room; 42 focused tests and the full 184-test suite passed. No transport shutdown ordering or SDK logging was changed.
+
+The final deployment `dpl_44zp8zqCqQFPLgxxP4Gofn8NdP6z` is Ready at the same canonical URL. After explicit browser reloads, the landing displayed its expected heading and the ended live show's Program displayed “Until the next impossible thing.” with zero video elements. The full physical-camera Cloud walkthrough above retains its preceding `12df783` deployment provenance; it was not repeated after this narrow pending-intent change.
+
+![Final deployment preserves the stopped show](production-final-ended.jpg)

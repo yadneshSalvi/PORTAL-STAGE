@@ -47,7 +47,7 @@ See [architecture](docs/architecture.md), [media](docs/media.md), [gestures](doc
 
 ## Verified so far
 
-- 183 automated tests pass, including camera request cancellation and the final no-hand status. Three opt-in Neon integration tests passed separately. Typecheck, authored-file formatting, and the optimized production build pass.
+- 184 automated tests pass, including camera request cancellation, late grants after show end, and the final no-hand status. Three opt-in Neon integration tests passed separately. Typecheck, authored-file formatting, and the optimized production build pass.
 - An actual two-session local LiveKit walkthrough completed both accepted transfers, hatching, shelter, emergency hold, disconnect/reconnect, fresh admission, resume, and end. Its moving video plates are explicitly synthetic.
 - A fresh optimized browser regression showed both cameras on the first curtain without opening a preview. Decoder playback survived preview open/close and guest reconnect; the source-reset failure is covered by an installed-SDK regression.
 - The production rehearsal completed a labeled wild test ballot, both crossings, hatch, and shelter with the same umbrella at version 6 and 52% wetness. Production Twitch OAuth and EventSub listening also passed.
