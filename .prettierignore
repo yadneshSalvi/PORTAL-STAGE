@@ -1,3 +1,6 @@
 # Preserve captured evidence bytes and upstream vendor assets.
 docs/evidence/browser/*.json
 public/vision/
+
+# Preserve exact baseline UI export bytes.
+docs/evidence/review-2026-11-01/baseline-rehearsal-sequence8.json

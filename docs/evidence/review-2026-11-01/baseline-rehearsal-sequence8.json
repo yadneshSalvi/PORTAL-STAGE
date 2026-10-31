@@ -1,0 +1,135 @@
+{
+  "exportedAt": "2026-10-31T19:50:16.867Z",
+  "mode": "rehearsal",
+  "showId": "ps_a7a1bbab7ce1f016",
+  "sequence": 8,
+  "umbrella": {
+    "id": "ps_a7a1bbab7ce1f016-umbrella-1",
+    "armed": true,
+    "owner": "A",
+    "version": 3,
+    "wetness": 0,
+    "transfer": {
+      "id": "ps_a7a1bbab7ce1f016-transfer-4",
+      "to": "B",
+      "from": "A",
+      "status": "expired",
+      "arrivedAt": null,
+      "expiresAt": 1793476106430,
+      "offeredAt": 1793476086430,
+      "committedAt": null,
+      "commitSequence": null
+    },
+    "repairPatch": "coral"
+  },
+  "creature": {
+    "id": "ps_a7a1bbab7ce1f016-pip-1",
+    "mood": "gentle",
+    "hatched": false,
+    "hatchedAt": null,
+    "shelterOwner": "A"
+  },
+  "round": null,
+  "events": [
+    {
+      "at": 1793476052801,
+      "id": "ps_a7a1bbab7ce1f016:1",
+      "type": "show.created",
+      "actor": "director",
+      "owner": "A",
+      "propId": "ps_a7a1bbab7ce1f016-umbrella-1",
+      "summary": "Labeled solo rehearsal created with synthetic test plates.",
+      "sequence": 1,
+      "propVersion": 1
+    },
+    {
+      "at": 1793476053853,
+      "id": "ps_a7a1bbab7ce1f016:2",
+      "type": "renderer.acquired",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "epoch": 1
+      },
+      "propId": "ps_a7a1bbab7ce1f016-umbrella-1",
+      "summary": "One director tab acquired the canonical stage.",
+      "sequence": 2,
+      "propVersion": 1
+    },
+    {
+      "at": 1793476071092,
+      "id": "ps_a7a1bbab7ce1f016:3",
+      "type": "action.start",
+      "actor": "director",
+      "owner": "A",
+      "propId": "ps_a7a1bbab7ce1f016-umbrella-1",
+      "summary": "The curtain rose on two admitted performers.",
+      "sequence": 3,
+      "propVersion": 1
+    },
+    {
+      "at": 1793476086430,
+      "id": "ps_a7a1bbab7ce1f016:4",
+      "type": "action.offer",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "to": "B",
+        "from": "A",
+        "transferId": "ps_a7a1bbab7ce1f016-transfer-4"
+      },
+      "propId": "ps_a7a1bbab7ce1f016-umbrella-1",
+      "summary": "Test plate A offered the same umbrella to Test plate B. Ownership remains with A.",
+      "sequence": 4,
+      "propVersion": 2
+    },
+    {
+      "at": 1793476107736,
+      "id": "ps_a7a1bbab7ce1f016:5",
+      "type": "transfer.expired",
+      "actor": "system",
+      "owner": "A",
+      "propId": "ps_a7a1bbab7ce1f016-umbrella-1",
+      "summary": "The offer expired before acceptance; ownership did not change.",
+      "sequence": 5,
+      "propVersion": 3
+    },
+    {
+      "at": 1793476147849,
+      "id": "ps_a7a1bbab7ce1f016:6",
+      "type": "fixture.ready",
+      "actor": "system",
+      "owner": "A",
+      "propId": "ps_a7a1bbab7ce1f016-umbrella-1",
+      "summary": "Synthetic rehearsal plates were restored. The committed scene remains intact; the director can resume.",
+      "sequence": 6,
+      "propVersion": 3
+    },
+    {
+      "at": 1793476147849,
+      "id": "ps_a7a1bbab7ce1f016:7",
+      "type": "renderer.acquired",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "epoch": 2
+      },
+      "propId": "ps_a7a1bbab7ce1f016-umbrella-1",
+      "summary": "A new director epoch recovered the committed scene under a holding curtain.",
+      "sequence": 7,
+      "propVersion": 3
+    },
+    {
+      "at": 1793476179702,
+      "id": "ps_a7a1bbab7ce1f016:8",
+      "type": "action.end",
+      "actor": "director",
+      "owner": "A",
+      "propId": "ps_a7a1bbab7ce1f016-umbrella-1",
+      "summary": "The show ended; invitations and output grants were revoked.",
+      "sequence": 8,
+      "propVersion": 3
+    }
+  ],
+  "scope": "Current state and recent server events; rehearsal is synthetic, not remote-media or audience evidence."
+}

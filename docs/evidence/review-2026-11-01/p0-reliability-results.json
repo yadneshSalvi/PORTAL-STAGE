@@ -1,0 +1,296 @@
+{
+  "sourceCommit": "2de2871c5c18ba55680742ca9778270189db65c9",
+  "buildId": "GsihmIdXNrYGGY2ZmNMnZ",
+  "environment": {
+    "app": "optimized local Next server",
+    "directorOrigin": "http://127.0.0.1:3201",
+    "browser": "Codex in-app browser",
+    "database": "actual configured Neon Postgres",
+    "mediaAtThisPoint": "none; illustrated synthetic rehearsal"
+  },
+  "postgres": {
+    "passed": 4,
+    "failed": 0,
+    "pending": 0,
+    "tests": [
+      "renews while a concurrent state mutation preserves both results",
+      "refuses wrong owner, renderer, stale epoch, expired lease, and ended show",
+      "enforces the rate limit and does not write an unchanged snapshot",
+      "fences old mount renewals and released mounts without changing the new epoch"
+    ]
+  },
+  "reloadPendingOffer": {
+    "showId": "ps_400c69367856642c",
+    "epochBefore": 1,
+    "epochAfter": 1,
+    "mountSequenceBefore": 1,
+    "mountSequenceAfter": 2,
+    "phaseAfter": "live",
+    "ownerAfter": "B",
+    "sameTransfer": {
+      "id": "ps_400c69367856642c-transfer-4",
+      "to": "B",
+      "from": "A",
+      "status": "arrived",
+      "arrivedAt": 1793478860316,
+      "expiresAt": 1793478872169,
+      "offeredAt": 1793478852169,
+      "committedAt": 1793478858505,
+      "commitSequence": 5
+    },
+    "offerToCommitMs": 6336,
+    "events": [
+      {
+        "sequence": 1,
+        "type": "show.created",
+        "at": 1793478815859
+      },
+      {
+        "sequence": 2,
+        "type": "renderer.acquired",
+        "at": 1793478817292
+      },
+      {
+        "sequence": 3,
+        "type": "action.start",
+        "at": 1793478829284
+      },
+      {
+        "sequence": 4,
+        "type": "action.offer",
+        "at": 1793478852169
+      },
+      {
+        "sequence": 5,
+        "type": "action.accept",
+        "at": 1793478858505
+      },
+      {
+        "sequence": 6,
+        "type": "action.arrive",
+        "at": 1793478860316
+      }
+    ],
+    "observation": "2026-10-31T20:34:24.417Z",
+    "note": "The first post-reload observation briefly showed authority acquisition. The accept button then became usable and the same offer committed. No hold, cancellation or additional renderer-acquired event occurred. The initial 572 ms read measured DOM visibility, not control readiness."
+  },
+  "endedShow": {
+    "showId": "ps_400c69367856642c",
+    "recheckedAfterSeconds": 74.176,
+    "leaseSpinnerAbsent": true,
+    "newRehearsalEnabled": true,
+    "newRehearsalShowId": "ps_279d1dd64d8c977a",
+    "newRehearsalCurtainControlEnabled": true,
+    "mobileViewport": 390,
+    "mobileScrollWidth": 390
+  },
+  "transportVersion": {
+    "sourceCommit": "840604568ae50da47e1f383508e51e21ba83d32b",
+    "packageLockSha256": "72995689e03eec7ae237156c5be3f71039e96b350285b26fce703ce358e118b9",
+    "dependencies": "APFS clone of validated2de2871 dependencies",
+    "buildId": "d2HUFhgM40AwI_gW3ucds",
+    "gates": {
+      "unitTestsPassed": 220,
+      "optionalDatabaseTestsSkipped": 4,
+      "typecheck": "passed",
+      "format": "passed",
+      "optimizedBuild": "passed"
+    }
+  },
+  "guestReplacement": {
+    "showId": "ps_279d1dd64d8c977a",
+    "freshGuestBrowserSession": true,
+    "oldGuestReopen": "UI rejected: The stage door is closed.",
+    "inviteGeneration": [1, 2],
+    "outputGeneration": [1, 1],
+    "issuedProgramViewerCount": [1, 1],
+    "epoch": [1, 1],
+    "phaseAfter": "live",
+    "programSamples": [
+      {
+        "stage": "before guest close",
+        "at": 1793479325781,
+        "videos": [
+          {
+            "currentTime": 47.73021,
+            "height": 1080,
+            "paused": false,
+            "readyState": 4,
+            "width": 1920
+          }
+        ]
+      },
+      {
+        "stage": "original guest window closed",
+        "at": 1793479341260,
+        "videos": [
+          {
+            "currentTime": 63.254882,
+            "height": 1080,
+            "paused": false,
+            "readyState": 4,
+            "width": 1920
+          }
+        ]
+      },
+      {
+        "stage": "old guest revoked; new invitation issued",
+        "at": 1793479363835,
+        "videos": [
+          {
+            "currentTime": 85.789579,
+            "height": 1080,
+            "paused": false,
+            "readyState": 4,
+            "width": 1920
+          }
+        ]
+      },
+      {
+        "stage": "replacement guest joining; same Program session",
+        "at": 1793479406160,
+        "videos": [
+          {
+            "currentTime": 128.109243,
+            "height": 1080,
+            "paused": false,
+            "readyState": 4,
+            "width": 1920
+          }
+        ]
+      },
+      {
+        "stage": "replacement guest admitted",
+        "at": 1793479445948,
+        "videos": [
+          {
+            "currentTime": 167.896724,
+            "height": 1080,
+            "paused": false,
+            "readyState": 4,
+            "width": 1920
+          }
+        ]
+      }
+    ],
+    "mediaWasSynthetic": true,
+    "newPairingAfterGuestReplacement": false,
+    "notes": "Discrete decoder observations, not a frame-loss or latency benchmark. Original guest: in-app browser localhost. Replacement guest: Chrome localhost. Director: in-app browser127.0.0.1. Same Chrome127.0.0.1 Program session throughout."
+  },
+  "explicitOutputUnpair": {
+    "outputGeneration": 2,
+    "inviteGeneration": 2,
+    "programUi": {
+      "observedAt": 1793479487594,
+      "elapsedSinceActionMs": 7388,
+      "videos": []
+    },
+    "sfuBefore": {
+      "observedAt": "2026-10-31T20:44:23.979Z",
+      "showId": "ps_279d1dd64d8c977a",
+      "endpoint": "loopback SFU",
+      "rooms": {
+        "backstage": [
+          {
+            "role": "director",
+            "tracks": [
+              {
+                "name": "portal-camera",
+                "type": 1,
+                "muted": false
+              },
+              {
+                "name": "portal-return",
+                "type": 1,
+                "muted": false
+              }
+            ]
+          },
+          {
+            "role": "performer",
+            "tracks": [
+              {
+                "name": "portal-camera",
+                "type": 1,
+                "muted": false
+              }
+            ]
+          }
+        ],
+        "program": [
+          {
+            "role": "program",
+            "tracks": []
+          },
+          {
+            "role": "output-publisher",
+            "tracks": [
+              {
+                "name": "portal-program",
+                "type": 1,
+                "muted": false
+              },
+              {
+                "name": "portal-program-audio",
+                "type": 0,
+                "muted": false
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "sfuAfter": {
+      "observedAt": "2026-10-31T20:44:43.992Z",
+      "showId": "ps_279d1dd64d8c977a",
+      "endpoint": "loopback SFU",
+      "rooms": {
+        "backstage": [
+          {
+            "role": "director",
+            "tracks": [
+              {
+                "name": "portal-camera",
+                "type": 1,
+                "muted": false
+              },
+              {
+                "name": "portal-return",
+                "type": 1,
+                "muted": false
+              }
+            ]
+          },
+          {
+            "role": "performer",
+            "tracks": [
+              {
+                "name": "portal-camera",
+                "type": 1,
+                "muted": false
+              }
+            ]
+          }
+        ],
+        "program": [
+          {
+            "role": "output-publisher",
+            "tracks": [
+              {
+                "name": "portal-program",
+                "type": 1,
+                "muted": false
+              },
+              {
+                "name": "portal-program-audio",
+                "type": 0,
+                "muted": false
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "scope": "Actual localSFU removal and browser access rejection. Does not establish Cloud token revocation or a malicious cached-token replay boundary."
+  }
+}
