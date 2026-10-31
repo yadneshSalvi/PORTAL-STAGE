@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import {
   ArrowRight,
   Check,
@@ -9,6 +10,7 @@ import {
 } from "lucide-react";
 import type { ShowAction, ShowState, Weather } from "@/lib/contracts";
 import { useNow } from "./use-show-controller";
+import { NewShowButton } from "./new-show-button";
 
 export type Cue = {
   title: string;
@@ -29,9 +31,9 @@ export function nextCue(show: ShowState): Cue {
       number: "FIN",
       title: "A lovely place to leave it.",
       description:
-        "The curtain is closed. Keep your version, or reset the scene to rehearse another story.",
-      label: "Reset the scene",
-      act: { type: "reset" },
+        "The show has ended and the curtain is closed. Your saved version and stage record stay with this show.",
+      label: "Show ended",
+      act: null,
     };
   if (show.phase === "hold")
     return {
@@ -195,30 +197,46 @@ export function CueDeck({
       </span>
       <h2 id="next-cue-title">{cue.title}</h2>
       <p>{cue.description}</p>
-      <button
-        className="button button-gold cue-primary"
-        disabled={busy || !cue.act || locked}
-        onClick={() => {
-          if (cue.act) void run(cue.act);
-        }}
-      >
-        {busy || cue.waiting ? (
-          <LoaderCircle size={17} className="spin" aria-hidden="true" />
-        ) : null}
-        {cue.label}
-        {!busy && !cue.waiting ? (
-          <ArrowRight size={16} aria-hidden="true" />
-        ) : null}
-      </button>
-      <span className="cue-key-hint">
-        {cue.waiting ? (
-          "The stage will update as the story moves."
-        ) : (
-          <>
-            Keyboard: <kbd>Space</kbd> for this cue
-          </>
-        )}
-      </span>
+      {show.phase === "ended" ? (
+        <div className="ended-show-actions">
+          <p className="ended-show-status">
+            <Check size={16} aria-hidden="true" /> Show ended
+          </p>
+          <NewShowButton className="button button-gold">
+            New rehearsal
+          </NewShowButton>
+          <Link href="/studio" className="button button-dark">
+            New show <ArrowRight size={16} aria-hidden="true" />
+          </Link>
+        </div>
+      ) : (
+        <>
+          <button
+            className="button button-gold cue-primary"
+            disabled={busy || !cue.act || locked}
+            onClick={() => {
+              if (cue.act) void run(cue.act);
+            }}
+          >
+            {busy || cue.waiting ? (
+              <LoaderCircle size={17} className="spin" aria-hidden="true" />
+            ) : null}
+            {cue.label}
+            {!busy && !cue.waiting ? (
+              <ArrowRight size={16} aria-hidden="true" />
+            ) : null}
+          </button>
+          <span className="cue-key-hint">
+            {cue.waiting ? (
+              "The stage will update as the story moves."
+            ) : (
+              <>
+                Keyboard: <kbd>Space</kbd> for this cue
+              </>
+            )}
+          </span>
+        </>
+      )}
     </section>
   );
 }
@@ -227,11 +245,13 @@ export function AudienceChoice({
   busy,
   run,
   serverOffset,
+  locked = false,
 }: {
   show: ShowState;
   busy: boolean;
   run: (action: ShowAction) => Promise<unknown>;
   serverOffset: number;
+  locked?: boolean;
 }) {
   const now = useNow();
   const round = show.round;
@@ -298,10 +318,16 @@ export function AudienceChoice({
       </div>
       {show.mode === "rehearsal" && round?.status === "open" ? (
         <div className="test-vote-actions">
-          <button disabled={busy} onClick={() => void testVote("gentle")}>
+          <button
+            disabled={busy || locked}
+            onClick={() => void testVote("gentle")}
+          >
             Test !gentle
           </button>
-          <button disabled={busy} onClick={() => void testVote("wild")}>
+          <button
+            disabled={busy || locked}
+            onClick={() => void testVote("wild")}
+          >
             Test !wild
           </button>
         </div>

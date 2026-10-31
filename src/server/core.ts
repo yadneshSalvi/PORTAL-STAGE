@@ -138,6 +138,7 @@ export function createRecord(
     idempotency: {},
     rates: {},
     inviteGeneration: 1,
+    outputGeneration: 1,
     twitchSessionId: null,
   };
   recordEvent(
@@ -210,6 +211,8 @@ export function requireLease(
   rendererId: string | undefined,
   epoch: number | undefined,
   now: number,
+  incarnationId?: string,
+  incarnationSequence?: number,
 ) {
   const lease = record.state.renderLease;
   assert(
@@ -217,6 +220,10 @@ export function requireLease(
       rendererId === lease.clientId &&
       epoch === lease.epoch &&
       epoch === record.state.epoch &&
+      (!lease.incarnationId ||
+        (lease.incarnationId === incarnationId &&
+          lease.incarnationSequence === incarnationSequence)) &&
+      !lease.releasedAt &&
       lease.expiresAt > now,
     409,
     "renderer_fenced",
@@ -250,6 +257,7 @@ export function acquireLease(
   clientId: string,
   takeover: boolean,
   now: number,
+  incarnation?: { id: string; sequence: number },
 ) {
   assert(
     /^[a-zA-Z0-9_-]{8,128}$/.test(clientId),
@@ -259,13 +267,32 @@ export function acquireLease(
   );
   const s = record.state,
     previous = s.renderLease;
+  if (previous.clientId === clientId && previous.incarnationId) {
+    assert(
+      incarnation &&
+        (incarnation.sequence > (previous.incarnationSequence ?? 0) ||
+          (incarnation.sequence === previous.incarnationSequence &&
+            incarnation.id === previous.incarnationId)),
+      409,
+      "renderer_fenced",
+      "This director page was replaced by a newer page. Use the current studio.",
+    );
+  }
   if (previous.clientId === clientId && previous.expiresAt > now) {
     restoreFixtureReadiness(record, now);
     previous.expiresAt = now + LEASE_MS;
+    if (incarnation) {
+      previous.incarnationId = incarnation.id;
+      previous.incarnationSequence = incarnation.sequence;
+    }
+    delete previous.releasedAt;
     return;
   }
   assert(
-    !previous.clientId || previous.expiresAt <= now || takeover,
+    !previous.clientId ||
+      previous.expiresAt <= now ||
+      previous.releasedAt ||
+      takeover,
     409,
     "renderer_busy",
     "Another director tab owns this stage. Close it or explicitly take over.",
@@ -284,7 +311,17 @@ export function acquireLease(
     }
   }
   restoreFixtureReadiness(record, now);
-  s.renderLease = { clientId, epoch: s.epoch, expiresAt: now + LEASE_MS };
+  s.renderLease = {
+    clientId,
+    epoch: s.epoch,
+    expiresAt: now + LEASE_MS,
+    ...(incarnation
+      ? {
+          incarnationId: incarnation.id,
+          incarnationSequence: incarnation.sequence,
+        }
+      : {}),
+  };
   recordEvent(
     record,
     "renderer.acquired",
@@ -572,6 +609,8 @@ export function applyAction(
     expectedVersion: envelope.expectedVersion,
     epoch: envelope.epoch,
     rendererId: envelope.rendererId,
+    incarnationId: envelope.incarnationId,
+    incarnationSequence: envelope.incarnationSequence,
   });
   const previous = record.idempotency[key];
   if (previous) {
@@ -600,11 +639,19 @@ export function applyAction(
   );
   if (DIRECTOR_ACTIONS.has(action.type)) requireDirector(actor);
   if (
-    (s.mode === "live" || s.transport === "livekit") &&
     actor.role === "director" &&
-    !["panic", "hold", "end", "hide", "consent", "leave"].includes(action.type)
+    !["panic", "hold", "end", "hide", "leave"].includes(action.type) &&
+    !(action.type === "consent" && !action.broadcast) &&
+    !(action.type === "ready" && !action.ready)
   )
-    requireLease(record, envelope.rendererId, envelope.epoch, now);
+    requireLease(
+      record,
+      envelope.rendererId,
+      envelope.epoch,
+      now,
+      envelope.incarnationId,
+      envelope.incarnationSequence,
+    );
   if (HANDOFF.has(action.type)) {
     assert(
       envelope.expectedVersion === s.umbrella.version,
@@ -711,6 +758,8 @@ export function applyAction(
     case "end":
       s.phase = "ended";
       s.beat = "curtain";
+      record.outputGeneration =
+        (record.outputGeneration ?? record.inviteGeneration) + 1;
       record.inviteGeneration += 1;
       for (const slot of ["A", "B"] as Slot[]) {
         hideParticipant(record, slot, now, "The show ended before acceptance.");
@@ -768,6 +817,7 @@ export function applyAction(
       );
       s.transport = "fixture";
       s.phase = "hold";
+      record.outputGeneration ??= record.inviteGeneration;
       record.inviteGeneration += 1;
       delete record.participantSessions.B;
       cancelPendingOffer(

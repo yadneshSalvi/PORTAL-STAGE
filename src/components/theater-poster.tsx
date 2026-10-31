@@ -5,10 +5,12 @@ export function TheaterPoster({
   weather = "gentle",
   className = "",
   compact = false,
+  showLabel = true,
 }: {
   weather?: "gentle" | "wild";
   className?: string;
   compact?: boolean;
+  showLabel?: boolean;
 }) {
   const id = useId().replace(/:/g, "");
   return (
@@ -307,17 +309,19 @@ export function TheaterPoster({
       >
         Borrowed Weather
       </text>
-      <text
-        x="720"
-        y="752"
-        fontFamily="Inter, sans-serif"
-        fontSize={compact ? "19" : "15"}
-        textAnchor="middle"
-        fill="#B8BFC9"
-        letterSpacing="2"
-      >
-        ILLUSTRATED REHEARSAL · NO LIVE CAMERAS
-      </text>
+      {showLabel ? (
+        <text
+          x="720"
+          y="752"
+          fontFamily="Inter, sans-serif"
+          fontSize={compact ? "19" : "15"}
+          textAnchor="middle"
+          fill="#B8BFC9"
+          letterSpacing="2"
+        >
+          ILLUSTRATED REHEARSAL · NO LIVE CAMERAS
+        </text>
+      ) : null}
     </svg>
   );
 }

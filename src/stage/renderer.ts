@@ -13,6 +13,7 @@ import { makePip, makeUmbrella, UMBRELLA_GRIP } from "./props";
 import { apertureCoverCrop } from "@/vision/calibration";
 import { stagePointForAperture } from "./coordinates";
 import { VideoFrameUpload } from "./video-frame-upload";
+import { startStageFrameLoop } from "./frame-loop";
 
 export type RenderInput = {
   show: ShowState;
@@ -149,9 +150,7 @@ export function createTheaterRenderer(
     >
   > = {};
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
-  let frame = 0,
-    stopped = false,
-    lastFrame = 0,
+  let stopped = false,
     lastText = "",
     healthAt = performance.now(),
     frames = 0;
@@ -242,9 +241,6 @@ export function createTheaterRenderer(
   }
   function render(time: number) {
     if (stopped) return;
-    frame = requestAnimationFrame(render);
-    if (time - lastFrame < 1000 / 30 - 2) return;
-    lastFrame = time;
     const current = getInput(),
       show = current.show;
     const now = Date.now() + (current.serverOffset || 0),
@@ -426,6 +422,7 @@ export function createTheaterRenderer(
   function contextLost(e: Event) {
     e.preventDefault();
     stopped = true;
+    stopFrameLoop();
     getInput().onCanvas?.(null);
     getInput().onRenderHealth?.({
       fps: 0,
@@ -437,7 +434,7 @@ export function createTheaterRenderer(
   }
   canvas.addEventListener("webglcontextlost", contextLost);
   getInput().onCanvas?.(canvas);
-  frame = requestAnimationFrame(render);
+  const stopFrameLoop = startStageFrameLoop(render);
   document.fonts.ready
     .then(() => {
       if (!stopped) lastText = "";
@@ -445,7 +442,7 @@ export function createTheaterRenderer(
     .catch(() => undefined);
   return () => {
     stopped = true;
-    cancelAnimationFrame(frame);
+    stopFrameLoop();
     canvas.removeEventListener("webglcontextlost", contextLost);
     getInput().onCanvas?.(null);
     const geometries = new Set<THREE.BufferGeometry>(),

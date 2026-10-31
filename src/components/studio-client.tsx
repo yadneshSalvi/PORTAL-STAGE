@@ -54,6 +54,11 @@ import {
   PresetPanel,
 } from "./studio-panels";
 import { useNow, useShowController } from "./use-show-controller";
+import {
+  StudioAuthorityNotice,
+  StudioVisibilityNotice,
+} from "./studio-notices";
+import { canIssueDirectorAction } from "./studio-controls";
 
 const StageCanvas = dynamic(() => import("@/stage/stage-canvas"), {
   ssr: false,
@@ -240,11 +245,15 @@ function StudioWorkspace({
   const panicGeneration = useRef(0);
   const now = useNow(),
     leaseValid =
+      controller.leaseStatus === "active" &&
       show.renderLease.clientId === rendererId &&
+      show.renderLease.epoch === show.epoch &&
+      !show.renderLease.releasedAt &&
       show.renderLease.expiresAt > now + serverOffset,
     isRehearsal = show.mode === "rehearsal",
     solo = isRehearsal && show.transport !== "livekit";
   const canOffer =
+    leaseValid &&
     show.phase === "live" &&
     (solo || show.umbrella.owner === "A") &&
     !["offered", "accepted"].includes(show.umbrella.transfer?.status || "") &&
@@ -266,6 +275,8 @@ function StudioWorkspace({
     role: "director",
     slot: "A",
     rendererId,
+    rendererIncarnationId: controller.rendererIncarnationId,
+    rendererIncarnationSequence: controller.rendererIncarnationSequence,
     epoch: show.epoch,
     serverNow: envelope.serverNow,
     onPresence,
@@ -279,6 +290,12 @@ function StudioWorkspace({
   }, []);
   const run = useCallback(
     async (action: ShowAction) => {
+      if (!canIssueDirectorAction(action, leaseValid)) {
+        setError(
+          "This director window does not control the stage. Recover the current stage before sending a cue.",
+        );
+        return null;
+      }
       const generation = panicGeneration.current;
       const result = await act(action);
       if (
@@ -291,21 +308,21 @@ function StudioWorkspace({
         setForceCurtain(false);
       return result;
     },
-    [act],
+    [act, leaseValid, setError],
   );
   const offer = useCallback(() => run({ type: "offer", from: "A" }), [run]);
   const accept = useCallback(() => {
     const transfer = show.umbrella.transfer;
-    return transfer?.status === "offered" && transfer.to === "A"
+    return leaseValid && transfer?.status === "offered" && transfer.to === "A"
       ? run({ type: "accept", transferId: transfer.id, slot: "A" })
       : Promise.resolve(null);
-  }, [run, show.umbrella.transfer]);
+  }, [run, show.umbrella.transfer, leaseValid]);
   const onAnchor = useCallback(
     (anchor: { x: number; y: number }) => media.sendAnchor(anchor),
     [media.sendAnchor],
   );
   const gesture = useGestureInput(media.localPreview, {
-    armed: gestureArmed,
+    armed: gestureArmed && show.phase === "live" && leaseValid,
     calibration,
     slot: "A",
     owner: show.umbrella.owner,
@@ -322,10 +339,25 @@ function StudioWorkspace({
     onAccept: accept,
     onAnchor,
   });
-  const authority = useRef({ rendererId, epoch: show.epoch });
+  const authority = useRef({
+    rendererId,
+    epoch: show.epoch,
+    incarnationId: controller.rendererIncarnationId,
+    incarnationSequence: controller.rendererIncarnationSequence,
+  });
   useEffect(() => {
-    authority.current = { rendererId, epoch: show.epoch };
-  }, [rendererId, show.epoch]);
+    authority.current = {
+      rendererId,
+      epoch: show.epoch,
+      incarnationId: controller.rendererIncarnationId,
+      incarnationSequence: controller.rendererIncarnationSequence,
+    };
+  }, [
+    rendererId,
+    show.epoch,
+    controller.rendererIncarnationId,
+    controller.rendererIncarnationSequence,
+  ]);
   useEffect(() => {
     if (!chatEnabled || !leaseValid || isRehearsal || show.phase === "ended")
       return;
@@ -369,6 +401,7 @@ function StudioWorkspace({
   }, [run]);
   useEffect(() => {
     function key(e: KeyboardEvent) {
+      if (show.phase === "ended") return;
       const target = e.target as HTMLElement;
       if (document.querySelector("dialog[open]")) return;
       if (e.code === "Escape") {
@@ -380,12 +413,7 @@ function StudioWorkspace({
         target.closest("input,textarea,select,button,a,[contenteditable=true]")
       )
         return;
-      if (
-        e.code === "Space" &&
-        !e.repeat &&
-        !busy &&
-        (isRehearsal || leaseValid)
-      ) {
+      if (e.code === "Space" && !e.repeat && !busy && leaseValid) {
         const cue = nextCue(show);
         if (cue.act) {
           e.preventDefault();
@@ -403,6 +431,7 @@ function StudioWorkspace({
         e.key.toLowerCase() === "a" &&
         !e.repeat &&
         !busy &&
+        leaseValid &&
         show.umbrella.transfer?.status === "offered"
       ) {
         const t = show.umbrella.transfer;
@@ -449,10 +478,14 @@ function StudioWorkspace({
             pulse={show.phase === "live"}
           >
             {isRehearsal
-              ? "Rehearsal"
+              ? show.phase === "ended"
+                ? "Show ended"
+                : "Rehearsal"
               : show.phase === "live"
                 ? "On stage"
-                : "Backstage"}
+                : show.phase === "ended"
+                  ? "Show ended"
+                  : "Backstage"}
           </StatusPill>
           <Link href="/guide" className="studio-guide-link">
             <CircleHelp size={17} />
@@ -492,7 +525,10 @@ function StudioWorkspace({
           <div className="studio-title-actions">
             <button
               className="button button-dark"
-              disabled={isRehearsal && !(localHost && localTest)}
+              disabled={
+                show.phase === "ended" ||
+                (isRehearsal && !(localHost && localTest))
+              }
               title={
                 isRehearsal && !(localHost && localTest)
                   ? "Create a live show to invite a performer"
@@ -506,6 +542,7 @@ function StudioWorkspace({
             <button
               className="button button-gold"
               onClick={() => setPanel("output")}
+              disabled={show.phase === "ended"}
             >
               <Monitor size={16} />
               <span>
@@ -518,23 +555,18 @@ function StudioWorkspace({
         {error ? (
           <ErrorNotice onDismiss={() => setError("")}>{error}</ErrorNotice>
         ) : null}
-        {!isRehearsal && !leaseValid ? (
-          <div className="authority-notice">
-            <ShieldCheck size={19} />
-            <p>
-              {controller.leaseError ||
-                "Reserving the single canonical renderer for this studio…"}
-            </p>
-            {controller.leaseError ? (
-              <button
-                className="button button-dark button-small"
-                onClick={() => void controller.claimLease(true)}
-              >
-                Take over the stage
-              </button>
-            ) : null}
-          </div>
-        ) : null}
+        <StudioAuthorityNotice
+          phase={show.phase}
+          leaseValid={leaseValid}
+          status={controller.leaseStatus}
+          error={controller.leaseError}
+          recovery={controller.leaseRecovery}
+          onTakeover={() => void controller.claimLease(true)}
+        />
+        <StudioVisibilityNotice
+          hidden={controller.documentHidden}
+          phase={show.phase}
+        />
         <div className="studio-grid">
           <aside className="studio-sidebar">
             <section className="cast-panel">
@@ -594,7 +626,7 @@ function StudioWorkspace({
                         title={
                           p.admitted ? "Hide from Program" : "Admit to Program"
                         }
-                        disabled={busy}
+                        disabled={busy || (!p.admitted && !leaseValid)}
                         onClick={() =>
                           void run({
                             type: p.admitted ? "hide" : "admit",
@@ -618,6 +650,7 @@ function StudioWorkspace({
                   <button
                     className="button button-dark button-small full-width"
                     onClick={() => setPanel("devices")}
+                    disabled={show.phase === "ended"}
                   >
                     <Camera size={15} /> Your camera & consent
                   </button>
@@ -628,6 +661,7 @@ function StudioWorkspace({
                       className="button button-teal button-small full-width"
                       disabled={
                         busy ||
+                        !leaseValid ||
                         !show.participants.A.calibrated ||
                         !show.participants.A.consentBroadcast
                       }
@@ -691,7 +725,7 @@ function StudioWorkspace({
                 <>
                   <button
                     className="button button-dark button-small full-width"
-                    disabled={!leaseValid}
+                    disabled={!leaseValid || show.phase === "ended"}
                     onClick={() => setChatEnabled((v) => !v)}
                   >
                     <Radio size={15} />
@@ -728,7 +762,7 @@ function StudioWorkspace({
                   1920 × 1080 <i /> 16:9
                 </span>
               </div>
-              {isRehearsal || leaseValid ? (
+              {leaseValid || show.phase === "ended" ? (
                 <StageCanvas
                   show={show}
                   videoA={!isRehearsal || localTest ? media.videos.A : null}
@@ -842,7 +876,10 @@ function StudioWorkspace({
               <button
                 className="button button-dark"
                 disabled={
-                  busy || !currentOffer || (!solo && transfer.to !== "A")
+                  busy ||
+                  !leaseValid ||
+                  !currentOffer ||
+                  (!solo && transfer.to !== "A")
                 }
                 onClick={() => {
                   if (transfer)
@@ -858,7 +895,7 @@ function StudioWorkspace({
               {currentOffer ? (
                 <button
                   className="button button-text"
-                  disabled={busy}
+                  disabled={busy || !leaseValid}
                   onClick={() => {
                     if (transfer)
                       void run({
@@ -897,16 +934,14 @@ function StudioWorkspace({
               show={show}
               busy={busy}
               run={run}
-              locked={
-                (!isRehearsal && !leaseValid) ||
-                (show.phase === "backstage" && !liveReady)
-              }
+              locked={!leaseValid || (show.phase === "backstage" && !liveReady)}
             />
             <AudienceChoice
               show={show}
               busy={busy}
               run={run}
               serverOffset={serverOffset}
+              locked={!leaseValid}
             />
           </aside>
         </div>
@@ -925,7 +960,7 @@ function StudioWorkspace({
             </button>
             <button
               onClick={() => void run({ type: "recall", to: "A" })}
-              disabled={busy || show.phase === "ended"}
+              disabled={busy || !leaseValid || show.phase === "ended"}
             >
               <RotateCcw size={15} /> Return umbrella
             </button>
@@ -937,7 +972,11 @@ function StudioWorkspace({
             </button>
           </div>
           <div className="safety-bar-right">
-            <button className="curtain-safety" onClick={panic}>
+            <button
+              className="curtain-safety"
+              onClick={panic}
+              disabled={show.phase === "ended"}
+            >
               <ShieldCheck size={15} /> Close curtain <kbd>Esc</kbd>
             </button>
             <button
@@ -956,7 +995,7 @@ function StudioWorkspace({
             <ArrowUpRight size={13} />
           </button>
         </div>
-        {localHost && isRehearsal ? (
+        {localHost && isRehearsal && show.phase !== "ended" ? (
           <details className="transport-test-panel">
             <summary>
               Local transport testing · synthetic media only{" "}
@@ -1043,15 +1082,17 @@ function StudioWorkspace({
       </main>
       <InvitePanel
         show={show}
-        open={panel === "invite"}
+        open={panel === "invite" && show.phase !== "ended"}
         onClose={() => setPanel(null)}
+        onChanged={() => void refresh()}
       />
       <OutputPanel
         show={show}
-        open={panel === "output"}
+        open={panel === "output" && show.phase !== "ended"}
         onClose={() => setPanel(null)}
         publishing={media.programPublishing}
         transportTesting={localHost && localTest}
+        onChanged={() => void refresh()}
       />
       <EvidencePanel
         show={show}
@@ -1063,10 +1104,10 @@ function StudioWorkspace({
         open={panel === "preset"}
         onClose={() => setPanel(null)}
         run={run}
-        busy={busy}
+        busy={busy || !leaseValid}
       />
       <Modal
-        open={panel === "devices"}
+        open={panel === "devices" && show.phase !== "ended"}
         onClose={() => setPanel(null)}
         title="Find your place in the frame."
         eyebrow="HOST CAMERA & CONSENT"

@@ -6,6 +6,7 @@ import {
   type VideoGrant,
 } from "livekit-server-sdk";
 import type { MediaToken, Slot } from "@/lib/contracts";
+import { rendererMediaIdentity } from "@/lib/media-identity";
 import { assert } from "./errors";
 import { localMediaTestingEnabled } from "./environment";
 import { rate, recordEvent, requireDirector, requireLease } from "./core";
@@ -67,10 +68,34 @@ export async function mintMediaToken(
   );
   const rendererId =
       typeof body.rendererId === "string" ? body.rendererId : undefined,
-    epoch = typeof body.epoch === "number" ? body.epoch : undefined;
+    epoch = typeof body.epoch === "number" ? body.epoch : undefined,
+    incarnationId =
+      typeof body.incarnationId === "string" ? body.incarnationId : undefined,
+    incarnationSequence =
+      typeof body.incarnationSequence === "number"
+        ? body.incarnationSequence
+        : undefined;
+  assert(
+    (body.incarnationId === undefined &&
+      body.incarnationSequence === undefined) ||
+      (typeof incarnationId === "string" &&
+        /^[a-zA-Z0-9_-]{8,128}$/.test(incarnationId) &&
+        Number.isSafeInteger(incarnationSequence) &&
+        Number(incarnationSequence) > 0),
+    400,
+    "renderer_incarnation",
+    "A valid director page identifier is required.",
+  );
   if (purpose === "director" || purpose === "output-publish") {
     requireDirector(actor);
-    requireLease(record, rendererId, epoch, Date.now());
+    requireLease(
+      record,
+      rendererId,
+      epoch,
+      Date.now(),
+      incarnationId,
+      incarnationSequence,
+    );
   }
   if (purpose === "performer")
     assert(
@@ -108,9 +133,19 @@ export async function mintMediaToken(
   const identity = outputView
     ? `program-${randomBytes(10).toString("hex")}`
     : purpose === "output-publish"
-      ? `renderer-${id}-${record.state.epoch}`
+      ? rendererMediaIdentity(
+          id,
+          record.state.epoch,
+          "output-publisher",
+          incarnationId,
+        )
       : purpose === "director"
-        ? `director-${id}-${record.state.epoch}`
+        ? rendererMediaIdentity(
+            id,
+            record.state.epoch,
+            "director",
+            incarnationId,
+          )
         : `performer-${id}-${slot}`;
   const role = outputView
     ? "program"
@@ -155,21 +190,49 @@ export async function mintMediaToken(
         slot,
         epoch: record.state.epoch,
         showId: id,
+        ...((purpose === "director" || purpose === "output-publish") &&
+        incarnationId
+          ? { incarnationId, incarnationSequence }
+          : {}),
       }),
     },
   );
   token.addGrant(grant);
+  // Issue before the final database fence: revocation can invalidate even a token
+  // that was reserved but has not connected to LiveKit yet.
+  const signedToken = await token.toJwt();
   // Recheck after the room operation so withdrawn consent cannot race token issuance.
   await getStore().update<ShowRecord, void>(showKey(id), (value) => {
     assert(
       value.state.phase !== "ended" &&
-        value.inviteGeneration === record.inviteGeneration,
+        (output
+          ? (value.outputGeneration ?? value.inviteGeneration) ===
+            (record.outputGeneration ?? record.inviteGeneration)
+          : purpose !== "performer" ||
+            value.inviteGeneration === record.inviteGeneration),
       409,
       "media_revoked",
       "This media session was revoked before it could connect.",
     );
     if (purpose === "director" || purpose === "output-publish")
-      requireLease(value, rendererId, epoch, Date.now());
+      requireLease(
+        value,
+        rendererId,
+        epoch,
+        Date.now(),
+        incarnationId,
+        incarnationSequence,
+      );
+    if (outputView) {
+      const identities = (value.outputIdentities ??= []);
+      assert(
+        identities.length < 64,
+        409,
+        "output_capacity",
+        "Unpair previous outputs before connecting more Program viewers.",
+      );
+      identities.push(identity);
+    }
     if (!output) {
       value.state.transport = "livekit";
       assert(
@@ -196,7 +259,7 @@ export async function mintMediaToken(
   });
   return {
     url: process.env.LIVEKIT_URL!,
-    token: await token.toJwt(),
+    token: signedToken,
     room,
     identity,
     expiresAt: Date.now() + 120_000,
@@ -204,30 +267,64 @@ export async function mintMediaToken(
     purpose: purpose as MediaToken["purpose"],
   };
 }
+/** Revoke viewers only. The canonical publisher and backstage room stay intact. */
+export async function removeMediaOutputs(
+  id: string,
+  issuedIdentities: string[] = [],
+) {
+  if (!process.env.LIVEKIT_URL) return;
+  const service = mediaService(),
+    room = mediaRoom(id, true);
+  const connected = await service.listParticipants(room).catch(() => []);
+  const identities = new Set([
+    ...issuedIdentities,
+    ...connected
+      .filter((participant) => participant.identity.startsWith("program-"))
+      .map((participant) => participant.identity),
+  ]);
+  await Promise.allSettled(
+    [...identities].map((identity) =>
+      service.removeParticipant(room, identity, {
+        revokeTokenTs: BigInt(Math.floor(Date.now() / 1000) + 1),
+      }),
+    ),
+  );
+}
 export async function removeMediaParticipant(
   id: string,
   slot: Slot,
   epoch: number,
+  incarnationId?: string,
 ) {
   if (!process.env.LIVEKIT_URL) return;
   const identity =
-    slot === "A" ? `director-${id}-${epoch}` : `performer-${id}-${slot}`;
+    slot === "A"
+      ? rendererMediaIdentity(id, epoch, "director", incarnationId)
+      : `performer-${id}-${slot}`;
   await mediaService()
     .removeParticipant(mediaRoom(id), identity, {
       revokeTokenTs: BigInt(Math.floor(Date.now() / 1000) + 1),
     })
     .catch(() => undefined);
 }
-export async function fenceMedia(id: string, oldEpoch: number) {
+export async function fenceMedia(
+  id: string,
+  oldEpoch: number,
+  oldIncarnationId?: string,
+) {
   if (!process.env.LIVEKIT_URL) return;
   const service = mediaService();
   await Promise.allSettled([
-    service.removeParticipant(mediaRoom(id), `director-${id}-${oldEpoch}`, {
-      revokeTokenTs: BigInt(Math.floor(Date.now() / 1000) + 1),
-    }),
+    service.removeParticipant(
+      mediaRoom(id),
+      rendererMediaIdentity(id, oldEpoch, "director", oldIncarnationId),
+      {
+        revokeTokenTs: BigInt(Math.floor(Date.now() / 1000) + 1),
+      },
+    ),
     service.removeParticipant(
       mediaRoom(id, true),
-      `renderer-${id}-${oldEpoch}`,
+      rendererMediaIdentity(id, oldEpoch, "output-publisher", oldIncarnationId),
       { revokeTokenTs: BigInt(Math.floor(Date.now() / 1000) + 1) },
     ),
   ]);

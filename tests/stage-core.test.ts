@@ -620,6 +620,7 @@ describe("bounded audience choices and reusable variation", () => {
       // Exercise the actual CAS callback in place; snapshot rollback and store
       // isolation are checked separately, rather than cloning the memo 2210 times.
       const envelope = stage.envelope(action);
+      acquireLease(stage.record, RENDERER, false, stage.now);
       expireState(stage.record, stage.now);
       applyAction(stage.record, DIRECTOR, envelope, stage.now);
     };

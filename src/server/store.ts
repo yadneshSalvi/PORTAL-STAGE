@@ -22,6 +22,7 @@ export interface DocumentStore {
     clientId: string,
     epoch: number,
     durationMs: number,
+    incarnation?: { id: string; sequence: number },
   ): Promise<ShowRecord | null>;
 }
 function serialize(value: unknown) {
@@ -138,6 +139,7 @@ export class PostgresStore implements DocumentStore {
     clientId: string,
     epoch: number,
     durationMs: number,
+    incarnation?: { id: string; sequence: number },
   ): Promise<ShowRecord | null> {
     await this.ready();
     const now = "floor(extract(epoch from clock_timestamp()) * 1000)::bigint";
@@ -158,6 +160,10 @@ export class PostgresStore implements DocumentStore {
         AND (value #>> '{state,epoch}')::bigint = $4
         AND (value #>> '{state,renderLease,epoch}')::bigint = $4
         AND (value #>> '{state,renderLease,expiresAt}')::bigint > (${now})
+        AND value #>> '{state,renderLease,releasedAt}' IS NULL
+        AND ((value #>> '{state,renderLease,incarnationId}' IS NULL AND $7::text IS NULL)
+          OR (value #>> '{state,renderLease,incarnationId}' = $7::text
+            AND (value #>> '{state,renderLease,incarnationSequence}')::bigint = $8::bigint))
         AND (value #>> '{state,expiresAt}')::bigint > (${now})
         AND value #>> '{state,phase}' <> 'ended'
         AND (${expiredBucket} OR COALESCE((value #>> ARRAY['rates', $5, 'count'])::integer, 0) < 30)
@@ -165,7 +171,16 @@ export class PostgresStore implements DocumentStore {
           OR (value #>> '{state,participants,A,ready}' = 'true' AND value #>> '{state,participants,A,admitted}' = 'true'
             AND value #>> '{state,participants,B,ready}' = 'true' AND value #>> '{state,participants,B,admitted}' = 'true'))
       RETURNING value`,
-      [id, ownerId, clientId, epoch, "lease:" + clientId, durationMs],
+      [
+        id,
+        ownerId,
+        clientId,
+        epoch,
+        "lease:" + clientId,
+        durationMs,
+        incarnation?.id ?? null,
+        incarnation?.sequence ?? null,
+      ],
     );
     return rows.length ? (rows[0].value as ShowRecord) : null;
   }

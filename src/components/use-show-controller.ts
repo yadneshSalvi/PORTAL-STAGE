@@ -2,6 +2,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { act, api, getShow } from "@/lib/client";
 import type { ShowAction, ShowEnvelope } from "@/lib/contracts";
+import {
+  createRendererLeaseIdentity,
+  maySendDirectorAction,
+  releaseRendererLease,
+  rendererLeaseClaim,
+  rendererLeaseStatus,
+  startRendererLeaseHeartbeat,
+  type RendererLeaseIdentity,
+} from "@/media/renderer-lease";
 import { PresenceLane, type PresenceAction } from "./presence-lane";
 
 export function useNow() {
@@ -24,10 +33,20 @@ export function useShowController(
     [busy, setBusy] = useState(false),
     [rendererId, setRendererId] = useState(""),
     [serverOffset, setServerOffset] = useState(0),
-    [leaseError, setLeaseError] = useState("");
+    [leaseError, setLeaseError] = useState(""),
+    [leaseRecovery, setLeaseRecovery] = useState(""),
+    [documentHidden, setDocumentHidden] = useState(false);
+  const leaseEnabled = options.lease !== false;
   const latest = useRef<ShowEnvelope | null>(null),
     mounted = useRef(true),
     idRef = useRef(""),
+    identityRef = useRef<RendererLeaseIdentity | null>(null),
+    leaving = useRef(false),
+    leaseEnabledRef = useRef(leaseEnabled),
+    clockOffset = useRef(0),
+    leaseHeartbeat = useRef<ReturnType<
+      typeof startRendererLeaseHeartbeat
+    > | null>(null),
     working = useRef(false),
     foreground = useRef<Task[]>([]),
     samples = useRef(new Map<string, Task>()),
@@ -35,31 +54,49 @@ export function useShowController(
     snapshotFlight = useRef<Promise<ShowEnvelope | null> | null>(null),
     reconciliation = useRef<Promise<ShowEnvelope | null> | null>(null),
     kick = useRef<() => void>(() => undefined);
-  const receive = useCallback((next: ShowEnvelope) => {
-    if (!mounted.current) return;
-    const current = latest.current;
-    const revision = (value: ShowEnvelope) =>
-      value.show.revision ?? value.show.sequence;
-    if (
-      current &&
-      (next.show.epoch < current.show.epoch ||
-        (next.show.epoch === current.show.epoch &&
-          revision(next) < revision(current)))
-    )
-      return;
-    setServerOffset(next.serverNow - Date.now());
-    latest.current = next;
-    setEnvelope(next);
-  }, []);
+  leaseEnabledRef.current = leaseEnabled;
+  const receive = useCallback(
+    (next: ShowEnvelope) => {
+      if (!mounted.current || leaving.current || next.show.id !== showId)
+        return;
+      const current = latest.current;
+      const revision = (value: ShowEnvelope) =>
+        value.show.revision ?? value.show.sequence;
+      if (
+        current &&
+        (next.show.epoch < current.show.epoch ||
+          (next.show.epoch === current.show.epoch &&
+            revision(next) < revision(current)))
+      )
+        return;
+      clockOffset.current = next.serverNow - Date.now();
+      setServerOffset(clockOffset.current);
+      latest.current = next;
+      setEnvelope(next);
+      if (next.show.phase === "live") setLeaseRecovery("");
+    },
+    [showId],
+  );
   const refresh = useCallback((): Promise<ShowEnvelope | null> => {
     if (snapshotFlight.current) return snapshotFlight.current;
+    const identity = identityRef.current;
     const task = getShow(showId)
       .then((next) => {
+        if (
+          identity !== identityRef.current ||
+          !mounted.current ||
+          leaving.current
+        )
+          return null;
         receive(next);
         return next;
       })
       .catch((e: unknown) => {
-        if (mounted.current)
+        if (
+          mounted.current &&
+          identity === identityRef.current &&
+          !leaving.current
+        )
           setError(
             e instanceof Error
               ? e.message
@@ -75,9 +112,19 @@ export function useShowController(
   }, [showId, receive]);
   useEffect(() => {
     mounted.current = true;
-    const id = crypto.randomUUID();
-    idRef.current = id;
-    setRendererId(id);
+    leaving.current = false;
+    const identity = createRendererLeaseIdentity(showId);
+    identityRef.current = identity;
+    idRef.current = identity.clientId;
+    setRendererId(identity.clientId);
+    latest.current = null;
+    snapshotFlight.current = null;
+    leaseFlight.current = null;
+    setEnvelope(null);
+    setError("");
+    setLeaseError("");
+    setLeaseRecovery("");
+    setDocumentHidden(document.hidden);
     let active = true;
     let timer: number;
     async function poll() {
@@ -85,35 +132,88 @@ export function useShowController(
       if (active)
         timer = window.setTimeout(poll, document.hidden ? 5000 : 1500);
     }
+    const release = () => {
+      leaving.current = true;
+      const current = latest.current;
+      const identity = identityRef.current;
+      if (
+        identity &&
+        leaseEnabledRef.current &&
+        current?.role === "director" &&
+        current.show.id === showId &&
+        current.show.phase !== "ended" &&
+        current.show.renderLease.clientId === identity.clientId
+      )
+        releaseRendererLease(showId, identity, current.show.epoch);
+    };
+    const visibility = () => {
+      setDocumentHidden(document.hidden);
+      if (!leaving.current) {
+        void refresh();
+        void leaseHeartbeat.current?.wake();
+      }
+    };
+    const pageShow = () => {
+      leaving.current = false;
+      visibility();
+    };
+    document.addEventListener("visibilitychange", visibility);
+    window.addEventListener("pagehide", release);
+    window.addEventListener("pageshow", pageShow);
     void poll();
     return () => {
+      release();
       mounted.current = false;
       active = false;
       clearTimeout(timer);
+      document.removeEventListener("visibilitychange", visibility);
+      window.removeEventListener("pagehide", release);
+      window.removeEventListener("pageshow", pageShow);
       foreground.current.splice(0).forEach((task) => task.resolve(null));
       samples.current.forEach((task) => task.resolve(null));
       samples.current.clear();
     };
-  }, [refresh]);
+  }, [showId, refresh]);
+  const maySend = useCallback(
+    (action: ShowAction, current: ShowEnvelope) =>
+      maySendDirectorAction(
+        action,
+        current,
+        identityRef.current,
+        Date.now() + clockOffset.current,
+        leaseEnabledRef.current,
+      ),
+    [],
+  );
   const sendPresence = useCallback(
     async (action: PresenceAction) => {
       const current = latest.current;
-      if (!current || !mounted.current) return null;
+      const identity = identityRef.current;
+      if (
+        !current ||
+        !mounted.current ||
+        leaving.current ||
+        !maySend(action, current)
+      )
+        return null;
       try {
         const next = await act(showId, action, {
           expectedVersion: current.show.umbrella.version,
           epoch: current.show.epoch,
           rendererId: idRef.current,
+          incarnationId: identity?.incarnationId,
+          incarnationSequence: identity?.incarnationSequence,
         });
+        if (identity !== identityRef.current) return null;
         receive(next);
         return next;
       } catch {
         // Presence failure must not hold the semantic queue or lease renewal.
-        void refresh();
+        if (identity === identityRef.current) void refresh();
         return null;
       }
     },
-    [showId, receive, refresh],
+    [showId, receive, refresh, maySend],
   );
   const presenceLane = useMemo(
     () => new PresenceLane<ShowEnvelope>(sendPresence),
@@ -123,7 +223,16 @@ export function useShowController(
   const execute = useCallback(
     async (task: Task) => {
       const current = latest.current;
-      if (!current || !mounted.current) {
+      const identity = identityRef.current;
+      if (!current || !mounted.current || leaving.current) {
+        task.resolve(null);
+        return;
+      }
+      if (!maySend(task.action, current)) {
+        if (!task.quiet)
+          setError(
+            "This studio no longer owns the stage. Recover the current studio before sending a cue.",
+          );
         task.resolve(null);
         return;
       }
@@ -136,10 +245,18 @@ export function useShowController(
           expectedVersion: current.show.umbrella.version,
           epoch: current.show.epoch,
           rendererId: idRef.current,
+          incarnationId: identity?.incarnationId,
+          incarnationSequence: identity?.incarnationSequence,
         });
-        receive(next);
-        task.resolve(next);
+        if (identity === identityRef.current) {
+          receive(next);
+          task.resolve(next);
+        } else task.resolve(null);
       } catch (e) {
+        if (identity !== identityRef.current) {
+          task.resolve(null);
+          return;
+        }
         if (mounted.current && !task.quiet)
           setError(
             e instanceof Error ? e.message : "That cue could not be completed.",
@@ -167,7 +284,7 @@ export function useShowController(
         task.resolve(null);
       }
     },
-    [showId, receive, refresh],
+    [showId, receive, refresh, maySend],
   );
   const drain = useCallback(async () => {
     if (working.current) return;
@@ -212,7 +329,15 @@ export function useShowController(
   const run = useCallback(
     (action: ShowAction, quiet = false): Promise<ShowEnvelope | null> =>
       new Promise((resolve) => {
-        if (!latest.current || !mounted.current) {
+        if (!latest.current || !mounted.current || leaving.current) {
+          resolve(null);
+          return;
+        }
+        if (!maySend(action, latest.current)) {
+          if (!quiet)
+            setError(
+              "This studio no longer owns the stage. Recover the current studio before sending a cue.",
+            );
           resolve(null);
           return;
         }
@@ -242,30 +367,72 @@ export function useShowController(
         }
         void drain();
       }),
-    [execute, drain, presenceLane],
+    [execute, drain, presenceLane, maySend],
   );
   const claimLease = useCallback(
     (takeover = false): Promise<ShowEnvelope | null> => {
       if (leaseFlight.current) return leaseFlight.current;
-      if (!idRef.current || !mounted.current) return Promise.resolve(null);
+      let identity = identityRef.current;
+      const current = latest.current;
+      if (
+        !identity ||
+        !mounted.current ||
+        leaving.current ||
+        !leaseEnabled ||
+        current?.role !== "director" ||
+        current.show.phase === "ended"
+      )
+        return Promise.resolve(null);
+      if (takeover) {
+        // A copied tab can have an equal sequence. Explicit recovery creates a
+        // new renderer, while ordinary reload keeps the stable per-show ID.
+        identity = createRendererLeaseIdentity(
+          showId,
+          undefined,
+          undefined,
+          true,
+        );
+        identityRef.current = identity;
+        idRef.current = identity.clientId;
+        setRendererId(identity.clientId);
+        foreground.current.splice(0).forEach((task) => task.resolve(null));
+        samples.current.forEach((task) => task.resolve(null));
+        samples.current.clear();
+        presenceLane.clearPending();
+      }
+      const claimant = identity;
       const task = api<ShowEnvelope>(
         `/api/shows/${encodeURIComponent(showId)}/lease`,
         {
           method: "POST",
-          body: JSON.stringify({
-            clientId: idRef.current,
-            takeover,
-            epoch: latest.current?.show.epoch,
-          }),
+          body: JSON.stringify(rendererLeaseClaim(claimant, current, takeover)),
         },
       )
         .then((next) => {
+          if (
+            !mounted.current ||
+            leaving.current ||
+            claimant !== identityRef.current ||
+            latest.current?.show.phase === "ended"
+          )
+            return null;
           receive(next);
-          if (mounted.current) setLeaseError("");
+          setLeaseError("");
+          if (
+            next.show.epoch !== current.show.epoch &&
+            next.show.phase === "hold"
+          )
+            setLeaseRecovery(
+              "Director authority was recovered. The committed scene is held; resume when ready.",
+            );
           return next;
         })
         .catch((e: unknown) => {
-          if (mounted.current)
+          if (
+            mounted.current &&
+            !leaving.current &&
+            claimant === identityRef.current
+          )
             setLeaseError(
               e instanceof Error
                 ? e.message
@@ -279,24 +446,27 @@ export function useShowController(
       leaseFlight.current = task;
       return task;
     },
-    [showId, receive],
+    [showId, receive, leaseEnabled, presenceLane],
   );
   const role = envelope?.role,
     ended = envelope?.show.phase === "ended";
   useEffect(() => {
-    if (options.lease === false || role !== "director" || ended) return;
-    let active = true;
-    let timer: number;
-    async function renew() {
-      await claimLease();
-      if (active) timer = window.setTimeout(renew, 4000);
-    }
-    void renew();
+    if (!leaseEnabled || role !== "director" || ended) return;
+    const heartbeat = startRendererLeaseHeartbeat(
+      claimLease,
+      () =>
+        mounted.current &&
+        !leaving.current &&
+        latest.current?.role === "director" &&
+        latest.current.show.phase !== "ended",
+    );
+    leaseHeartbeat.current = heartbeat;
     return () => {
-      active = false;
-      clearTimeout(timer);
+      heartbeat.stop();
+      if (leaseHeartbeat.current === heartbeat) leaseHeartbeat.current = null;
     };
-  }, [role, ended, claimLease, options.lease]);
+  }, [role, ended, claimLease, leaseEnabled]);
+  const now = useNow();
   return {
     envelope,
     error,
@@ -306,8 +476,20 @@ export function useShowController(
     receive,
     refresh,
     rendererId,
+    rendererIncarnationId: identityRef.current?.incarnationId,
+    rendererIncarnationSequence: identityRef.current?.incarnationSequence,
     serverOffset,
     leaseError,
+    leaseRecovery,
+    documentHidden,
+    leaseStatus: rendererLeaseStatus(
+      envelope,
+      rendererId,
+      (now || Date.now()) + serverOffset,
+      leaseEnabled,
+      leaseError,
+      identityRef.current,
+    ),
     claimLease,
   };
 }

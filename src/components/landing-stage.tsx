@@ -23,7 +23,7 @@ export function LandingStage() {
         <span className="ticket-number">EP. 001</span>
       </div>
       <div className={`landing-stage stage-weather-${weather}`}>
-        <TheaterPoster weather={weather} />
+        <TheaterPoster weather={weather} showLabel={false} />
         <div className="poster-rehearsal-label">
           <ShieldCheck size={14} aria-hidden="true" /> Illustrated rehearsal ·
           no live cameras

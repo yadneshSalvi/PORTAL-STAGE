@@ -16,13 +16,16 @@ import {
   invite,
   lease,
   loadRecord,
+  releaseLease,
   revokeGuest,
+  revokeOutputs,
 } from "@/server/shows";
 import {
   closeMedia,
   fenceMedia,
   mintMediaToken,
   removeMediaParticipant,
+  removeMediaOutputs,
 } from "@/server/media";
 import { chatHealth, connectChat, ingestChat } from "@/server/twitch";
 type Context = { params: Promise<{ showId: string; action: string[] }> };
@@ -48,10 +51,11 @@ export async function POST(request: Request, context: Context) {
           showId,
           result.slot!,
           result.show.epoch,
+          result.show.renderLease.incarnationId,
         ).catch(() => undefined);
       return jsonResponse(result);
     }
-    if (route === "lease") {
+    if (route === "lease" || route === "lease/release") {
       assert(
         typeof body.clientId === "string" &&
           (body.takeover === undefined || typeof body.takeover === "boolean"),
@@ -66,15 +70,50 @@ export async function POST(request: Request, context: Context) {
         "renderer_epoch",
         "A valid director epoch is required.",
       );
+      assert(
+        (body.incarnationId === undefined &&
+          body.incarnationSequence === undefined) ||
+          (typeof body.incarnationId === "string" &&
+            Number.isSafeInteger(body.incarnationSequence)),
+        400,
+        "renderer_incarnation",
+        "A valid director page identifier is required.",
+      );
+      if (route === "lease/release") {
+        assert(
+          typeof body.epoch === "number" &&
+            typeof body.incarnationId === "string" &&
+            typeof body.incarnationSequence === "number",
+          400,
+          "renderer_incarnation",
+          "Only the active director page can release its lease.",
+        );
+        return jsonResponse(
+          await releaseLease(
+            showId,
+            request,
+            body.clientId,
+            body.epoch,
+            body.incarnationId,
+            body.incarnationSequence,
+          ),
+        );
+      }
       const result = await lease(
         showId,
         request,
         body.clientId,
         body.takeover === true,
         body.epoch as number | undefined,
+        body.incarnationId as string | undefined,
+        body.incarnationSequence as number | undefined,
       );
-      if (result.changed)
-        await fenceMedia(showId, result.oldEpoch).catch(() => undefined);
+      if (result.changed || result.rendererChanged)
+        await fenceMedia(
+          showId,
+          result.oldEpoch,
+          result.oldIncarnationId,
+        ).catch(() => undefined);
       return jsonResponse(result.envelope);
     }
     if (route === "invite") {
@@ -95,6 +134,13 @@ export async function POST(request: Request, context: Context) {
     }
     if (route === "output-grant")
       return jsonResponse(await createOutputGrant(showId, request));
+    if (route === "output-revoke") {
+      const result = await revokeOutputs(showId, request);
+      await removeMediaOutputs(showId, result.identities).catch(
+        () => undefined,
+      );
+      return jsonResponse(result.envelope);
+    }
     if (route === "media/token")
       return jsonResponse(await mintMediaToken(showId, request, body));
     if (route === "twitch/session") {

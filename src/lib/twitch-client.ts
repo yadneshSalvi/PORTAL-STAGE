@@ -36,7 +36,12 @@ export class TwitchConnector {
     private showId: string,
     private onState: (state: ClientState, message: string) => void,
     private onEvent: () => void,
-    private authority: () => { rendererId: string; epoch: number },
+    private authority: () => {
+      rendererId: string;
+      epoch: number;
+      incarnationId?: string;
+      incarnationSequence?: number;
+    },
   ) {}
 
   start() {

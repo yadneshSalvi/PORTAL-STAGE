@@ -43,8 +43,10 @@ import {
   invite,
   joinShow,
   lease,
+  releaseLease,
   redeemOutput,
   revokeGuest,
+  revokeOutputs,
 } from "@/server/shows";
 import { digest, sign, signedCookie } from "@/server/security";
 import { mintMediaToken } from "@/server/media";
@@ -93,6 +95,267 @@ beforeEach(() => {
 });
 afterEach(() => vi.unstubAllEnvs());
 describe("show and media role boundaries", () => {
+  it("reclaims a promptly reloaded renderer without losing its pending offer and fences the old page", async () => {
+    await lease(
+      id,
+      request(),
+      "fixture-renderer",
+      false,
+      undefined,
+      "first-page-mount",
+      1,
+    );
+    for (const p of Object.values(record().state.participants))
+      Object.assign(p, {
+        connected: true,
+        camera: true,
+        ready: true,
+        admitted: true,
+        lastSeenAt: Date.now(),
+      });
+    await command(id, request(), {
+      action: { type: "start" },
+      idempotencyKey: "reload-start",
+      incarnationId: "first-page-mount",
+      incarnationSequence: 1,
+      rendererId: "fixture-renderer",
+      epoch: 1,
+    });
+    await command(id, request(), {
+      action: { type: "offer" },
+      idempotencyKey: "reload-offer",
+      incarnationId: "first-page-mount",
+      incarnationSequence: 1,
+      rendererId: "fixture-renderer",
+      epoch: 1,
+      expectedVersion: 1,
+    });
+    const before = structuredClone(record().state);
+    expect(
+      await releaseLease(
+        id,
+        request(),
+        "fixture-renderer",
+        1,
+        "first-page-mount",
+        1,
+      ),
+    ).toEqual({ released: true });
+    const resumed = await lease(
+      id,
+      request(),
+      "fixture-renderer",
+      false,
+      undefined,
+      "second-page-mount",
+      2,
+    );
+    expect(resumed.changed).toBe(false);
+    expect(resumed.rendererChanged).toBe(true);
+    expect(resumed.oldIncarnationId).toBe("first-page-mount");
+    expect(resumed.envelope.show).toMatchObject({
+      phase: "live",
+      epoch: 1,
+      beat: before.beat,
+      umbrella: before.umbrella,
+    });
+    expect(resumed.envelope.show.renderLease.releasedAt).toBeUndefined();
+    expect(
+      await releaseLease(
+        id,
+        request(),
+        "fixture-renderer",
+        1,
+        "first-page-mount",
+        1,
+      ),
+    ).toEqual({ released: false });
+    await expect(
+      lease(id, request(), "fixture-renderer", false, 1, "first-page-mount", 1),
+    ).rejects.toMatchObject({ code: "renderer_fenced" });
+    await expect(
+      lease(
+        id,
+        request(),
+        "fixture-renderer",
+        false,
+        undefined,
+        "first-page-mount",
+        1,
+      ),
+    ).rejects.toMatchObject({ code: "renderer_fenced" });
+    await expect(
+      command(id, request(), {
+        action: {
+          type: "cancel-offer",
+          transferId: before.umbrella.transfer!.id,
+        },
+        idempotencyKey: "old-mount-command",
+        rendererId: "fixture-renderer",
+        epoch: 1,
+        expectedVersion: before.umbrella.version,
+        incarnationId: "first-page-mount",
+        incarnationSequence: 1,
+      }),
+    ).rejects.toMatchObject({ code: "renderer_fenced" });
+    await expect(
+      mintMediaToken(id, request(), {
+        purpose: "director",
+        rendererId: "fixture-renderer",
+        epoch: 1,
+        incarnationId: "first-page-mount",
+        incarnationSequence: 1,
+      }),
+    ).rejects.toMatchObject({ code: "renderer_fenced" });
+    const currentMedia = await mintMediaToken(id, request(), {
+      purpose: "director",
+      rendererId: "fixture-renderer",
+      epoch: 1,
+      incarnationId: "second-page-mount",
+      incarnationSequence: 2,
+    });
+    expect(currentMedia.identity).toBe(`director-${id}-1-second-page-mount`);
+    const claims = await new TokenVerifier(
+      "fixture-key",
+      "fixture-signing-secret-at-least-32-characters",
+    ).verify(currentMedia.token);
+    expect(JSON.parse(claims.metadata!)).toMatchObject({
+      incarnationId: "second-page-mount",
+      incarnationSequence: 2,
+    });
+    expect(record().state.umbrella).toEqual(before.umbrella);
+  });
+  it("does not let a late renewal undo its pagehide release or an equal-sequence duplicate replace the page", async () => {
+    await lease(
+      id,
+      request(),
+      "fixture-renderer",
+      false,
+      undefined,
+      "first-page-mount",
+      1,
+    );
+    await releaseLease(
+      id,
+      request(),
+      "fixture-renderer",
+      1,
+      "first-page-mount",
+      1,
+    );
+    await expect(
+      lease(id, request(), "fixture-renderer", false, 1, "first-page-mount", 1),
+    ).rejects.toMatchObject({ code: "renderer_fenced" });
+    await expect(
+      lease(
+        id,
+        request(),
+        "fixture-renderer",
+        false,
+        undefined,
+        "duplicate-page-mount",
+        1,
+      ),
+    ).rejects.toMatchObject({ code: "renderer_fenced" });
+    expect(record().state.renderLease.releasedAt).toBeGreaterThan(0);
+  });
+  it("holds a genuinely expired reload and never acquires an ended renderer", async () => {
+    await lease(
+      id,
+      request(),
+      "fixture-renderer",
+      false,
+      undefined,
+      "first-page-mount",
+      1,
+    );
+    record().state.phase = "live";
+    record().state.renderLease.expiresAt = Date.now() - 1;
+    const recovered = await lease(
+      id,
+      request(),
+      "fixture-renderer",
+      false,
+      undefined,
+      "second-page-mount",
+      2,
+    );
+    expect(recovered.envelope.show).toMatchObject({ phase: "hold", epoch: 2 });
+    record().state.phase = "ended";
+    await expect(
+      lease(
+        id,
+        request(),
+        "fixture-renderer",
+        false,
+        undefined,
+        "third-page-mount",
+        3,
+      ),
+    ).rejects.toMatchObject({ code: "show_ended" });
+  });
+  it("replaces a lost guest session while preserving a migrated Program pairing", async () => {
+    record().inviteGeneration = 4;
+    delete record().outputGeneration;
+    const output = await createOutputGrant(id, request());
+    const redeemed = await redeemOutput(id, output.code, request());
+    delete record().outputGeneration; // An already-redeemed pre-migration pairing.
+    const program = new Request("http://localhost:3200/api", {
+      headers: {
+        Cookie: signedCookie("portal_program_" + id, redeemed.token).split(
+          ";",
+        )[0],
+      },
+    });
+    await revokeGuest(id, request());
+    expect(record().outputGeneration).toBe(4);
+    expect(record().inviteGeneration).toBe(5);
+    expect((await actorFor(record(), program, true)).role).toBe("program");
+    await expect(actorFor(record(), request(guest))).rejects.toMatchObject({
+      code: "show_access",
+    });
+    const invitation = await invite(id, request(), "B"),
+      replacement = "123e4567-e89b-12d3-a456-426614174002";
+    const joined = await joinShow(
+      invitation.code,
+      "New guest",
+      replacement,
+      request(replacement),
+    );
+    expect(joined.show.participants.B).toMatchObject({
+      joined: true,
+      ready: false,
+      admitted: false,
+      consentBroadcast: false,
+    });
+    expect((await actorFor(record(), program, true)).role).toBe("program");
+    await expect(
+      mintMediaToken(id, request(guest), { purpose: "performer" }),
+    ).rejects.toMatchObject({ status: 403 });
+  });
+  it("explicitly unpairs outputs without revoking the guest, including issued but unconnected viewers", async () => {
+    const output = await createOutputGrant(id, request());
+    const redeemed = await redeemOutput(id, output.code, request());
+    const program = new Request("http://localhost:3200/api", {
+      headers: {
+        Cookie: signedCookie("portal_program_" + id, redeemed.token).split(
+          ";",
+        )[0],
+      },
+    });
+    const media = await mintMediaToken(id, program, { purpose: "output-view" });
+    const revoked = await revokeOutputs(id, request());
+    expect(revoked.identities).toEqual([media.identity]);
+    expect(record().outputIdentities).toEqual([]);
+    expect((await actorFor(record(), request(guest))).role).toBe("performer");
+    await expect(actorFor(record(), program, true)).rejects.toMatchObject({
+      status: 403,
+    });
+    const fresh = await createOutputGrant(id, request());
+    await expect(
+      redeemOutput(id, fresh.code, request()),
+    ).resolves.toMatchObject({ result: { role: "program" } });
+  });
   it("rejects non-string media purposes before issuing any token", async () => {
     for (const purpose of [
       ["performer"],

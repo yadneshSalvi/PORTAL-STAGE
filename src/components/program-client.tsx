@@ -1,12 +1,16 @@
 "use client";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, ArrowRight, Headphones, Radio } from "lucide-react";
 import { api, getSession } from "@/lib/client";
 import type { ShowEnvelope } from "@/lib/contracts";
 import { useMediaRoom } from "@/media/use-media-room";
 import { VideoSurface } from "@/media/video-surface";
+import {
+  programAuthorityIssue,
+  rejectedProgramGrant,
+} from "@/media/program-status";
 import { PortalMark } from "./brand";
 import { Spinner } from "./ui";
 const RehearsalCanvas = dynamic(() => import("@/stage/stage-canvas"), {
@@ -36,7 +40,20 @@ export function ProgramClient({
     [code, setCode] = useState(""),
     [id, setId] = useState(showId || ""),
     [loading, setLoading] = useState(!!showId),
-    [pairing, setPairing] = useState(false);
+    [pairing, setPairing] = useState(false),
+    [serverClock, setServerClock] = useState(0);
+  const serverSample = envelope?.serverNow;
+  const clockOffset = useMemo(
+    () => (serverSample === undefined ? 0 : serverSample - Date.now()),
+    [serverSample],
+  );
+  useEffect(() => {
+    if (serverSample === undefined) return;
+    const update = () => setServerClock(Date.now() + clockOffset);
+    update();
+    const timer = window.setInterval(update, 250);
+    return () => clearInterval(timer);
+  }, [serverSample, clockOffset]);
   useEffect(() => {
     if (!showId) return;
     let active = true,
@@ -53,10 +70,13 @@ export function ProgramClient({
         }
       } catch (e) {
         if (active) {
+          if (rejectedProgramGrant(e)) setEnvelope(null);
           setError(
-            e instanceof Error
-              ? e.message
-              : "Pair this output with your director.",
+            rejectedProgramGrant(e)
+              ? "Program pairing is no longer valid. Picture and audio have stopped. Ask the director for a new pairing code."
+              : e instanceof Error
+                ? e.message
+                : "Pair this output with your director.",
           );
           setLoading(false);
         }
@@ -165,21 +185,29 @@ export function ProgramClient({
         </div>
       </main>
     );
+  const authorityIssue = programAuthorityIssue(
+    envelope.show,
+    serverClock || envelope.serverNow,
+  );
   return envelope.show.mode === "rehearsal" && !(transportTest && localHost) ? (
     <main className="program-page rehearsal-program" id="main-content">
       <div className="program-frame">
-        <RehearsalCanvas
-          show={envelope.show}
-          serverOffset={envelope.serverNow - Date.now()}
-        />
+        <RehearsalCanvas show={envelope.show} serverOffset={clockOffset} />
       </div>
       <span className="program-rehearsal-label">
         SYNTHETIC REHEARSAL · LOCAL SCENE PREVIEW · NO LIVE CAMERAS OR AUDIENCE
       </span>
+      {error || authorityIssue ? (
+        <p className="program-transport-label" role="alert">
+          {error || authorityIssue}
+        </p>
+      ) : null}
     </main>
   ) : (
     <LiveProgram
       envelope={envelope}
+      controlError={error}
+      authorityIssue={authorityIssue}
       syntheticTransport={
         transportTest && localHost && envelope.show.mode === "rehearsal"
       }
@@ -188,12 +216,17 @@ export function ProgramClient({
 }
 function LiveProgram({
   envelope,
+  controlError,
+  authorityIssue,
   syntheticTransport = false,
 }: {
   envelope: ShowEnvelope;
+  controlError: string;
+  authorityIssue: string | null;
   syntheticTransport?: boolean;
 }) {
   const { show } = envelope;
+  const ended = show.phase === "ended";
   const media = useMediaRoom({
     show,
     role: "program",
@@ -202,19 +235,23 @@ function LiveProgram({
     allowSyntheticMedia: syntheticTransport,
   });
   useEffect(() => {
-    if (show.phase !== "ended") void media.connect().catch(() => undefined);
+    if (!ended) void media.connect().catch(() => undefined);
     return () => {
       void media.disconnect();
     };
-  }, [show.id, media.connect, media.disconnect]);
+  }, [show.id, ended, media.connect, media.disconnect]);
   return (
     <main className="program-page" id="main-content">
-      {syntheticTransport ? (
+      {controlError ? (
+        <p className="program-transport-label" role="alert">
+          Program state could not refresh. {controlError}
+        </p>
+      ) : syntheticTransport ? (
         <span className="program-transport-label">
           SYNTHETIC MEDIA · LOCAL WEBRTC TRANSPORT TEST · NO REAL PERFORMERS
         </span>
       ) : null}
-      {media.programVideo && show.phase !== "ended" ? (
+      {media.programVideo && !ended && !authorityIssue ? (
         <div className="program-frame">
           <VideoSurface
             video={media.programVideo}
@@ -228,14 +265,18 @@ function LiveProgram({
             ✦
           </span>
           <h1>
-            {show.phase === "ended"
+            {ended
               ? "Until the next impossible thing."
-              : "A moment in the wings."}
+              : authorityIssue
+                ? "Program is on hold."
+                : "A moment in the wings."}
           </h1>
           <p>
-            {show.phase === "ended"
+            {ended
               ? "Thank you for sharing the stage."
-              : "Waiting for the director’s Program stream."}
+              : authorityIssue
+                ? authorityIssue
+                : "Waiting for the director’s Program stream."}
           </p>
           <span>PORTAL STAGE</span>
           {media.error ? (
@@ -243,7 +284,9 @@ function LiveProgram({
               {media.error.message}
             </p>
           ) : null}
-          {media.status === "error" || media.status === "disconnected" ? (
+          {!ended &&
+          !authorityIssue &&
+          (media.status === "error" || media.status === "disconnected") ? (
             <button
               className="button button-dark"
               onClick={() => {
@@ -255,7 +298,9 @@ function LiveProgram({
           ) : null}
         </div>
       )}
-      {media.audioBlocked || media.videoBlocked ? (
+      {!ended &&
+      !authorityIssue &&
+      (media.audioBlocked || media.videoBlocked) ? (
         <button
           className="program-enable-audio button button-gold"
           onClick={() => {

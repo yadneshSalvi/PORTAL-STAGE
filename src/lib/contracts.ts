@@ -110,7 +110,15 @@ export type ShowState = {
   preset: ShowPreset;
   savedPresets: ShowPreset[];
   events: StageEvent[];
-  renderLease: { clientId: string | null; epoch: number; expiresAt: number };
+  renderLease: {
+    clientId: string | null;
+    epoch: number;
+    expiresAt: number;
+    /** Per-mount fencing; optional only for records created before this protocol. */
+    incarnationId?: string;
+    incarnationSequence?: number;
+    releasedAt?: number;
+  };
   twitch: {
     connected: boolean;
     connectedAt: number | null;
@@ -145,6 +153,8 @@ export type ActionEnvelope = {
   expectedVersion?: number;
   epoch?: number;
   rendererId?: string;
+  incarnationId?: string;
+  incarnationSequence?: number;
 };
 export type ShowAction =
   | {

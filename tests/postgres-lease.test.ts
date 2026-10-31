@@ -98,4 +98,37 @@ describe.skipIf(!url)("Postgres renderer lease integration", () => {
       before.state.revision,
     );
   }, 30_000);
+  it("fences old mount renewals and released mounts without changing the new epoch", async () => {
+    await store.update<ShowRecord, void>(key, (record) => {
+      acquireLease(record, renderer, false, Date.now(), {
+        id: "second-page-mount",
+        sequence: 2,
+      });
+    });
+    const epoch = (await store.get<ShowRecord>(key))!.state.epoch;
+    expect(
+      await store.renewShowLease(key, owner, renderer, epoch, LEASE_MS, {
+        id: "first-page-mount",
+        sequence: 1,
+      }),
+    ).toBeNull();
+    expect(
+      await store.renewShowLease(key, owner, renderer, epoch, LEASE_MS),
+    ).toBeNull();
+    expect(
+      await store.renewShowLease(key, owner, renderer, epoch, LEASE_MS, {
+        id: "second-page-mount",
+        sequence: 2,
+      }),
+    ).not.toBeNull();
+    await store.update<ShowRecord, void>(key, (record) => {
+      record.state.renderLease.releasedAt = Date.now();
+    });
+    expect(
+      await store.renewShowLease(key, owner, renderer, epoch, LEASE_MS, {
+        id: "second-page-mount",
+        sequence: 2,
+      }),
+    ).toBeNull();
+  }, 30_000);
 });

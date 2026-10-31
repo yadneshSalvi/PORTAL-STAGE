@@ -7,12 +7,14 @@ import type {
   Room,
 } from "livekit-client";
 import type { MediaToken, Point, Slot } from "../lib/contracts";
+import { rendererMediaIdentity } from "../lib/media-identity";
 import { api } from "../lib/client";
 import { ProgramAudioMixer } from "./audio-mix";
 import {
   hasRenderAuthority,
   mayMixSlot,
   mayPlayProgramAudio,
+  mayReceiveRendererMedia,
   mediaCapabilities,
   mediaIssue,
   MEDIA_TRACKS,
@@ -71,6 +73,8 @@ const defaultRuntime: MediaRuntime = {
         body: JSON.stringify({
           purpose,
           rendererId: options.rendererId,
+          incarnationId: options.rendererIncarnationId,
+          incarnationSequence: options.rendererIncarnationSequence,
           epoch: options.epoch,
         }),
       },
@@ -223,6 +227,7 @@ export class MediaRoomController {
       this.onDeviceChange,
     );
     window.addEventListener("pagehide", this.onPageHide);
+    document.addEventListener("visibilitychange", this.onVisibilityChange);
     void this.refreshDevices();
     void this.observePermission("camera");
     void this.observePermission("microphone");
@@ -234,6 +239,7 @@ export class MediaRoomController {
         );
       }
       if (this.mixer) this.patch({ audioLevels: this.mixer.levels() });
+      this.revalidateRemote();
       this.checkVideoLiveness();
       this.updateAnchors();
       this.syncRemoteAudioGates();
@@ -243,10 +249,32 @@ export class MediaRoomController {
     }, 8000);
   };
   updateOptions = (options: MediaRoomOptions) => {
-    const previousEpoch = this.options.show.epoch;
+    const previous = this.options;
+    const previousPhase = previous.show.phase;
+    const scopeChanged =
+      previous.show.epoch !== options.show.epoch ||
+      previous.show.renderLease.incarnationId !==
+        options.show.renderLease.incarnationId ||
+      previous.show.renderLease.incarnationSequence !==
+        options.show.renderLease.incarnationSequence;
+    const localIdentityChanged =
+      previous.rendererId !== options.rendererId ||
+      previous.rendererIncarnationId !== options.rendererIncarnationId ||
+      previous.rendererIncarnationSequence !==
+        options.rendererIncarnationSequence;
     this.options = options;
     this.updateClock(options.serverNow);
-    if (previousEpoch !== options.show.epoch) this.clearAnchors();
+    if (scopeChanged) this.clearAnchors();
+    if (
+      options.role === "director" &&
+      (scopeChanged || localIdentityChanged) &&
+      (this.room || this.connectTask || this.outputRoom || this.programTask)
+    )
+      void this.disconnect();
+    this.revalidateRemote();
+    this.room?.remoteParticipants.forEach((participant) =>
+      this.subscribeParticipant(participant),
+    );
     this.updateAnchors();
     this.syncRemoteAudioGates();
     this.syncAudioMix();
@@ -254,7 +282,10 @@ export class MediaRoomController {
       void this.stopProgram();
     if (
       options.show.phase === "ended" &&
-      (this.room ||
+      (previousPhase !== "ended" ||
+        this.room ||
+        this.connectTask ||
+        this.programTask ||
         this.camera ||
         this.microphone ||
         this.snapshot.cameraRequestPending)
@@ -266,6 +297,17 @@ export class MediaRoomController {
   };
   private onPageHide = () => {
     void this.disconnect();
+  };
+  private onVisibilityChange = () => {
+    if ((this.outputRoom || this.programTask) && !this.authority()) {
+      void this.stopProgram();
+      this.hint(
+        "Program is held because the director’s authority is no longer current.",
+      );
+    }
+    this.revalidateRemote();
+    this.syncRemoteAudioGates();
+    this.checkVideoLiveness();
   };
   private async observePermission(name: "camera" | "microphone") {
     try {
@@ -304,8 +346,20 @@ export class MediaRoomController {
     }
   };
 
+  private activeShow() {
+    return this.mounted && this.options.show.phase !== "ended";
+  }
   private ensureCaptureAllowed() {
     const caps = mediaCapabilities();
+    if (!this.activeShow()) {
+      this.issue({
+        code: "authorization",
+        recoverable: false,
+        message:
+          "This show has ended. Start a new show before enabling a device.",
+      });
+      return false;
+    }
     if (this.options.role === "program") {
       this.issue({
         code: "authorization",
@@ -384,6 +438,7 @@ export class MediaRoomController {
   enableTestCamera = async () => {
     if (
       !this.options.allowSyntheticMedia ||
+      !this.activeShow() ||
       this.options.show.mode !== "rehearsal" ||
       !this.options.slot ||
       this.options.role === "program"
@@ -400,7 +455,7 @@ export class MediaRoomController {
     const generation = ++this.cameraGeneration;
     try {
       const sdk = await this.sdk();
-      if (generation !== this.cameraGeneration) return;
+      if (generation !== this.cameraGeneration || !this.activeShow()) return;
       const pattern = createSyntheticCamera(this.options.slot);
       this.syntheticStop = pattern.stop;
       const track = new sdk.LocalVideoTrack(
@@ -634,6 +689,7 @@ export class MediaRoomController {
     return this.connectTask;
   };
   private async doConnect() {
+    if (!this.activeShow()) return;
     if (
       this.options.show.mode === "rehearsal" &&
       !this.options.allowSyntheticMedia
@@ -646,7 +702,6 @@ export class MediaRoomController {
       });
       return;
     }
-    if (this.options.show.phase === "ended") return;
     const generation = ++this.generation;
     this.patch({ status: "connecting", error: null });
     // A new join always begins muted, even after a private microphone check.
@@ -862,17 +917,41 @@ export class MediaRoomController {
     let allowed = false;
     if (this.options.role === "program")
       allowed =
-        (publication.trackName === MEDIA_TRACKS.programVideo &&
+        mayReceiveRendererMedia(
+          this.options.show,
+          participant,
+          "output-publisher",
+          this.now(),
+        ) &&
+        ((publication.trackName === MEDIA_TRACKS.programVideo &&
+          publication.kind === "video" &&
           publication.source === "screen_share") ||
-        (publication.trackName === MEDIA_TRACKS.programAudio &&
-          publication.source === "screen_share_audio");
+          (publication.trackName === MEDIA_TRACKS.programAudio &&
+            publication.kind === "audio" &&
+            publication.source === "screen_share_audio"));
     else if (publication.trackName === MEDIA_TRACKS.returnVideo)
       allowed =
         this.options.role === "performer" &&
         slot === "A" &&
+        mayReceiveRendererMedia(
+          this.options.show,
+          participant,
+          "director",
+          this.now(),
+        ) &&
         publication.kind === "video" &&
         publication.source === "screen_share";
-    else if (slot && slot !== this.options.slot) {
+    else if (
+      slot &&
+      slot !== this.options.slot &&
+      (slot !== "A" ||
+        mayReceiveRendererMedia(
+          this.options.show,
+          participant,
+          "director",
+          this.now(),
+        ))
+    ) {
       allowed =
         (publication.source === "camera" && this.options.role === "director") ||
         publication.source === "microphone";
@@ -883,9 +962,19 @@ export class MediaRoomController {
     publication: RemoteTrackPublication,
     participant: RemoteParticipant,
   ) {
-    publication.setSubscribed(
-      this.allowedPublication(publication, participant),
-    );
+    const allowed = this.allowedPublication(publication, participant);
+    publication.setSubscribed(allowed);
+    if (!allowed) this.removeRemote(publication.trackSid);
+    else if (publication.track && publication.isSubscribed)
+      this.attachRemote(publication.track, publication, participant);
+  }
+  private revalidateRemote() {
+    for (const [id, binding] of this.remote) {
+      if (this.allowedPublication(binding.publication, binding.participant))
+        continue;
+      binding.publication.setSubscribed(false);
+      this.removeRemote(id);
+    }
   }
   private makeVideo() {
     const video = document.createElement("video");
@@ -918,15 +1007,11 @@ export class MediaRoomController {
     } else if (track.kind === "audio") {
       binding.audio = document.createElement("audio");
       binding.audio.autoplay = true;
-      binding.audio.muted = this.options.role === "program";
+      binding.audio.muted = true;
       binding.audio.style.display = "none";
       binding.audio.dataset.portalAudio =
         this.options.role === "program" ? "program-mix" : "direct-call";
       document.body.appendChild(binding.audio);
-      if (this.options.role !== "program") {
-        track.attach(binding.audio);
-        binding.audioAttached = true;
-      }
       const sink = this.snapshot.selectedDevices.audiooutput;
       if (sink)
         void binding.audio
@@ -952,6 +1037,7 @@ export class MediaRoomController {
       element.remove();
     });
     if (binding.audio) {
+      binding.audio.muted = true;
       binding.audio.pause();
       binding.audio.srcObject = null;
       binding.audio.remove();
@@ -996,6 +1082,7 @@ export class MediaRoomController {
     for (const {
       video,
       publication,
+      participant,
       track,
       slot,
       serverPaused,
@@ -1006,7 +1093,8 @@ export class MediaRoomController {
         track.isMuted ||
         publication.isMuted ||
         serverPaused ||
-        stalled
+        stalled ||
+        !this.allowedPublication(publication, participant)
       )
         continue;
       if (
@@ -1147,7 +1235,12 @@ export class MediaRoomController {
       this.anchorLastSentAt = this.runtime.now();
       const destinationIdentities = [
         slot === "B"
-          ? `director-${this.options.show.id}-${sample.epoch}`
+          ? rendererMediaIdentity(
+              this.options.show.id,
+              sample.epoch,
+              "director",
+              this.options.show.renderLease.incarnationId,
+            )
           : `performer-${this.options.show.id}-B`,
       ];
       try {
@@ -1206,16 +1299,18 @@ export class MediaRoomController {
       this.patch({ anchors, transientAnchors: transient });
   }
   private syncRemoteAudioGates() {
-    if (this.options.role !== "program") return;
     for (const binding of this.remote.values()) {
-      if (
-        !binding.audio ||
-        binding.publication.trackName !== MEDIA_TRACKS.programAudio
-      )
-        continue;
+      if (!binding.audio) continue;
       const allowed =
         this.snapshot.connected &&
-        mayPlayProgramAudio(this.options.show, binding.participant, this.now());
+        (this.options.role === "program"
+          ? binding.publication.trackName === MEDIA_TRACKS.programAudio &&
+            mayPlayProgramAudio(
+              this.options.show,
+              binding.participant,
+              this.now(),
+            )
+          : this.allowedPublication(binding.publication, binding.participant));
       if (allowed && !binding.audioAttached) {
         binding.audio.muted = false;
         binding.track.attach(binding.audio);
@@ -1470,6 +1565,7 @@ export class MediaRoomController {
       this.onDeviceChange,
     );
     window.removeEventListener("pagehide", this.onPageHide);
+    document.removeEventListener("visibilitychange", this.onVisibilityChange);
     this.permissionCleanups.splice(0).forEach((cleanup) => cleanup());
     if (this.tick) clearInterval(this.tick);
     if (this.heartbeat) clearInterval(this.heartbeat);

@@ -23,7 +23,7 @@ Vercel runs the bounded control API. LiveKit runs the media transport; the direc
 
 Choose **Start a rehearsal**, then follow the next cue: open the curtain, open the weather choice, cast an explicitly labeled test ballot, close/apply the weather, offer, accept, hatch, return the umbrella, and shelter. A later choice from the same fixture replaces its earlier ballot. Empty rounds visibly use Director's choice. Save a variation, load it, and start a new episode to see its configured rules.
 
-The stage uses original generated test plates and test votes. Neither is presented as remote people or actual Twitch participation. A renderer reload preserves the scene, restores fixture readiness, and holds until the director resumes.
+The stage uses original generated test plates and test votes. Neither is presented as remote people or actual Twitch participation. A prompt same-tab reload preserves its cue and offers still within their original expiry. Genuine lease expiry shows recovery under a holding curtain. Ended shows offer New rehearsal and New show, even after the old lease expires.
 
 ## Two consenting performers
 
@@ -38,6 +38,10 @@ The stage uses original generated test plates and test votes. Neither is present
 ## Output and audio
 
 Keep the director renderer open and visible on the performance computer. Browsers may throttle hidden or minimized canvases; verify actual output before broadcasting. A guest or Program page does not take over rendering. Program subscribes to a separate output room carrying only composed video and the on-air audio mix. Pair another browser/OBS view using a one-time output code; it expires after 5 minutes and yields a read-only two-hour cookie. Host credentials and media tokens never go in the Program URL.
+
+Use a dedicated, uncovered Chrome window for the director. A hidden-document warning accompanies a requested 8-frame-per-second drawing cadence; that is a bound requested by the app, not protection against browser or operating-system suspension. Visibility changes wake lease renewal. Chrome documents suspended animation frames and throttled timers in its [timer policy](https://developer.chrome.com/blog/timer-throttling-in-chrome-88). The optional controlled-test launch flag `--disable-backgrounding-occluded-windows` is defined in [Chromium source](https://chromium.googlesource.com/chromium/src/+/HEAD/content/public/common/content_switches.cc). It is a testing switch, not a replacement for checking the actual browser, OS, and capture route. Scheduler tests do not establish covered-window or OBS reliability.
+
+If a guest loses their browser session, use **Replace guest and re-invite**. The former guest loses access, a fresh invitation is created, and Program remains paired. **Unpair all Program outputs** is a separate explicit control. Rejected Program grants stop media and request a new pairing code; stale or released renderer authority shows a holding state.
 
 Guests receive composed video without Program audio and hear direct-call audio separately. Use headphones; do not also monitor delayed OBS/Twitch audio in the call. The exact OBS Browser Source runtime needs compatibility verification. If it cannot run this WebRTC path, use Window Capture of the Program browser. See [media checks](media.md). Preparing Program does not start a Twitch broadcast.
 

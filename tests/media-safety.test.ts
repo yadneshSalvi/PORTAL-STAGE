@@ -5,6 +5,8 @@ import {
   mayMixSlot,
   mediaIssue,
   participantSlot,
+  mayReceiveRendererMedia,
+  rendererParticipantMatches,
 } from "../src/media/safety";
 import type { MediaRoomOptions } from "../src/media/types";
 
@@ -81,6 +83,102 @@ describe("media privacy and renderer authority", () => {
     expect(
       hasRenderAuthority({ ...rehearsal, allowSyntheticMedia: true }, 10_000),
     ).toBe(true);
+  });
+  it("fences a superseded mount even when a duplicate tab retained the same renderer ID", () => {
+    const initial = options();
+    initial.show.renderLease.incarnationId = "current-mount-incarnation";
+    initial.show.renderLease.incarnationSequence = 2;
+    expect(hasRenderAuthority(initial, 10_000)).toBe(false);
+    expect(
+      hasRenderAuthority(
+        {
+          ...initial,
+          rendererIncarnationId: "current-mount-incarnation",
+          rendererIncarnationSequence: 2,
+        },
+        10_000,
+      ),
+    ).toBe(true);
+    expect(
+      hasRenderAuthority(
+        {
+          ...initial,
+          rendererIncarnationId: "old-mount-incarnation",
+          rendererIncarnationSequence: 1,
+        },
+        10_000,
+      ),
+    ).toBe(false);
+    initial.show.renderLease.releasedAt = 9000;
+    expect(
+      hasRenderAuthority(
+        {
+          ...initial,
+          rendererIncarnationId: "current-mount-incarnation",
+          rendererIncarnationSequence: 2,
+        },
+        10_000,
+      ),
+    ).toBe(false);
+  });
+  it("requires signed show, epoch, identity and mount for Program and private director media", () => {
+    const state = show();
+    state.id = "ps_signed_media";
+    Object.assign(state.renderLease, {
+      incarnationId: "current-mount",
+      incarnationSequence: 2,
+    });
+    for (const kind of ["director", "output-publisher"] as const) {
+      const sender = {
+        identity: `${kind === "director" ? "director" : "renderer"}-ps_signed_media-4-current-mount`,
+        metadata: JSON.stringify({
+          role: kind,
+          slot: kind === "director" ? "A" : null,
+          showId: state.id,
+          epoch: 4,
+          incarnationId: "current-mount",
+          incarnationSequence: 2,
+        }),
+      };
+      expect(mayReceiveRendererMedia(state, sender, kind, 10_000)).toBe(true);
+      for (const invalid of [
+        {
+          ...sender,
+          identity: sender.identity.replace("current-mount", "previous-mount"),
+        },
+        {
+          ...sender,
+          metadata: JSON.stringify({
+            ...JSON.parse(sender.metadata),
+            incarnationSequence: 1,
+          }),
+        },
+        {
+          ...sender,
+          metadata: JSON.stringify({
+            ...JSON.parse(sender.metadata),
+            showId: "other-show",
+          }),
+        },
+        {
+          ...sender,
+          metadata: JSON.stringify({
+            ...JSON.parse(sender.metadata),
+            epoch: 3,
+          }),
+        },
+      ])
+        expect(rendererParticipantMatches(state, invalid, kind)).toBe(false);
+      expect(
+        mayReceiveRendererMedia(
+          { ...state, phase: "hold" },
+          sender,
+          kind,
+          10_000,
+        ),
+      ).toBe(true);
+      expect(mayReceiveRendererMedia(state, sender, kind, 20_000)).toBe(false);
+    }
   });
   it("excludes backstage, muted, disconnected, unconsented, held, and ended voices", () => {
     expect(mayMixSlot(show(), "A")).toBe(true);

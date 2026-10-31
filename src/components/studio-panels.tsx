@@ -27,24 +27,54 @@ export function InvitePanel({
   show,
   open,
   onClose,
+  onChanged,
 }: {
   show: ShowState;
   open: boolean;
   onClose: () => void;
+  onChanged?: () => void;
 }) {
   const [invitation, setInvitation] = useState<Invitation | null>(null),
     [busy, setBusy] = useState(false),
     [copied, setCopied] = useState(false),
-    [error, setError] = useState("");
+    [error, setError] = useState(""),
+    [notice, setNotice] = useState("");
   async function create() {
     setBusy(true);
     setCopied(false);
     setError("");
+    setNotice("");
     try {
       setInvitation(await invite(show.id, "B"));
     } catch (e) {
       setError(
         e instanceof Error ? e.message : "An invitation could not be created.",
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
+  async function replaceGuest() {
+    setBusy(true);
+    setCopied(false);
+    setError("");
+    setNotice("");
+    try {
+      await api(`/api/shows/${encodeURIComponent(show.id)}/revoke-invite`, {
+        method: "POST",
+        body: "{}",
+      });
+      setInvitation(null);
+      onChanged?.();
+      setInvitation(await invite(show.id, "B"));
+      setNotice(
+        "The old guest access is closed. Send the new invitation privately; Program outputs remain paired.",
+      );
+    } catch (e) {
+      setError(
+        e instanceof Error
+          ? e.message
+          : "Guest replacement could not be completed.",
       );
     } finally {
       setBusy(false);
@@ -146,6 +176,26 @@ export function InvitePanel({
           )}
         </button>
       )}
+      {show.participants.B.joined ? (
+        <div className="guest-replacement">
+          <p className="field-help">
+            Lost the guest window? Replace performer B to close their old access
+            and issue a fresh invitation. Existing Program outputs stay paired.
+          </p>
+          <button
+            className="button button-dark full-width"
+            disabled={busy || show.phase === "ended"}
+            onClick={() => void replaceGuest()}
+          >
+            <RefreshCw size={16} /> Replace guest and re-invite
+          </button>
+        </div>
+      ) : null}
+      {notice ? (
+        <p className="field-help" role="status">
+          {notice}
+        </p>
+      ) : null}
       {error ? (
         <p className="panel-error" role="alert">
           {error}
@@ -160,22 +210,26 @@ export function OutputPanel({
   onClose,
   publishing,
   transportTesting = false,
+  onChanged,
 }: {
   show: ShowState;
   open: boolean;
   onClose: () => void;
   publishing: boolean;
   transportTesting?: boolean;
+  onChanged?: () => void;
 }) {
   const [grant, setGrant] = useState<{
       code: string;
       expiresAt: number;
     } | null>(null),
     [error, setError] = useState(""),
-    [busy, setBusy] = useState(false);
+    [busy, setBusy] = useState(false),
+    [notice, setNotice] = useState("");
   async function prepare() {
     setBusy(true);
     setError("");
+    setNotice("");
     try {
       setGrant(
         await api(`/api/shows/${encodeURIComponent(show.id)}/output-grant`, {
@@ -188,6 +242,28 @@ export function OutputPanel({
         e instanceof Error
           ? e.message
           : "Program access could not be prepared.",
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
+  async function unpairOutputs() {
+    setBusy(true);
+    setError("");
+    setNotice("");
+    try {
+      await api(`/api/shows/${encodeURIComponent(show.id)}/output-revoke`, {
+        method: "POST",
+        body: "{}",
+      });
+      setGrant(null);
+      setNotice(
+        "All Program outputs are unpaired. Prepare a new pairing code to reconnect an output.",
+      );
+      onChanged?.();
+    } catch (e) {
+      setError(
+        e instanceof Error ? e.message : "Outputs could not be unpaired.",
       );
     } finally {
       setBusy(false);
@@ -272,6 +348,26 @@ export function OutputPanel({
           <ExternalLink size={17} />
         </button>
       )}
+      {show.mode !== "rehearsal" ? (
+        <div className="guest-replacement">
+          <button
+            className="button button-dark full-width"
+            disabled={busy || show.phase === "ended"}
+            onClick={() => void unpairOutputs()}
+          >
+            Unpair all Program outputs
+          </button>
+          <p className="field-help">
+            This closes every existing output pairing. Guest invitations are
+            separate.
+          </p>
+        </div>
+      ) : null}
+      {notice ? (
+        <p className="field-help" role="status">
+          {notice}
+        </p>
+      ) : null}
       {error ? (
         <p role="alert" className="panel-error">
           {error}

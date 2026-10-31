@@ -177,6 +177,12 @@ function authority(body: Record<string, unknown>) {
     rendererId:
       typeof body.rendererId === "string" ? body.rendererId : undefined,
     epoch: typeof body.epoch === "number" ? body.epoch : undefined,
+    incarnationId:
+      typeof body.incarnationId === "string" ? body.incarnationId : undefined,
+    incarnationSequence:
+      typeof body.incarnationSequence === "number"
+        ? body.incarnationSequence
+        : undefined,
   };
 }
 export async function connectChat(
@@ -188,7 +194,14 @@ export async function connectChat(
     actor = await actorFor(record, request);
   requireDirector(actor);
   const fence = authority(body);
-  requireLease(record, fence.rendererId, fence.epoch, Date.now());
+  requireLease(
+    record,
+    fence.rendererId,
+    fence.epoch,
+    Date.now(),
+    fence.incarnationId,
+    fence.incarnationSequence,
+  );
   assert(
     record.state.mode === "live" && record.credentialId,
     409,
@@ -214,7 +227,14 @@ export async function connectChat(
       "A planned reconnect needs an established subscription.",
     );
     await getStore().update<ShowRecord, void>(showKey(id), (value) => {
-      requireLease(value, fence.rendererId, fence.epoch, Date.now());
+      requireLease(
+        value,
+        fence.rendererId,
+        fence.epoch,
+        Date.now(),
+        fence.incarnationId,
+        fence.incarnationSequence,
+      );
       value.twitchSessionId = sessionId;
       value.state.twitch.connected = true;
       value.state.twitch.lastHeartbeatAt = Date.now();
@@ -277,7 +297,14 @@ export async function connectChat(
   );
   const subscriptionId = result.data[0].id;
   await getStore().update<ShowRecord, void>(showKey(id), (value) => {
-    requireLease(value, fence.rendererId, fence.epoch, Date.now());
+    requireLease(
+      value,
+      fence.rendererId,
+      fence.epoch,
+      Date.now(),
+      fence.incarnationId,
+      fence.incarnationSequence,
+    );
     value.twitchSessionId = sessionId;
     value.channelId = grant.userId;
     value.state.channel = grant.login;
@@ -307,7 +334,14 @@ export async function chatHealth(
     actor = await actorFor(record, request);
   requireDirector(actor);
   const fence = authority(body);
-  requireLease(record, fence.rendererId, fence.epoch, Date.now());
+  requireLease(
+    record,
+    fence.rendererId,
+    fence.epoch,
+    Date.now(),
+    fence.incarnationId,
+    fence.incarnationSequence,
+  );
   const status = String(body.status || "");
   assert(
     ["connected", "gap", "revoked", "disconnected"].includes(status),
@@ -324,7 +358,14 @@ export async function chatHealth(
       healthy = false;
     }
   await getStore().update<ShowRecord, void>(showKey(id), (value) => {
-    requireLease(value, fence.rendererId, fence.epoch, Date.now());
+    requireLease(
+      value,
+      fence.rendererId,
+      fence.epoch,
+      Date.now(),
+      fence.incarnationId,
+      fence.incarnationSequence,
+    );
     value.state.twitch.connected = healthy;
     value.state.twitch.lastHeartbeatAt = Date.now();
     value.state.twitch.status = healthy
@@ -353,7 +394,14 @@ export async function ingestChat(
     actor = await actorFor(record, request);
   requireDirector(actor);
   const fence = authority(body);
-  requireLease(record, fence.rendererId, fence.epoch, Date.now());
+  requireLease(
+    record,
+    fence.rendererId,
+    fence.epoch,
+    Date.now(),
+    fence.incarnationId,
+    fence.incarnationSequence,
+  );
   const input = body.envelope as Record<string, unknown> | undefined;
   assert(
     input && typeof input === "object",
@@ -426,7 +474,14 @@ export async function ingestChat(
   const voter = privateActor(`${id}:${event.chatter_user_id}`),
     messageId = digest(`${record.channelId}:${event.message_id}`);
   await getStore().update<ShowRecord, void>(showKey(id), (value) => {
-    requireLease(value, fence.rendererId, fence.epoch, Date.now());
+    requireLease(
+      value,
+      fence.rendererId,
+      fence.epoch,
+      Date.now(),
+      fence.incarnationId,
+      fence.incarnationSequence,
+    );
     assert(
       value.state.twitch.subscriptionId === subscription.id &&
         value.state.twitch.connected,

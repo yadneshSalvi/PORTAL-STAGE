@@ -1,4 +1,5 @@
 import type { Point, ShowState, Slot } from "../lib/contracts";
+import { rendererParticipantMatches } from "./safety";
 
 export const ANCHOR_TOPIC = "portal-anchor/v1";
 export const ANCHOR_LIMITS = {
@@ -51,6 +52,7 @@ export function activeAnchorSlot(
     show.phase === "live" &&
     show.umbrella.owner === slot &&
     !!show.renderLease.clientId &&
+    !show.renderLease.releasedAt &&
     show.renderLease.epoch === show.epoch &&
     show.renderLease.expiresAt > serverNow &&
     person.connected &&
@@ -81,8 +83,7 @@ export function anchorSenderSlot(
     if (
       data.role === "director" &&
       data.slot === "A" &&
-      data.epoch === show.epoch &&
-      sender.identity === `director-${show.id}-${show.epoch}`
+      rendererParticipantMatches(show, sender, "director")
     )
       return "A";
     // A connected guest's immutable grant survives a director epoch change. The
@@ -136,9 +137,17 @@ export function decodeAnchor(bytes: Uint8Array): AnchorPacket | null {
 
 /** Two bounded slots. Values are disposable presentation, never authoritative show state. */
 export class TransientAnchorReceiver {
+  private scope = "";
   private entries: Partial<Record<Slot, Entry>> = {};
   private history: Partial<Record<Slot, History>> = {};
   private buckets: Partial<Record<Slot, Bucket>> = {};
+
+  private syncScope(show: ShowState) {
+    const next = `${show.id}:${show.epoch}:${show.renderLease.incarnationId || "legacy"}:${show.renderLease.incarnationSequence || 0}`;
+    if (next === this.scope) return;
+    this.clear();
+    this.scope = next;
+  }
 
   receive(
     bytes: Uint8Array,
@@ -147,6 +156,7 @@ export class TransientAnchorReceiver {
     serverNow: number,
     localNow: number,
   ): boolean {
+    this.syncScope(show);
     const slot = anchorSenderSlot(sender, show);
     if (
       !slot ||
@@ -190,6 +200,7 @@ export class TransientAnchorReceiver {
     serverNow: number,
     localNow: number,
   ): boolean {
+    this.syncScope(show);
     if (!validAnchor(point) || !activeAnchorSlot(show, slot, serverNow))
       return false;
     this.entries[slot] = {
@@ -204,6 +215,7 @@ export class TransientAnchorReceiver {
     serverNow: number,
     localNow: number,
   ): Record<Slot, Point | null> {
+    this.syncScope(show);
     const result: Record<Slot, Point | null> = { A: null, B: null };
     for (const slot of ["A", "B"] as const) {
       const entry = this.entries[slot];
@@ -224,6 +236,7 @@ export class TransientAnchorReceiver {
       delete this.history[slot];
       delete this.buckets[slot];
     } else {
+      this.scope = "";
       this.entries = {};
       this.history = {};
       this.buckets = {};

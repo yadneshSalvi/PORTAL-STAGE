@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ShowState } from "../src/lib/contracts";
+import { rendererMediaIdentity } from "../src/lib/media-identity";
 import { MediaRoomController } from "../src/media/room-controller";
 import type { MediaRuntime } from "../src/media/room-controller";
 import type { MediaRoomOptions } from "../src/media/types";
@@ -263,6 +264,41 @@ function publication(
   };
   participant.trackPublications.set(value.trackSid, value);
   return { value, participant, track };
+}
+function rendererTracks(
+  kind: "director" | "output-publisher",
+  incarnationId: string,
+  incarnationSequence: number,
+) {
+  const metadata = JSON.stringify({
+    role: kind,
+    slot: kind === "director" ? "A" : null,
+    showId: "ps_media_test",
+    epoch: 3,
+    incarnationId,
+    incarnationSequence,
+  });
+  const video = publication(
+    kind === "director" ? "portal-return" : "portal-program",
+    "screen_share",
+    new TestTrack(),
+    metadata,
+  );
+  const audio = publication(
+    kind === "director" ? "portal-microphone" : "portal-program-audio",
+    kind === "director" ? "microphone" : "screen_share_audio",
+    new TestTrack(new TestMediaTrack("audio")),
+    metadata,
+  );
+  const peer = video.participant;
+  peer.identity = rendererMediaIdentity(
+    "ps_media_test",
+    3,
+    kind,
+    incarnationId,
+  );
+  peer.trackPublications.set(audio.value.trackSid, audio.value);
+  return { video, audio, peer };
 }
 async function flush() {
   await vi.advanceTimersByTimeAsync(0);
@@ -624,6 +660,73 @@ describe("LiveKit browser lifecycle", () => {
       error: null,
     });
   });
+  it("refuses all new capture and transport requests after the show has ended", async () => {
+    const initial = options();
+    const media = controller({
+      ...initial,
+      show: { ...initial.show, phase: "ended" },
+    });
+    await media.enableCamera();
+    await media.enableMicrophone();
+    await media.enableTestCamera();
+    await media.connect();
+    expect(loadSDK).not.toHaveBeenCalled();
+    expect(createVideo).not.toHaveBeenCalled();
+    expect(createAudio).not.toHaveBeenCalled();
+    expect(requestToken).not.toHaveBeenCalled();
+    expect(rooms).toHaveLength(0);
+  });
+  it("fences a pending token response when the show ends before any room exists", async () => {
+    let release!: () => void;
+    const gate = new Promise<void>((done) => {
+      release = done;
+    });
+    const initial = options();
+    const media = controller(initial, {
+      requestToken: async (value, purpose) => {
+        await gate;
+        return requestToken(value, purpose);
+      },
+    });
+    const joining = media.connect();
+    await flush();
+    expect(media.getSnapshot().status).toBe("connecting");
+    expect(rooms).toHaveLength(0);
+    media.updateOptions({
+      ...initial,
+      show: { ...initial.show, phase: "ended" },
+    });
+    release();
+    await joining;
+    expect(rooms).toHaveLength(0);
+    expect(media.getSnapshot()).toMatchObject({
+      status: "disconnected",
+      connected: false,
+    });
+  });
+  it("stops a microphone granted after an unjoined show ends", async () => {
+    let resolve!: (track: TestTrack) => void;
+    createAudio.mockImplementationOnce(
+      () =>
+        new Promise<TestTrack>((done) => {
+          resolve = done;
+        }),
+    );
+    const initial = options();
+    const media = controller(initial);
+    const enabling = media.enableMicrophone();
+    await flush();
+    media.updateOptions({
+      ...initial,
+      show: { ...initial.show, phase: "ended" },
+    });
+    const track = new TestTrack(new TestMediaTrack("audio"));
+    resolve(track);
+    await enabling;
+    expect(track.stop).toHaveBeenCalledOnce();
+    expect(track.attach).not.toHaveBeenCalled();
+    expect(media.getSnapshot().microphoneEnabled).toBe(false);
+  });
   it("switches only an already enabled input and leaves disabled inputs private", async () => {
     const media = controller();
     await media.selectDevice("videoinput", "camera-2");
@@ -700,8 +803,9 @@ describe("LiveKit browser lifecycle", () => {
       "portal-program",
       "screen_share",
       new TestTrack(),
-      '{"role":"output-publish"}',
+      '{"role":"output-publisher","showId":"ps_media_test","epoch":3}',
     );
+    program.participant.identity = "renderer-ps_media_test-3";
     rooms[0].emit(
       "TrackSubscribed",
       program.track,
@@ -716,7 +820,8 @@ describe("LiveKit browser lifecycle", () => {
   it("subscribes guests only to direct host audio and the video-only return", async () => {
     const media = controller({ role: "performer", slot: "B" });
     await media.connect();
-    const host = '{"role":"director","slot":"A"}';
+    const host =
+      '{"role":"director","slot":"A","showId":"ps_media_test","epoch":3}';
     const camera = publication(
       "portal-camera",
       "camera",
@@ -735,6 +840,8 @@ describe("LiveKit browser lifecycle", () => {
       new TestTrack(),
       host,
     );
+    for (const value of [camera, audio, returned])
+      value.participant.identity = "director-ps_media_test-3";
     for (const item of [camera, audio, returned])
       rooms[0].emit("TrackPublished", item.value, item.participant);
     expect(camera.value.setSubscribed).toHaveBeenLastCalledWith(false);
@@ -794,6 +901,51 @@ describe("LiveKit browser lifecycle", () => {
     } as unknown as HTMLCanvasElement);
     expect(requestToken).toHaveBeenCalledTimes(requests);
     expect(media.getSnapshot().error?.code).toBe("stale-renderer");
+  });
+  it("carries the current mount authority in backstage and output publisher token requests", async () => {
+    const initial = options({
+      rendererIncarnationId: "current-mount-id",
+      rendererIncarnationSequence: 2,
+    });
+    Object.assign(initial.show.renderLease, {
+      incarnationId: "current-mount-id",
+      incarnationSequence: 2,
+    });
+    const fetch = vi.fn(async (_path: string, init?: RequestInit) => {
+      const body = JSON.parse(String(init?.body));
+      if (
+        body.incarnationId !== "current-mount-id" ||
+        body.incarnationSequence !== 2
+      )
+        return Response.json({ code: "renderer_fenced" }, { status: 409 });
+      return Response.json({
+        url: "ws://localhost:7880",
+        token: "private-test-token",
+        room: "test-room",
+        identity: "test-identity",
+        purpose: body.purpose,
+        expiresAt: Date.now() + 60_000,
+        slot: null,
+      });
+    });
+    vi.stubGlobal("fetch", fetch);
+    const media = new MediaRoomController(initial, {
+      loadSDK,
+      makeMixer: () => mixer as unknown as ProgramAudioMixer,
+    });
+    controllers.push(media);
+    media.mount();
+    await media.connect();
+    expect(media.getSnapshot().connected).toBe(true);
+    await media.publishProgram({
+      captureStream: () => new TestStream([new TestMediaTrack()]),
+    } as unknown as HTMLCanvasElement);
+    expect(media.getSnapshot().programPublishing).toBe(true);
+    expect(
+      fetch.mock.calls.map(
+        ([, init]) => JSON.parse(String(init?.body)).purpose,
+      ),
+    ).toEqual(["director", "output-publish"]);
   });
   it("stops and detaches every local and remote track on leave", async () => {
     const media = controller();
@@ -949,13 +1101,27 @@ describe("LiveKit browser lifecycle", () => {
     };
     media.updateOptions({ ...initial, show: next, epoch: 4 });
     expect(media.getSnapshot().transientAnchors.B).toBeNull();
-    room.emit("DataReceived", packet(4), peer.participant, 1, ANCHOR_TOPIC);
+    expect(media.getSnapshot().connected).toBe(false);
+    await flush();
+    await media.connect();
+    const recoveredRoom = rooms.at(-1)!;
+    recoveredRoom.remoteParticipants.set(
+      peer.participant.identity,
+      peer.participant,
+    );
+    recoveredRoom.emit(
+      "DataReceived",
+      packet(4),
+      peer.participant,
+      1,
+      ANCHOR_TOPIC,
+    );
     expect(media.getSnapshot().transientAnchors.B).not.toBeNull();
-    room.emit("Reconnecting");
+    recoveredRoom.emit("Reconnecting");
     expect(media.getSnapshot().transientAnchors.B).toBeNull();
     expect(media.getSnapshot().anchors.B).toEqual({ x: 0.35, y: 0.48 });
   });
-  it("independently detaches Program audio during Hold or lease expiry, including Start audio while held", async () => {
+  it("independently detaches Program audio during release, Hold or expiry, including playback unlock while held", async () => {
     const initial = options({ role: "program", slot: null });
     const media = controller(initial);
     await media.connect();
@@ -971,6 +1137,10 @@ describe("LiveKit browser lifecycle", () => {
       epoch: 3,
       slot: null,
     });
+    rooms[0].remoteParticipants.set(
+      audio.participant.identity,
+      audio.participant,
+    );
     rooms[0].emit(
       "TrackSubscribed",
       audio.track,
@@ -979,6 +1149,19 @@ describe("LiveKit browser lifecycle", () => {
     );
     expect(audio.track.attached).toHaveLength(1);
     const element = audio.track.attached[0];
+    media.updateOptions({
+      ...initial,
+      show: {
+        ...initial.show,
+        renderLease: { ...initial.show.renderLease, releasedAt: Date.now() },
+      },
+    });
+    expect(audio.track.attached).toHaveLength(0);
+    expect(element.srcObject).toBeNull();
+    await media.startAudio();
+    expect(audio.track.attached).toHaveLength(0);
+    media.updateOptions(initial);
+    expect(audio.track.attached).toHaveLength(1);
     media.updateOptions({
       ...initial,
       show: { ...initial.show, phase: "hold" },
@@ -993,6 +1176,208 @@ describe("LiveKit browser lifecycle", () => {
     await vi.advanceTimersByTimeAsync(60_250);
     expect(audio.track.attached).toHaveLength(0);
     expect(element.muted).toBe(true);
+  });
+  it("rechecks Program audio expiry on visibility return before the next watchdog tick", async () => {
+    const initial = options({ role: "program", slot: null });
+    const media = controller(initial);
+    await media.connect();
+    const audio = publication(
+      "portal-program-audio",
+      "screen_share_audio",
+      new TestTrack(new TestMediaTrack("audio")),
+    );
+    audio.participant.identity = "renderer-ps_media_test-3";
+    audio.participant.metadata = JSON.stringify({
+      role: "output-publisher",
+      showId: "ps_media_test",
+      epoch: 3,
+    });
+    rooms[0].emit(
+      "TrackSubscribed",
+      audio.track,
+      audio.value,
+      audio.participant,
+    );
+    expect(audio.track.attached).toHaveLength(1);
+    vi.setSystemTime(Date.now() + 60_001);
+    const listener = vi
+      .mocked(document.addEventListener)
+      .mock.calls.find(
+        ([name]) => name === "visibilitychange",
+      )?.[1] as EventListener;
+    listener(new Event("visibilitychange"));
+    expect(audio.track.attached).toHaveLength(0);
+  });
+  it("replaces superseded Program picture and audio from current signed tracks when the mount changes", async () => {
+    const initial = options({ role: "program", slot: null });
+    Object.assign(initial.show.renderLease, {
+      incarnationId: "first-mount",
+      incarnationSequence: 1,
+    });
+    const media = controller(initial);
+    await media.connect();
+    const room = rooms[0];
+    const previous = rendererTracks("output-publisher", "first-mount", 1);
+    const next = rendererTracks("output-publisher", "next-mount", 2);
+    room.remoteParticipants.set(previous.peer.identity, previous.peer);
+    room.emit(
+      "TrackSubscribed",
+      previous.video.track,
+      previous.video.value,
+      previous.peer,
+    );
+    room.emit(
+      "TrackSubscribed",
+      previous.audio.track,
+      previous.audio.value,
+      previous.peer,
+    );
+    expect(media.getSnapshot().programVideo).not.toBeNull();
+    expect(previous.audio.track.attached).toHaveLength(1);
+    room.remoteParticipants.set(next.peer.identity, next.peer);
+    room.emit("TrackPublished", next.video.value, next.peer);
+    expect(next.video.track.attach).not.toHaveBeenCalled();
+    media.updateOptions({
+      ...initial,
+      show: {
+        ...initial.show,
+        renderLease: {
+          ...initial.show.renderLease,
+          incarnationId: "next-mount",
+          incarnationSequence: 2,
+        },
+      },
+    });
+    expect(previous.video.track.attached).toHaveLength(0);
+    expect(previous.audio.track.attached).toHaveLength(0);
+    expect(previous.video.value.setSubscribed).toHaveBeenLastCalledWith(false);
+    expect(media.getSnapshot().programVideo).toBe(next.video.track.attached[0]);
+    expect(next.audio.track.attached).toHaveLength(1);
+    room.emit(
+      "TrackSubscribed",
+      previous.video.track,
+      previous.video.value,
+      previous.peer,
+    );
+    expect(previous.video.track.attached).toHaveLength(0);
+    expect(media.getSnapshot().programVideo).toBe(next.video.track.attached[0]);
+  });
+  it("keeps the guest connection and capture while fencing a replaced director return and private call", async () => {
+    const initial = options({ role: "performer", slot: "B" });
+    Object.assign(initial.show.renderLease, {
+      incarnationId: "first-mount",
+      incarnationSequence: 1,
+    });
+    const media = controller(initial);
+    await media.enableCamera();
+    await media.connect();
+    const room = rooms[0];
+    const previous = rendererTracks("director", "first-mount", 1);
+    room.remoteParticipants.set(previous.peer.identity, previous.peer);
+    room.emit(
+      "TrackSubscribed",
+      previous.video.track,
+      previous.video.value,
+      previous.peer,
+    );
+    room.emit(
+      "TrackSubscribed",
+      previous.audio.track,
+      previous.audio.value,
+      previous.peer,
+    );
+    expect(previous.audio.track.attached).toHaveLength(1);
+    media.updateOptions({
+      ...initial,
+      show: { ...initial.show, phase: "hold" },
+    });
+    expect(previous.audio.track.attached).toHaveLength(1);
+    media.updateOptions({
+      ...initial,
+      show: {
+        ...initial.show,
+        renderLease: {
+          ...initial.show.renderLease,
+          incarnationId: "next-mount",
+          incarnationSequence: 2,
+        },
+      },
+    });
+    expect(media.getSnapshot()).toMatchObject({
+      connected: true,
+      cameraEnabled: true,
+      programVideo: null,
+    });
+    expect(previous.video.track.attached).toHaveLength(0);
+    expect(previous.audio.track.attached).toHaveLength(0);
+    const next = rendererTracks("director", "next-mount", 2);
+    room.remoteParticipants.set(next.peer.identity, next.peer);
+    room.emit("TrackPublished", next.video.value, next.peer);
+    room.emit("TrackPublished", next.audio.value, next.peer);
+    expect(media.getSnapshot().programVideo).toBe(next.video.track.attached[0]);
+    expect(next.audio.track.attached).toHaveLength(1);
+    media.updateOptions({
+      ...initial,
+      show: {
+        ...initial.show,
+        umbrella: { ...initial.show.umbrella, owner: "B" },
+        renderLease: {
+          ...initial.show.renderLease,
+          incarnationId: "next-mount",
+          incarnationSequence: 2,
+        },
+      },
+    });
+    media.sendAnchor({ x: 0.6, y: 0.5 });
+    await flush();
+    expect(room.localParticipant.publishData).toHaveBeenCalledWith(
+      expect.any(Uint8Array),
+      expect.objectContaining({
+        destinationIdentities: [
+          rendererMediaIdentity("ps_media_test", 3, "director", "next-mount"),
+        ],
+      }),
+    );
+  });
+  it("stops the old director’s devices and outputs on a same-epoch mount replacement", async () => {
+    const initial = options({
+      rendererIncarnationId: "first-mount",
+      rendererIncarnationSequence: 1,
+    });
+    Object.assign(initial.show.renderLease, {
+      incarnationId: "first-mount",
+      incarnationSequence: 1,
+    });
+    const media = controller(initial);
+    await media.enableCamera();
+    await media.connect();
+    await media.enableMicrophone();
+    const captured = new TestMediaTrack();
+    await media.publishProgram({
+      captureStream: () => new TestStream([captured]),
+    } as unknown as HTMLCanvasElement);
+    const requests = requestToken.mock.calls.length;
+    media.updateOptions({
+      ...initial,
+      show: {
+        ...initial.show,
+        renderLease: {
+          ...initial.show.renderLease,
+          incarnationId: "next-mount",
+          incarnationSequence: 2,
+        },
+      },
+    });
+    expect(media.getSnapshot()).toMatchObject({
+      connected: false,
+      cameraEnabled: false,
+      microphoneEnabled: false,
+      programPublishing: false,
+    });
+    expect(captured.stop).toHaveBeenCalled();
+    expect(cameras[0].stop).toHaveBeenCalled();
+    expect(microphones[0].stop).toHaveBeenCalled();
+    expect(requestToken).toHaveBeenCalledTimes(requests);
   });
   it("rejects stale Program publishers without changing private direct-call monitoring policy", async () => {
     const program = controller({ role: "program", slot: null });

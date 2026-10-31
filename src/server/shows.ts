@@ -150,7 +150,8 @@ export async function actorFor(
       grant &&
       grant.redeemed &&
       grant.showId === record.state.id &&
-      grant.generation === record.inviteGeneration &&
+      grant.generation ===
+        (record.outputGeneration ?? record.inviteGeneration) &&
       record.state.phase !== "ended"
     )
       return { id: "program:" + token.grantId, role: "program", slot: null };
@@ -271,6 +272,8 @@ export async function lease(
   clientId: string,
   takeover: boolean,
   epoch?: number,
+  incarnationId?: string,
+  incarnationSequence?: number,
 ) {
   validShowId(id);
   const browser = readSession(request);
@@ -287,6 +290,7 @@ export async function lease(
     "A valid director tab identifier is required.",
   );
   const store = getStore();
+  const incarnation = parseIncarnation(incarnationId, incarnationSequence);
   if (!takeover && epoch !== undefined && store.renewShowLease) {
     const renewed = await store.renewShowLease(
       showKey(id),
@@ -294,6 +298,7 @@ export async function lease(
       clientId,
       epoch,
       LEASE_MS,
+      incarnation,
     );
     if (renewed)
       return {
@@ -303,12 +308,19 @@ export async function lease(
           slot: "A",
         }),
         oldEpoch: renewed.state.epoch,
+        oldIncarnationId: renewed.state.renderLease.incarnationId,
+        rendererChanged: false,
         changed: false,
       };
   }
   const result = await store.update<
     ShowRecord,
-    { record: ShowRecord; oldEpoch: number }
+    {
+      record: ShowRecord;
+      oldEpoch: number;
+      oldIncarnationId?: string;
+      rendererChanged: boolean;
+    }
   >(showKey(id), (value) => {
     assert(
       value.ownerId === browser.id,
@@ -329,9 +341,33 @@ export async function lease(
       "The stage's director authority changed. Refresh before recovering it.",
     );
     const oldEpoch = value.state.epoch;
+    const oldIncarnationId = value.state.renderLease.incarnationId;
+    const hadRenderer = Boolean(value.state.renderLease.clientId);
+    if (
+      !takeover &&
+      epoch !== undefined &&
+      value.state.renderLease.clientId === clientId &&
+      value.state.renderLease.incarnationId
+    )
+      assert(
+        incarnation?.id === value.state.renderLease.incarnationId &&
+          incarnation?.sequence ===
+            value.state.renderLease.incarnationSequence &&
+          !value.state.renderLease.releasedAt,
+        409,
+        "renderer_fenced",
+        "This director page was replaced by a newer page. Use the current studio.",
+      );
     rate(value.rates, "lease:" + clientId, 30, 60_000);
-    acquireLease(value, clientId, takeover, Date.now());
-    return { record: value, oldEpoch };
+    acquireLease(value, clientId, takeover, Date.now(), incarnation);
+    return {
+      record: value,
+      oldEpoch,
+      oldIncarnationId,
+      rendererChanged:
+        hadRenderer &&
+        oldIncarnationId !== value.state.renderLease.incarnationId,
+    };
   });
   return {
     envelope: envelope(result.record, {
@@ -340,8 +376,67 @@ export async function lease(
       slot: "A",
     }),
     oldEpoch: result.oldEpoch,
+    oldIncarnationId: result.oldIncarnationId,
+    rendererChanged: result.rendererChanged,
     changed: result.oldEpoch !== result.record.state.epoch,
   };
+}
+function parseIncarnation(id?: string, sequence?: number) {
+  if (id === undefined && sequence === undefined) return undefined;
+  assert(
+    typeof id === "string" &&
+      /^[a-zA-Z0-9_-]{8,128}$/.test(id) &&
+      Number.isSafeInteger(sequence) &&
+      Number(sequence) > 0,
+    400,
+    "renderer_incarnation",
+    "A valid director page identifier is required.",
+  );
+  return { id, sequence: sequence! };
+}
+/** A pagehide beacon releases this mount, never a newer reload of the same tab. */
+export async function releaseLease(
+  id: string,
+  request: Request,
+  clientId: string,
+  epoch: number,
+  incarnationId: string,
+  incarnationSequence: number,
+) {
+  validShowId(id);
+  const browser = readSession(request),
+    incarnation = parseIncarnation(incarnationId, incarnationSequence)!;
+  assert(
+    browser,
+    403,
+    "director_required",
+    "Only the director can release the stage.",
+  );
+  return getStore().update<ShowRecord, { released: boolean }>(
+    showKey(id),
+    (value) => {
+      assert(
+        value.ownerId === browser.id,
+        403,
+        "director_required",
+        "This show belongs to another director.",
+      );
+      const current = value.state.renderLease;
+      if (
+        value.state.phase === "ended" ||
+        current.clientId !== clientId ||
+        current.epoch !== epoch ||
+        current.incarnationId !== incarnation.id ||
+        current.incarnationSequence !== incarnation.sequence ||
+        current.releasedAt
+      )
+        return { released: false };
+      // Keep the bounded lease window so a prompt reload preserves its cue and offer.
+      // Program gates the released renderer until that same tab explicitly reclaims it.
+      current.releasedAt = Date.now();
+      return { released: true };
+    },
+  );
 }
 export async function invite(
   id: string,
@@ -530,6 +625,7 @@ export async function revokeGuest(id: string, request: Request) {
   const record = await getStore().update<ShowRecord, ShowRecord>(
     showKey(id),
     (value) => {
+      value.outputGeneration ??= value.inviteGeneration;
       value.inviteGeneration += 1;
       value.activeInvitations = {};
       delete value.participantSessions.B;
@@ -568,8 +664,18 @@ export async function createOutputGrant(id: string, request: Request) {
     "show_ended",
     "The show has ended.",
   );
-  await getStore().update<ShowRecord, void>(showKey(id), (value) =>
-    rate(value.rates, "output-grant", 10, 60_000),
+  const generation = await getStore().update<ShowRecord, number>(
+    showKey(id),
+    (value) => {
+      assert(
+        value.state.phase !== "ended",
+        409,
+        "show_ended",
+        "The show has ended.",
+      );
+      rate(value.rates, "output-grant", 10, 60_000);
+      return (value.outputGeneration ??= value.inviteGeneration);
+    },
   );
   const code = randomBytes(5).toString("hex").toUpperCase(),
     hash = digest(code),
@@ -579,13 +685,39 @@ export async function createOutputGrant(id: string, request: Request) {
     showId: id,
     expiresAt,
     redeemed: false,
-    generation: record.inviteGeneration,
+    generation,
   });
   return {
     code,
     expiresAt,
     showId: id,
     url: `${appOrigin(request)}/program?show=${id}`,
+  };
+}
+export async function revokeOutputs(id: string, request: Request) {
+  const initial = await loadRecord(id),
+    actor = await actorFor(initial, request);
+  requireDirector(actor);
+  const result = await getStore().update<
+    ShowRecord,
+    { record: ShowRecord; identities: string[] }
+  >(showKey(id), (value) => {
+    const identities = value.outputIdentities ?? [];
+    value.outputIdentities = [];
+    value.outputGeneration =
+      (value.outputGeneration ?? value.inviteGeneration) + 1;
+    recordEvent(
+      value,
+      "output.revoked",
+      "director",
+      "Program viewers were explicitly unpaired. Backstage performers and the committed scene are unchanged.",
+      Date.now(),
+    );
+    return { record: value, identities };
+  });
+  return {
+    envelope: envelope(result.record, actor),
+    identities: result.identities,
   };
 }
 export async function redeemOutput(id: string, code: string, request: Request) {
@@ -606,7 +738,8 @@ export async function redeemOutput(id: string, code: string, request: Request) {
         grant.showId === id &&
           grant.expiresAt > Date.now() &&
           !grant.redeemed &&
-          grant.generation === record.inviteGeneration &&
+          grant.generation ===
+            (record.outputGeneration ?? record.inviteGeneration) &&
           record.state.phase !== "ended",
         410,
         "output_expired",

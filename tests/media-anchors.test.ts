@@ -131,6 +131,46 @@ describe("disposable private-room anchors", () => {
         false,
       );
   });
+  it("fences the replaced director and clears cached positions and sequence history on a mount change", () => {
+    const state = show();
+    state.umbrella.owner = "A";
+    Object.assign(state.renderLease, {
+      incarnationId: "first-mount",
+      incarnationSequence: 1,
+    });
+    const director = (incarnationId: string, incarnationSequence: number) => ({
+      identity: `director-ps_anchor_test-3-${incarnationId}`,
+      metadata: JSON.stringify({
+        role: "director",
+        slot: "A",
+        showId: state.id,
+        epoch: 3,
+        incarnationId,
+        incarnationSequence,
+      }),
+    });
+    const first = director("first-mount", 1);
+    const next = director("next-mount", 2);
+    const receive = new TransientAnchorReceiver();
+    expect(
+      receive.receive(bytes({ slot: "A", seq: 40 }), first, state, now, now),
+    ).toBe(true);
+    expect(receive.current(state, now, now).A).not.toBeNull();
+    Object.assign(state.renderLease, {
+      incarnationId: "next-mount",
+      incarnationSequence: 2,
+    });
+    expect(receive.current(state, now, now).A).toBeNull();
+    expect(
+      receive.receive(bytes({ slot: "A", seq: 41 }), first, state, now, now),
+    ).toBe(false);
+    expect(
+      receive.receive(bytes({ slot: "A", seq: 1 }), next, state, now, now),
+    ).toBe(true);
+    state.umbrella.owner = "B";
+    expect(anchorSenderSlot(sender, state)).toBe("B");
+    expect(receive.receive(bytes(), sender, state, now, now)).toBe(true);
+  });
   it("bounds payloads, rejects nonfinite/out-of-range coordinates and never parses commands as anchors", () => {
     expect(decodeAnchor(new Uint8Array(257))).toBeNull();
     expect(decodeAnchor(new Uint8Array([255, 255]))).toBeNull();

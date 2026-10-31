@@ -46,6 +46,8 @@ export type MediaRoomOptions = {
   role: SessionRole;
   slot: Slot | null;
   rendererId?: string;
+  rendererIncarnationId?: string;
+  rendererIncarnationSequence?: number;
   epoch?: number;
   /** Last server clock sample, for fencing despite a skewed browser clock. */
   serverNow?: number;

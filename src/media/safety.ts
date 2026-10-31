@@ -1,4 +1,5 @@
 import type { ShowState, Slot } from "../lib/contracts";
+import { rendererMediaIdentity } from "../lib/media-identity";
 import type { MediaCapabilities, MediaIssue, MediaRoomOptions } from "./types";
 
 export const MEDIA_TRACKS = {
@@ -36,6 +37,11 @@ export function hasRenderAuthority(
     epoch === show.epoch &&
     epoch === show.renderLease.epoch &&
     show.renderLease.clientId === rendererId &&
+    (!show.renderLease.incarnationId ||
+      (show.renderLease.incarnationId === options.rendererIncarnationId &&
+        show.renderLease.incarnationSequence ===
+          options.rendererIncarnationSequence)) &&
+    !show.renderLease.releasedAt &&
     show.renderLease.expiresAt > serverNow
   );
 }
@@ -52,36 +58,64 @@ export function mayMixSlot(show: ShowState, slot: Slot): boolean {
   );
 }
 
-/** The output viewer closes its own audio path even if a stale publisher is audible. */
-export function mayPlayProgramAudio(
+export type MediaSender = { identity: string; metadata?: string };
+
+/** A signed role also belongs to one immutable show epoch and renderer mount. */
+export function rendererParticipantMatches(
   show: ShowState,
-  sender: { identity: string; metadata?: string },
-  serverNow: number,
+  sender: MediaSender,
+  kind: "director" | "output-publisher",
 ): boolean {
-  if (
-    show.phase !== "live" ||
-    !show.renderLease.clientId ||
-    show.renderLease.epoch !== show.epoch ||
-    show.renderLease.expiresAt <= serverNow ||
-    !sender.metadata ||
-    sender.metadata.length > 512
-  )
-    return false;
+  if (!sender.metadata || sender.metadata.length > 512) return false;
   try {
-    const metadata = JSON.parse(sender.metadata) as Record<
-      string,
-      unknown
-    > | null;
+    const data: unknown = JSON.parse(sender.metadata);
+    if (!data || typeof data !== "object" || Array.isArray(data)) return false;
+    const metadata = data as Record<string, unknown>;
+    const lease = show.renderLease;
     return (
-      !!metadata &&
-      metadata.role === "output-publisher" &&
+      metadata.role === kind &&
       metadata.showId === show.id &&
       metadata.epoch === show.epoch &&
-      sender.identity === `renderer-${show.id}-${show.epoch}`
+      lease.epoch === show.epoch &&
+      (kind !== "director" || metadata.slot === "A") &&
+      (lease.incarnationId
+        ? metadata.incarnationId === lease.incarnationId &&
+          metadata.incarnationSequence === lease.incarnationSequence
+        : metadata.incarnationId === undefined &&
+          metadata.incarnationSequence === undefined) &&
+      sender.identity ===
+        rendererMediaIdentity(show.id, show.epoch, kind, lease.incarnationId)
     );
   } catch {
     return false;
   }
+}
+
+export function mayReceiveRendererMedia(
+  show: ShowState,
+  sender: MediaSender,
+  kind: "director" | "output-publisher",
+  serverNow: number,
+): boolean {
+  return (
+    show.phase !== "ended" &&
+    !!show.renderLease.clientId &&
+    !show.renderLease.releasedAt &&
+    show.renderLease.expiresAt > serverNow &&
+    rendererParticipantMatches(show, sender, kind)
+  );
+}
+
+/** The output viewer closes its own audio path even if a stale publisher is audible. */
+export function mayPlayProgramAudio(
+  show: ShowState,
+  sender: MediaSender,
+  serverNow: number,
+): boolean {
+  return (
+    show.phase === "live" &&
+    mayReceiveRendererMedia(show, sender, "output-publisher", serverNow)
+  );
 }
 
 export function mediaCapabilities(): MediaCapabilities {

@@ -126,6 +126,16 @@ const envelope = z
     expectedVersion: z.number().int().nonnegative().optional(),
     epoch: z.number().int().nonnegative().optional(),
     rendererId: z.string().min(8).max(128).optional(),
+    incarnationId: z
+      .string()
+      .regex(/^[a-zA-Z0-9_-]{8,128}$/)
+      .optional(),
+    incarnationSequence: z
+      .number()
+      .int()
+      .positive()
+      .max(Number.MAX_SAFE_INTEGER)
+      .optional(),
   })
   .strict();
 export function parseAction(value: unknown): ActionEnvelope {

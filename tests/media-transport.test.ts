@@ -158,7 +158,7 @@ describe("rehearsal transport through server entry points", () => {
     });
     expect(provider.createRoom).not.toHaveBeenCalled();
   });
-  it("restores fixture mode through the route, closes both media rooms, and revokes old semantic access", async () => {
+  it("restores fixtures and closes media while revoking old guests and preserving read-only Program pairing", async () => {
     const oldInvitation = await joinGuest();
     const extraInvitation = await invite(id, request(), "B");
     record().state.phase = "live";
@@ -203,6 +203,7 @@ describe("rehearsal transport through server entry points", () => {
       savedPresets: record().state.savedPresets,
     });
     const generation = record().inviteGeneration;
+    const outputGeneration = record().outputGeneration;
     const response = await restore();
     expect(response.status).toBe(200);
     expect((await response.json()).show).toMatchObject({
@@ -212,6 +213,7 @@ describe("rehearsal transport through server entry points", () => {
       ...preserved,
     });
     expect(record().inviteGeneration).toBe(generation + 1);
+    expect(record().outputGeneration).toBe(outputGeneration);
     expect(record().participantSessions).toEqual({ A: host });
     expect(provider.deleteRoom).toHaveBeenCalledWith(`portal-${id}-backstage`);
     expect(provider.deleteRoom).toHaveBeenCalledWith(`portal-${id}-program`);
@@ -228,10 +230,16 @@ describe("rehearsal transport through server entry points", () => {
       status: 403,
       code: "show_access",
     });
-    await expect(actorFor(record(), programRequest)).rejects.toMatchObject({
-      status: 403,
-      code: "show_access",
+    await expect(actorFor(record(), programRequest)).resolves.toMatchObject({
+      role: "program",
+      slot: null,
     });
+    await expect(
+      command(id, programRequest, {
+        action: { type: "resume" },
+        idempotencyKey: "paired-output-stays-read-only",
+      }),
+    ).rejects.toMatchObject({ status: 403, code: "read_only" });
     await expect(
       command(id, request(guest), {
         action: {

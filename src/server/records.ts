@@ -22,6 +22,10 @@ export type ShowRecord = {
   idempotency: Record<string, { hash: string; sequence: number; at: number }>;
   rates: Record<string, RateBucket>;
   inviteGeneration: number;
+  /** Legacy grants adopt the invitation generation before its next change. */
+  outputGeneration?: number;
+  /** Bounded issued viewer identities, including tokens not connected yet. */
+  outputIdentities?: string[];
   activeInvitations?: Partial<Record<Slot, string>>;
   twitchSessionId: string | null;
 };
