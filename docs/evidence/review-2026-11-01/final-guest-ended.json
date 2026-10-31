@@ -1,0 +1,19 @@
+{
+  "sourceCommit": "de2ef19913d75c39bf64ef8b80b64357859cfbb5",
+  "buildId": "vuSxqpwVRsV4ruwwbePHd",
+  "showId": "ps_21764cae25006ac9",
+  "hostOrigin": "http://127.0.0.1:3201",
+  "guestOrigin": "http://localhost:3200",
+  "guestBrowser": "Chrome",
+  "hostBrowser": "in-app browser",
+  "guestName": "Exit QA Guest",
+  "mediaEnabled": false,
+  "observed": {
+    "heading": "The curtain is closed.",
+    "newRehearsal": true,
+    "cameraButtons": 0,
+    "microphoneButtons": 0,
+    "videoElements": 0
+  },
+  "scope": "Independent guest browser joined via actual one-time invitation; owner ended the show. UI acceptance only; no camera, microphone or remote-human claim."
+}

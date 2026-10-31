@@ -1,0 +1,40 @@
+{
+  "deploymentId": "dpl_Tty6pbCz4qB7t724hxvRNuUkRKzZ",
+  "sourceCommit": "2f5e407",
+  "showId": "ps_c39a971c7d948d0e",
+  "firstCommand": {
+    "text": "!gentle",
+    "sentAt": "2026-10-31T21:35:59.732Z",
+    "officialApiSent": true,
+    "observedBallots": 0
+  },
+  "secondCommandObserved": [
+    {
+      "metadata": {
+        "message_id": "BTPLNWL9eUwyraAOcqg4S1F70EKKx1j2JPOfvz2IAgg=",
+        "message_type": "notification",
+        "message_timestamp": "2026-10-31T21:37:20.745604594Z",
+        "subscription_type": "channel.chat.message",
+        "subscription_version": "1"
+      },
+      "subscription": {
+        "id": "e5cb3163-9d53-4e8f-9135-c8240587a735",
+        "type": "channel.chat.message",
+        "version": "1",
+        "condition": {
+          "broadcaster_user_id": "1599663869",
+          "user_id": "1599663869"
+        }
+      },
+      "event": {
+        "broadcaster_user_id": "1599663869",
+        "chatter_user_id": "1599663869",
+        "message_id": "154580ca-9633-4169-b087-a045a2d02e82",
+        "messageText": "!rain"
+      }
+    }
+  ],
+  "forwardingRequests": ["/api/shows/ps_c39a971c7d948d0e/twitch/health"],
+  "diagnosis": "The real notification metadata.message_id contains a trailing equals sign. The client opaque-ID filter rejected it before a batch request. The first missing ballot is retained separately; its exact raw notification was not captured.",
+  "scope": "Authorized public host-account commands, one account, not independent audience engagement. Only the known QA command notification is retained; no media or credentials."
+}
