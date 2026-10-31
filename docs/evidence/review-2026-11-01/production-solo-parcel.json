@@ -1,0 +1,339 @@
+{
+  "observedAt": "2026-10-31T21:57:26.155Z",
+  "showId": "ps_fd9d44159b7b4ffb",
+  "sourceCommit": "96fea8781dd86bf23a95126247b1e703b8babde9",
+  "mode": "solo",
+  "phase": "live",
+  "beat": "delivery",
+  "sequence": 46,
+  "episode": "midnight-parcel",
+  "parcel": {
+    "tag": "MP-9B7B4FFB",
+    "damage": 0.48,
+    "ending": "keep",
+    "opened": true,
+    "stamped": true,
+    "contents": "garden",
+    "openedAt": 1793483756883,
+    "transformedRoom": "A"
+  },
+  "umbrella": {
+    "id": "ps_fd9d44159b7b4ffb-parcel-1",
+    "armed": true,
+    "owner": "A",
+    "version": 9,
+    "wetness": 0,
+    "transfer": {
+      "id": "ps_fd9d44159b7b4ffb-transfer-37",
+      "to": "A",
+      "from": "B",
+      "status": "arrived",
+      "arrivedAt": 1793483806622,
+      "expiresAt": 1793483822726,
+      "offeredAt": 1793483802726,
+      "committedAt": 1793483805161,
+      "commitSequence": 39
+    },
+    "repairPatch": "coral",
+    "acceptedTransfers": 2
+  },
+  "decisions": {
+    "accept": {
+      "at": 1793483735301,
+      "choice": "accept",
+      "source": "director",
+      "voters": 0,
+      "roundId": "ps_fd9d44159b7b4ffb-round-24",
+      "contributors": []
+    },
+    "contents": {
+      "at": 1793483688975,
+      "choice": "garden",
+      "source": "director",
+      "voters": 0,
+      "roundId": "ps_fd9d44159b7b4ffb-round-11",
+      "contributors": []
+    },
+    "giveback": {
+      "at": 1793483802726,
+      "choice": "giveback",
+      "source": "director",
+      "voters": 0,
+      "roundId": "ps_fd9d44159b7b4ffb-round-33",
+      "contributors": []
+    },
+    "parcel-ending": {
+      "at": 1793483836196,
+      "choice": "keep",
+      "source": "director",
+      "voters": 0,
+      "roundId": "ps_fd9d44159b7b4ffb-round-41",
+      "contributors": []
+    }
+  },
+  "events": [
+    {
+      "sequence": 1,
+      "type": "show.created",
+      "at": 1793483601614
+    },
+    {
+      "sequence": 2,
+      "type": "renderer.acquired",
+      "at": 1793483602953
+    },
+    {
+      "sequence": 3,
+      "type": "action.consent",
+      "at": 1793483627808
+    },
+    {
+      "sequence": 4,
+      "type": "action.calibrate",
+      "at": 1793483628057
+    },
+    {
+      "sequence": 5,
+      "type": "media.grant",
+      "at": 1793483634081
+    },
+    {
+      "sequence": 6,
+      "type": "action.presence",
+      "at": 1793483634807
+    },
+    {
+      "sequence": 7,
+      "type": "action.ready",
+      "at": 1793483649349
+    },
+    {
+      "sequence": 8,
+      "type": "action.admit",
+      "at": 1793483652229
+    },
+    {
+      "sequence": 9,
+      "type": "twitch.connected",
+      "at": 1793483665020
+    },
+    {
+      "sequence": 10,
+      "type": "action.start",
+      "at": 1793483666146
+    },
+    {
+      "sequence": 11,
+      "type": "round.opened",
+      "at": 1793483673601
+    },
+    {
+      "sequence": 12,
+      "type": "round.closing",
+      "at": 1793483675811
+    },
+    {
+      "sequence": 13,
+      "type": "round.closed",
+      "at": 1793483679039
+    },
+    {
+      "sequence": 14,
+      "type": "round.resolved",
+      "at": 1793483686702
+    },
+    {
+      "sequence": 15,
+      "type": "action.apply-choice",
+      "at": 1793483688975
+    },
+    {
+      "sequence": 16,
+      "type": "action.stamp-parcel",
+      "at": 1793483692100
+    },
+    {
+      "sequence": 17,
+      "type": "round.opened",
+      "at": 1793483694360
+    },
+    {
+      "sequence": 18,
+      "type": "action.offer",
+      "at": 1793483694360
+    },
+    {
+      "sequence": 19,
+      "type": "round.closing",
+      "at": 1793483696745
+    },
+    {
+      "sequence": 20,
+      "type": "round.closed",
+      "at": 1793483699902
+    },
+    {
+      "sequence": 21,
+      "type": "round.resolved",
+      "at": 1793483706371
+    },
+    {
+      "sequence": 22,
+      "type": "action.decline",
+      "at": 1793483716848
+    },
+    {
+      "sequence": 23,
+      "type": "action.apply-choice",
+      "at": 1793483716848
+    },
+    {
+      "sequence": 24,
+      "type": "round.opened",
+      "at": 1793483719453
+    },
+    {
+      "sequence": 25,
+      "type": "action.offer",
+      "at": 1793483719453
+    },
+    {
+      "sequence": 26,
+      "type": "round.closing",
+      "at": 1793483721804
+    },
+    {
+      "sequence": 27,
+      "type": "round.closed",
+      "at": 1793483725982
+    },
+    {
+      "sequence": 28,
+      "type": "round.resolved",
+      "at": 1793483733099
+    },
+    {
+      "sequence": 29,
+      "type": "action.accept",
+      "at": 1793483735301
+    },
+    {
+      "sequence": 30,
+      "type": "action.apply-choice",
+      "at": 1793483735301
+    },
+    {
+      "sequence": 31,
+      "type": "action.arrive",
+      "at": 1793483736765
+    },
+    {
+      "sequence": 32,
+      "type": "action.open-parcel",
+      "at": 1793483756883
+    },
+    {
+      "sequence": 33,
+      "type": "round.opened",
+      "at": 1793483785035
+    },
+    {
+      "sequence": 34,
+      "type": "round.closing",
+      "at": 1793483787771
+    },
+    {
+      "sequence": 35,
+      "type": "round.closed",
+      "at": 1793483792211
+    },
+    {
+      "sequence": 36,
+      "type": "round.resolved",
+      "at": 1793483799993
+    },
+    {
+      "sequence": 37,
+      "type": "action.offer",
+      "at": 1793483802726
+    },
+    {
+      "sequence": 38,
+      "type": "action.apply-choice",
+      "at": 1793483802726
+    },
+    {
+      "sequence": 39,
+      "type": "action.accept",
+      "at": 1793483805161
+    },
+    {
+      "sequence": 40,
+      "type": "action.arrive",
+      "at": 1793483806622
+    },
+    {
+      "sequence": 41,
+      "type": "round.opened",
+      "at": 1793483814770
+    },
+    {
+      "sequence": 42,
+      "type": "round.closing",
+      "at": 1793483817465
+    },
+    {
+      "sequence": 43,
+      "type": "round.closed",
+      "at": 1793483821758
+    },
+    {
+      "sequence": 44,
+      "type": "round.resolved",
+      "at": 1793483825859
+    },
+    {
+      "sequence": 45,
+      "type": "action.apply-choice",
+      "at": 1793483836196
+    },
+    {
+      "sequence": 46,
+      "type": "action.finish-parcel",
+      "at": 1793483839019
+    }
+  ],
+  "earlyEnd": {
+    "observedAt": "2026-10-31T21:57:47.416Z",
+    "phase": "ended",
+    "beat": "curtain",
+    "sequence": 47,
+    "reservationStatus": "closing",
+    "quotaActive": true,
+    "roomsRemaining": 0,
+    "deadline": 1793484801614,
+    "finalCue": "Close the sorting office",
+    "owner": "A",
+    "parcel": {
+      "tag": "MP-9B7B4FFB",
+      "damage": 0.48,
+      "ending": "keep",
+      "opened": true,
+      "stamped": true,
+      "contents": "garden",
+      "openedAt": 1793483756883,
+      "transformedRoom": "A"
+    }
+  },
+  "retryClosure": {
+    "observedAt": "2026-10-31T21:58:47.281Z",
+    "status": "closed",
+    "phase": "ended",
+    "quotaActive": false,
+    "roomsRemaining": 0,
+    "closedAt": 1793483893827,
+    "retryButtonClicks": 1,
+    "browserVideoElements": 0,
+    "pendingNoticeResolved": true
+  }
+}

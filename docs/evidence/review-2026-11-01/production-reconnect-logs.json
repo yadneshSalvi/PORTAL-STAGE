@@ -1,0 +1,126 @@
+{
+  "capturedAt": "2026-10-31T21:46:30.609Z",
+  "showId": "ps_c39a971c7d948d0e",
+  "logs": [
+    {
+      "level": "warn",
+      "timestamp": "2026-10-31T21:42:34.101Z",
+      "message": "ping timeout triggered. last pong received at: Sat, 31 Oct 2026 21:42:19 GMT Object"
+    },
+    {
+      "level": "warn",
+      "timestamp": "2026-10-31T21:42:34.355Z",
+      "message": "signal disconnected Object"
+    },
+    {
+      "level": "warn",
+      "timestamp": "2026-10-31T21:42:38.563Z",
+      "message": "ping timeout triggered. last pong received at: Sat, 31 Oct 2026 21:42:23 GMT Object"
+    },
+    {
+      "level": "warn",
+      "timestamp": "2026-10-31T21:42:38.815Z",
+      "message": "signal disconnected Object"
+    },
+    {
+      "level": "error",
+      "timestamp": "2026-10-31T21:42:39.340Z",
+      "message": "cannot send signal request before connected, type: offer Object"
+    },
+    {
+      "level": "error",
+      "timestamp": "2026-10-31T21:42:39.342Z",
+      "message": "cannot send signal request before connected, type: offer Object"
+    },
+    {
+      "level": "warn",
+      "timestamp": "2026-10-31T21:42:40.693Z",
+      "message": "peerconnection failed disconnected Object"
+    },
+    {
+      "level": "warn",
+      "timestamp": "2026-10-31T21:42:41.102Z",
+      "message": "already attempting reconnect, returning early Object"
+    },
+    {
+      "level": "warn",
+      "timestamp": "2026-10-31T21:42:41.271Z",
+      "message": "peerconnection failed disconnected Object"
+    },
+    {
+      "level": "warn",
+      "timestamp": "2026-10-31T21:42:41.723Z",
+      "message": "already attempting reconnect, returning early Object"
+    },
+    {
+      "level": "error",
+      "timestamp": "2026-10-31T21:42:42.166Z",
+      "message": "error reading from signal stream Object"
+    },
+    {
+      "level": "error",
+      "timestamp": "2026-10-31T21:42:47.178Z",
+      "message": "error reading from signal stream Object"
+    },
+    {
+      "level": "error",
+      "timestamp": "2026-10-31T21:42:49.590Z",
+      "message": "room connection has timed out (signal) Object"
+    },
+    {
+      "level": "warn",
+      "timestamp": "2026-10-31T21:42:49.590Z",
+      "message": "reconnect disconnected Object"
+    },
+    {
+      "level": "warn",
+      "timestamp": "2026-10-31T21:42:54.302Z",
+      "message": "negotiation disconnected Object"
+    },
+    {
+      "level": "warn",
+      "timestamp": "2026-10-31T21:42:54.303Z",
+      "message": "negotiation disconnected Object"
+    },
+    {
+      "level": "warn",
+      "timestamp": "2026-10-31T21:42:54.303Z",
+      "message": "negotiation disconnected Object"
+    },
+    {
+      "level": "warn",
+      "timestamp": "2026-10-31T21:42:54.303Z",
+      "message": "negotiation disconnected Object"
+    },
+    {
+      "level": "warn",
+      "timestamp": "2026-10-31T21:42:54.303Z",
+      "message": "Abort connection attempt due to user initiated disconnect Object"
+    },
+    {
+      "level": "error",
+      "timestamp": "2026-10-31T21:42:54.303Z",
+      "message": "cannot send signal request before connected, type: leave Object"
+    },
+    {
+      "level": "warn",
+      "timestamp": "2026-10-31T21:42:54.313Z",
+      "message": "Got disconnected during reconnection attempt Object"
+    },
+    {
+      "level": "error",
+      "timestamp": "2026-10-31T21:42:54.316Z",
+      "message": "room connection has timed out (signal) Object"
+    },
+    {
+      "level": "warn",
+      "timestamp": "2026-10-31T21:42:54.316Z",
+      "message": "reconnect disconnected Object"
+    },
+    {
+      "level": "error",
+      "timestamp": "2026-10-31T21:42:57.320Z",
+      "message": "signal timed out after 3000 ms Object"
+    }
+  ]
+}

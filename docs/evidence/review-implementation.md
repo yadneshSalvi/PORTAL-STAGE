@@ -1,6 +1,6 @@
 # Review implementation checkpoint — 1 November 2026
 
-This record covers the `review/portal-improvements` implementation after baseline `2994fc6`. It is separate from the earlier deployed physical-camera walkthrough. Expanded story, local-camera, public solo, and app Workflow expiry acceptance are pending the root's frozen-build/browser and deployment checks; no new remote-human, gesture-accuracy, OBS, or audience-engagement result is inferred from the code.
+This record covers the review implementation after baseline `2994fc6`, now released from `96fea878`. Root completed the frozen-build and production checks described in [production verification](review-2026-11-01/production-verification.md), including both authored stories, physical local camera initialization, actual host-account Twitch solo handoffs, and the deployed 20-minute expiry. No remote-human, gesture-accuracy, OBS, or independent audience-engagement result is inferred from these observations.
 
 ## Implemented boundaries
 
@@ -22,6 +22,8 @@ This is not a hard real-time disconnect guarantee. A scheduler, database, networ
 
 ## Gates and dependencies
 
+The final release is `96fea8781dd86bf23a95126247b1e703b8babde9`, with runtime source from `16b1100`. It passed 370 tests, seven opt-in skips, whole-tree typecheck, formatting, diff checks, and an 18-page optimized build. The seven separately passing actual-Neon tests retain identical recorded source hashes. The final additions correct opaque Twitch notification IDs, reflect the current browser's connector status, and distinguish initial JWT lifetime from session expiry. [Exact final gates](review-2026-11-01/feature-gates.json).
+
 The integrated runtime is committed at **`b8e06733bd5ffc5230c0005543e20f9b9dc2737b`**. Its coherent source checkpoints are `dbb84cf` (local-camera lifecycle), `387dd37` (bound audience choices, capped solo reservation/closure and choice controls), and `b8e0673` (authored episodes, media/UI and local hand cues).
 
 | Gate                   | Observed result at that runtime boundary                                                                             |
@@ -36,9 +38,9 @@ Root separately reported **seven passing actual Neon tests**, with zero failures
 
 Workflow is pinned to 5.2.3. Compatible overrides patch the installed Zod and Undici advisories and the newer named-API minimatch consumers. The remaining dependency audit finding is the moderate minimatch advisory in Workflow CLI's legacy `@oclif/core → ejs → jake → filelist → minimatch` chain. This app does not invoke that CLI or pass audience input to its glob parser. A major incompatible override of filelist's callable minimatch API was not applied. This is a scoped outstanding dependency finding, not a clean audit claim.
 
-## Acceptance still owned by the root
+## Acceptance boundaries after release
 
-Run both full authored episodes on the frozen build, confirm tally/credit/effect visuals and the distinct endings, exercise a physical local-only camera in production Chrome while auditing media traffic, and verify departure/end cleanup. Test ordinary authenticated solo issuance and actual app Workflow closure after the browser is closed, including Cloud replay rejection and immutable deadline/cap behavior. Exercise genuine second-account Twitch choices/effects when that account can sign in. A second account controlled by the same user is not a second remote performer.
+Both complete authored episodes, explicit empty-ballot attribution, physical Chrome camera initialization/end cleanup, actual host-account solo issuance, and actual deployed expiry with refreshed-token rejection are now recorded. The expiry browser remained open; it is not an isolated browser-absent observation. Solo Parcel's initial early closure was incomplete and succeeded after one visible Retry; its cause was not identified. Worker-inclusive traffic capture, physical hand accuracy, ordinary non-allowlisted OAuth, and genuine second-account Twitch choices/effects remain separate checks. A second account controlled by the same user is not a second remote performer.
 
 S8 still requires two consenting humans on separate networks, microphones/echo checks, and an authorized actual OBS broadcast. Preserve that gap explicitly. No private footage, consent receipts, raw tokens, or fabricated observations belong in tracked evidence.
 

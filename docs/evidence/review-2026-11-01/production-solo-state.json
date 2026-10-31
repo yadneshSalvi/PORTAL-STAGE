@@ -1,0 +1,435 @@
+{
+  "observedAt": "2026-10-31T21:49:22.649Z",
+  "showId": "ps_c39a971c7d948d0e",
+  "mode": "solo",
+  "phase": "live",
+  "beat": "shelter",
+  "sequence": 69,
+  "episode": "borrowed-weather",
+  "weather": "gentle",
+  "creature": {
+    "id": "ps_c39a971c7d948d0e-pip-1",
+    "mood": "wild",
+    "hatched": true,
+    "hatchedAt": 1793483233572,
+    "shelterOwner": "A"
+  },
+  "parcel": null,
+  "umbrella": {
+    "id": "ps_c39a971c7d948d0e-umbrella-1",
+    "armed": true,
+    "owner": "A",
+    "version": 8,
+    "wetness": 0.29250000000000004,
+    "transfer": {
+      "id": "ps_c39a971c7d948d0e-transfer-60",
+      "to": "A",
+      "from": "B",
+      "status": "arrived",
+      "arrivedAt": 1793483258139,
+      "expiresAt": 1793483274384,
+      "offeredAt": 1793483254384,
+      "committedAt": 1793483256641,
+      "commitSequence": 62
+    },
+    "repairPatch": "coral",
+    "acceptedTransfers": 2
+  },
+  "decisions": {
+    "mood": {
+      "at": 1793483230744,
+      "choice": "curious",
+      "source": "director",
+      "voters": 0,
+      "roundId": "ps_c39a971c7d948d0e-round-49",
+      "contributors": []
+    },
+    "name": {
+      "at": 1793483208822,
+      "choice": "pip2",
+      "source": "director",
+      "voters": 0,
+      "roundId": "ps_c39a971c7d948d0e-round-44",
+      "contributors": []
+    },
+    "accept": {
+      "at": 1793483178761,
+      "choice": "accept",
+      "source": "audience",
+      "voters": 1,
+      "roundId": "ps_c39a971c7d948d0e-round-36",
+      "contributors": ["yadneshujwal"]
+    },
+    "ending": {
+      "at": 1793483316624,
+      "choice": "chase",
+      "source": "director",
+      "voters": 0,
+      "roundId": "ps_c39a971c7d948d0e-round-64",
+      "contributors": []
+    },
+    "weather": {
+      "at": 1793482930444,
+      "choice": "gentle",
+      "source": "director",
+      "voters": 0,
+      "roundId": "ps_c39a971c7d948d0e-round-11",
+      "contributors": []
+    },
+    "giveback": {
+      "at": 1793483254384,
+      "choice": "giveback",
+      "source": "audience",
+      "voters": 1,
+      "roundId": "ps_c39a971c7d948d0e-round-55",
+      "contributors": ["yadneshujwal"]
+    }
+  },
+  "events": [
+    {
+      "sequence": 1,
+      "type": "show.created",
+      "at": 1793482345011
+    },
+    {
+      "sequence": 2,
+      "type": "renderer.acquired",
+      "at": 1793482346426
+    },
+    {
+      "sequence": 3,
+      "type": "twitch.connected",
+      "at": 1793482390984
+    },
+    {
+      "sequence": 4,
+      "type": "action.consent",
+      "at": 1793482401871
+    },
+    {
+      "sequence": 5,
+      "type": "action.calibrate",
+      "at": 1793482402133
+    },
+    {
+      "sequence": 6,
+      "type": "media.grant",
+      "at": 1793482424247
+    },
+    {
+      "sequence": 7,
+      "type": "action.presence",
+      "at": 1793482425041
+    },
+    {
+      "sequence": 8,
+      "type": "action.ready",
+      "at": 1793482455731
+    },
+    {
+      "sequence": 9,
+      "type": "action.admit",
+      "at": 1793482504951
+    },
+    {
+      "sequence": 10,
+      "type": "action.start",
+      "at": 1793482553994
+    },
+    {
+      "sequence": 11,
+      "type": "round.opened",
+      "at": 1793482556528
+    },
+    {
+      "sequence": 12,
+      "type": "round.closing",
+      "at": 1793482588220
+    },
+    {
+      "sequence": 13,
+      "type": "round.closed",
+      "at": 1793482589957
+    },
+    {
+      "sequence": 14,
+      "type": "round.resolved",
+      "at": 1793482713926
+    },
+    {
+      "sequence": 15,
+      "type": "action.presence",
+      "at": 1793482804197
+    },
+    {
+      "sequence": 16,
+      "type": "twitch.connected",
+      "at": 1793482847175
+    },
+    {
+      "sequence": 17,
+      "type": "action.consent",
+      "at": 1793482850042
+    },
+    {
+      "sequence": 18,
+      "type": "action.calibrate",
+      "at": 1793482850276
+    },
+    {
+      "sequence": 19,
+      "type": "audience.presence",
+      "at": 1793482858270
+    },
+    {
+      "sequence": 20,
+      "type": "media.grant",
+      "at": 1793482868265
+    },
+    {
+      "sequence": 21,
+      "type": "action.presence",
+      "at": 1793482868905
+    },
+    {
+      "sequence": 22,
+      "type": "audience.presence",
+      "at": 1793482919231
+    },
+    {
+      "sequence": 23,
+      "type": "action.ready",
+      "at": 1793482926773
+    },
+    {
+      "sequence": 24,
+      "type": "action.admit",
+      "at": 1793482930082
+    },
+    {
+      "sequence": 25,
+      "type": "action.apply-weather",
+      "at": 1793482930444
+    },
+    {
+      "sequence": 26,
+      "type": "round.opened",
+      "at": 1793482936781
+    },
+    {
+      "sequence": 27,
+      "type": "action.offer",
+      "at": 1793482936781
+    },
+    {
+      "sequence": 28,
+      "type": "round.vote",
+      "at": 1793482947829
+    },
+    {
+      "sequence": 29,
+      "type": "transfer.cancelled",
+      "at": 1793482959449
+    },
+    {
+      "sequence": 30,
+      "type": "round.cancelled",
+      "at": 1793482959449
+    },
+    {
+      "sequence": 31,
+      "type": "action.presence",
+      "at": 1793482959449
+    },
+    {
+      "sequence": 32,
+      "type": "action.presence",
+      "at": 1793482984091
+    },
+    {
+      "sequence": 33,
+      "type": "action.presence",
+      "at": 1793483149552
+    },
+    {
+      "sequence": 34,
+      "type": "action.ready",
+      "at": 1793483152462
+    },
+    {
+      "sequence": 35,
+      "type": "action.admit",
+      "at": 1793483154382
+    },
+    {
+      "sequence": 36,
+      "type": "round.opened",
+      "at": 1793483160147
+    },
+    {
+      "sequence": 37,
+      "type": "action.offer",
+      "at": 1793483160147
+    },
+    {
+      "sequence": 38,
+      "type": "round.vote",
+      "at": 1793483162970
+    },
+    {
+      "sequence": 39,
+      "type": "round.closing",
+      "at": 1793483169123
+    },
+    {
+      "sequence": 40,
+      "type": "round.closed",
+      "at": 1793483172715
+    },
+    {
+      "sequence": 41,
+      "type": "action.accept",
+      "at": 1793483178761
+    },
+    {
+      "sequence": 42,
+      "type": "action.apply-choice",
+      "at": 1793483178761
+    },
+    {
+      "sequence": 43,
+      "type": "action.arrive",
+      "at": 1793483180220
+    },
+    {
+      "sequence": 44,
+      "type": "round.opened",
+      "at": 1793483185866
+    },
+    {
+      "sequence": 45,
+      "type": "round.closing",
+      "at": 1793483187808
+    },
+    {
+      "sequence": 46,
+      "type": "round.closed",
+      "at": 1793483191856
+    },
+    {
+      "sequence": 47,
+      "type": "round.resolved",
+      "at": 1793483198938
+    },
+    {
+      "sequence": 48,
+      "type": "action.apply-choice",
+      "at": 1793483208822
+    },
+    {
+      "sequence": 49,
+      "type": "round.opened",
+      "at": 1793483221109
+    },
+    {
+      "sequence": 50,
+      "type": "round.closing",
+      "at": 1793483223175
+    },
+    {
+      "sequence": 51,
+      "type": "round.closed",
+      "at": 1793483226580
+    },
+    {
+      "sequence": 52,
+      "type": "round.resolved",
+      "at": 1793483228546
+    },
+    {
+      "sequence": 53,
+      "type": "action.apply-choice",
+      "at": 1793483230744
+    },
+    {
+      "sequence": 54,
+      "type": "action.hatch",
+      "at": 1793483233572
+    },
+    {
+      "sequence": 55,
+      "type": "round.opened",
+      "at": 1793483235746
+    },
+    {
+      "sequence": 56,
+      "type": "round.vote",
+      "at": 1793483239970
+    },
+    {
+      "sequence": 57,
+      "type": "round.closing",
+      "at": 1793483242572
+    },
+    {
+      "sequence": 58,
+      "type": "round.closed",
+      "at": 1793483245873
+    },
+    {
+      "sequence": 59,
+      "type": "audience.presence",
+      "at": 1793483251657
+    },
+    {
+      "sequence": 60,
+      "type": "action.offer",
+      "at": 1793483254384
+    },
+    {
+      "sequence": 61,
+      "type": "action.apply-choice",
+      "at": 1793483254384
+    },
+    {
+      "sequence": 62,
+      "type": "action.accept",
+      "at": 1793483256641
+    },
+    {
+      "sequence": 63,
+      "type": "action.arrive",
+      "at": 1793483258139
+    },
+    {
+      "sequence": 64,
+      "type": "round.opened",
+      "at": 1793483276720
+    },
+    {
+      "sequence": 65,
+      "type": "round.closing",
+      "at": 1793483288993
+    },
+    {
+      "sequence": 66,
+      "type": "round.closed",
+      "at": 1793483293893
+    },
+    {
+      "sequence": 67,
+      "type": "round.resolved",
+      "at": 1793483314579
+    },
+    {
+      "sequence": 68,
+      "type": "action.apply-choice",
+      "at": 1793483316624
+    },
+    {
+      "sequence": 69,
+      "type": "action.shelter",
+      "at": 1793483319171
+    }
+  ]
+}

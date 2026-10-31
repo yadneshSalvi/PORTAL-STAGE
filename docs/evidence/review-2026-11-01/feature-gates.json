@@ -32,7 +32,8 @@
       "Postgres renderer lease integration enforces the rate limit and does not write an unchanged snapshot",
       "Postgres renderer lease integration fences old mount renewals and released mounts without changing the new epoch"
     ],
-    "coreSourceIdenticalToFinal": true
+    "coreSourceIdenticalToFinal": true,
+    "coreSourceIdenticalToRelease": true
   },
   "knownSecretExposure": {
     "checkedAt": "2026-10-31T21:20:57.853Z",
@@ -57,5 +58,18 @@
     "build": "passed",
     "reportedBy": "integration lead",
     "scope": "Only choice CTA and episode-specific rehearsal labels changed after the browser/core protocol checks."
+  },
+  "releaseGates": {
+    "sourceCommit": "96fea8781dd86bf23a95126247b1e703b8babde9",
+    "runtimeCommit": "16b11003dd066424f30e93dc2c04dfaccb3e072e",
+    "buildId": "jKHgKbotO8fc4sJHSBn3c",
+    "fullPassed": 370,
+    "optInSkipped": 7,
+    "typecheck": "passed",
+    "format": "passed",
+    "diffCheck": "passed",
+    "build": "passed",
+    "reportedBy": "integration lead, final run before source freeze",
+    "changesAfterFeatureProtocol": "Opaque Twitch notification IDs accepted; current-browser chat status; regression coverage distinguishing join-token expiry and session expiry."
   }
 }

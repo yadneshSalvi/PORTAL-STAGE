@@ -1,0 +1,93 @@
+{
+  "format": "portal-stage.app-solo-expiry-probe/v1",
+  "provenance": "Production probe through official app pairing/token endpoints and a receive-only LiveKit Cloud transport; successful issuance/connection are recorded explicitly. No published tracks, recordings, manufactured viewer JWTs or direct database writes. Workflow inspection is separate.",
+  "status": "passed",
+  "startedAt": "2026-10-31T21:33:03.235Z",
+  "finishedAt": "2026-10-31T21:52:49.488Z",
+  "showId": "ps_c39a971c7d948d0e",
+  "origin": "https://portal-stage-eight.vercel.app",
+  "expectedDeadlineMs": 1793483545012,
+  "expectedRunId": "wrun_41M69Y1JK10GGK1YJ6BK5DTED2",
+  "refreshCount": 4,
+  "disconnects": [
+    {
+      "at": "2026-10-31T21:52:28.271Z",
+      "atMs": 1793483548271,
+      "reason": 4,
+      "reasonName": "PARTICIPANT_REMOVED",
+      "localCleanup": false
+    }
+  ],
+  "postExpiryMint": {
+    "observedAt": "2026-10-31T21:52:28.566Z",
+    "status": 403,
+    "code": "show_access",
+    "tokenReturned": false,
+    "denied": true
+  },
+  "finalRooms": {
+    "observedAt": "2026-10-31T21:52:49.487Z",
+    "count": 0,
+    "rooms": []
+  },
+  "expiryDisconnectObserved": true,
+  "before": {
+    "observedAt": "2026-10-31T21:33:05.550Z",
+    "mode": "solo",
+    "phase": "backstage",
+    "publicStatus": "scheduled",
+    "reservationStatus": "scheduled",
+    "runId": "wrun_41M69Y1JK10GGK1YJ6BK5DTED2",
+    "deadlineMs": 1793483545012,
+    "publicDeadlineMs": 1793483545012,
+    "closedAtMs": null,
+    "quotaActive": true
+  },
+  "after": {
+    "observedAt": "2026-10-31T21:52:48.531Z",
+    "mode": "solo",
+    "phase": "ended",
+    "publicStatus": "closed",
+    "reservationStatus": "closed",
+    "runId": "wrun_41M69Y1JK10GGK1YJ6BK5DTED2",
+    "deadlineMs": 1793483545012,
+    "publicDeadlineMs": 1793483545012,
+    "closedAtMs": 1793483550118,
+    "quotaActive": false
+  },
+  "issuedIdentityCountBeforeReplay": 5,
+  "issuedIdentityCountAfterReplay": 5,
+  "replay": {
+    "attempted": true,
+    "source": "actual SDK TokenRefreshed event",
+    "attemptedAt": "2026-10-31T21:52:38.633Z",
+    "refreshedAt": "2026-10-31T21:48:02.735Z",
+    "validAtAttempt": true,
+    "connected": false,
+    "rejected": true,
+    "authenticationRejection": true,
+    "finishedAt": "2026-10-31T21:52:46.472Z",
+    "validAtResult": true,
+    "refreshedJwtExpiresAtSeconds": 1793483882
+  },
+  "workflow": {
+    "runId": "wrun_41M69Y1JK10GGK1YJ6BK5DTED2",
+    "status": "completed",
+    "createdAt": "2026-10-31T21:32:25.202Z",
+    "startedAt": "2026-10-31T21:32:26.411Z",
+    "completedAt": "2026-10-31T21:52:30.992Z",
+    "deploymentId": "dpl_Tty6pbCz4qB7t724hxvRNuUkRKzZ",
+    "workflowName": "workflow//./src/workflows/solo-expiry//expireSoloSession"
+  },
+  "browser": {
+    "beforeDeadlineSeconds": 33,
+    "physicalVideoWidth": 1280,
+    "physicalVideoHeight": 720,
+    "afterAt": "2026-10-31T21:52:28.376Z",
+    "videoElements": 0,
+    "phase": "ended",
+    "manualEndClicked": false,
+    "pendingClosureNoticeResolved": true
+  },
+  "scope": "Browser remained open; application deadline safeguards and deployed Workflow were active. This is a real elapsed20-minute app reservation, not an edited deadline or direct provider cleanup. No browser absence/isolation claim."
+}

@@ -1,0 +1,172 @@
+{
+  "observedAt": "2026-10-31T21:49:24.969Z",
+  "showId": "ps_1039d24c67241fae",
+  "mode": "rehearsal",
+  "phase": "ended",
+  "beat": "curtain",
+  "sequence": 21,
+  "episode": "midnight-parcel",
+  "weather": null,
+  "creature": {
+    "id": "ps_1039d24c67241fae-pip-1",
+    "mood": "gentle",
+    "hatched": false,
+    "hatchedAt": null,
+    "shelterOwner": "A"
+  },
+  "parcel": {
+    "tag": "MP-67241FAE",
+    "damage": 0.48,
+    "ending": "deliver",
+    "opened": true,
+    "stamped": true,
+    "contents": "stars",
+    "openedAt": 1793482789787,
+    "transformedRoom": "B"
+  },
+  "umbrella": {
+    "id": "ps_1039d24c67241fae-parcel-1",
+    "armed": true,
+    "owner": "A",
+    "version": 7,
+    "wetness": 0,
+    "transfer": {
+      "id": "ps_1039d24c67241fae-transfer-13",
+      "to": "A",
+      "from": "B",
+      "status": "arrived",
+      "arrivedAt": 1793482797866,
+      "expiresAt": 1793482813364,
+      "offeredAt": 1793482793364,
+      "committedAt": 1793482796306,
+      "commitSequence": 14
+    },
+    "repairPatch": "coral",
+    "acceptedTransfers": 2
+  },
+  "decisions": {
+    "contents": {
+      "at": 1793482747575,
+      "choice": "stars",
+      "source": "rehearsal",
+      "voters": 1,
+      "roundId": "ps_1039d24c67241fae-round-4",
+      "contributors": []
+    },
+    "parcel-ending": {
+      "at": 1793482820061,
+      "choice": "deliver",
+      "source": "rehearsal",
+      "voters": 1,
+      "roundId": "ps_1039d24c67241fae-round-16",
+      "contributors": []
+    }
+  },
+  "events": [
+    {
+      "sequence": 1,
+      "type": "show.created",
+      "at": 1793482709781
+    },
+    {
+      "sequence": 2,
+      "type": "renderer.acquired",
+      "at": 1793482710641
+    },
+    {
+      "sequence": 3,
+      "type": "action.start",
+      "at": 1793482725497
+    },
+    {
+      "sequence": 4,
+      "type": "round.opened",
+      "at": 1793482729085
+    },
+    {
+      "sequence": 5,
+      "type": "round.vote",
+      "at": 1793482732179
+    },
+    {
+      "sequence": 6,
+      "type": "round.closed",
+      "at": 1793482732449
+    },
+    {
+      "sequence": 7,
+      "type": "action.apply-choice",
+      "at": 1793482747575
+    },
+    {
+      "sequence": 8,
+      "type": "action.stamp-parcel",
+      "at": 1793482751559
+    },
+    {
+      "sequence": 9,
+      "type": "action.offer",
+      "at": 1793482755232
+    },
+    {
+      "sequence": 10,
+      "type": "action.accept",
+      "at": 1793482758428
+    },
+    {
+      "sequence": 11,
+      "type": "action.arrive",
+      "at": 1793482760058
+    },
+    {
+      "sequence": 12,
+      "type": "action.open-parcel",
+      "at": 1793482789787
+    },
+    {
+      "sequence": 13,
+      "type": "action.offer",
+      "at": 1793482793364
+    },
+    {
+      "sequence": 14,
+      "type": "action.accept",
+      "at": 1793482796306
+    },
+    {
+      "sequence": 15,
+      "type": "action.arrive",
+      "at": 1793482797866
+    },
+    {
+      "sequence": 16,
+      "type": "round.opened",
+      "at": 1793482811833
+    },
+    {
+      "sequence": 17,
+      "type": "round.vote",
+      "at": 1793482814825
+    },
+    {
+      "sequence": 18,
+      "type": "round.closed",
+      "at": 1793482815184
+    },
+    {
+      "sequence": 19,
+      "type": "action.apply-choice",
+      "at": 1793482820061
+    },
+    {
+      "sequence": 20,
+      "type": "action.finish-parcel",
+      "at": 1793482822880
+    },
+    {
+      "sequence": 21,
+      "type": "action.end",
+      "at": 1793483330510
+    }
+  ]
+}

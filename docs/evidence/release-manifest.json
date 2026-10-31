@@ -1,309 +1,331 @@
 {
-  "format": "portal-stage.release-evidence/v1",
-  "evidenceAsOf": "2026-10-31T16:47:35.065143+00:00",
-  "sourceCommit": "a9fd9242ef69a9b6b5052168c9564e4d5e5e63be",
+  "format": "portal-stage.release-evidence/v2",
+  "evidenceAsOf": "2026-10-31T22:00:16.431176+00:00",
   "repository": "https://github.com/yadneshSalvi/PORTAL-STAGE",
-  "deployment": {
-    "id": "dpl_44zp8zqCqQFPLgxxP4Gofn8NdP6z",
-    "url": "https://portal-stage-eight.vercel.app",
-    "status": "Ready",
-    "verification": "Final pending-camera-on-end guard: 184 tests, typecheck/format/build, deployed landing reload and ended-Program reload with zero video elements passed. Full physical-camera Cloud walkthrough belongs to preceding source12df783 and is recorded separately.",
-    "uniqueUrl": "https://portal-stage-m7jqdtxki-yadneshsalvis-projects.vercel.app"
+  "sourceCommit": "96fea8781dd86bf23a95126247b1e703b8babde9",
+  "runtimeCommit": "16b11003dd066424f30e93dc2c04dfaccb3e072e",
+  "sourceTrees": {
+    "src": "4d560a89d5e4fefb88c1ba6a57470b4b39b3c485",
+    "server": "1494f2679744789fdf4f9dc144ac0246493c8989",
+    "workflow": "bb88e1fb6197b8fbfdaf0e6c30982f77854bf176"
   },
-  "checks": {
-    "lastFullAutomatedRun": {
-      "passed": 184,
-      "skipped": 3,
-      "passedFiles": 20,
-      "skippedFiles": 1,
-      "seconds": 1.69,
-      "condition": "Includes the final pending-camera-on-show-end guard and late-grant lifecycle regression."
-    },
-    "finalVisionRegression": {
-      "passed": 35,
-      "condition": "Earlier focused no-hand status check; covered by the latest full run."
-    },
-    "actualNeonIntegration": {
-      "passed": 3,
-      "condition": "Separate opt-in run with random test rows created and deleted."
-    },
+  "packageLockSha256": "6f046645ea0614f7ec104641f23711a6624892c72df13f74409fb78727f8e427",
+  "deployment": {
+    "id": "dpl_mUKo1r1j3ojraoWWmKWgToPeGCp5",
+    "url": "https://portal-stage-eight.vercel.app",
+    "uniqueUrl": "https://portal-stage-o8yk3wwet-yadneshsalvis-projects.vercel.app",
+    "status": "READY",
+    "remoteBuild": "passed;18pages,18Workflowsteps,1workflow"
+  },
+  "gates": {
+    "sourceCommit": "96fea8781dd86bf23a95126247b1e703b8babde9",
+    "runtimeCommit": "16b11003dd066424f30e93dc2c04dfaccb3e072e",
+    "buildId": "jKHgKbotO8fc4sJHSBn3c",
+    "fullPassed": 370,
+    "optInSkipped": 7,
     "typecheck": "passed",
-    "formatting": "passed",
-    "optimizedBuild": "passed",
-    "localSyntheticMedia": "Full two-session protocol and recovery passed through a real local SFU.",
-    "localDecoderRegression": "First pictures, preview open/close and guest reconnect passed without the initial workaround.",
-    "localHandRuntime": "Successful inference on synthetic frames displayed active tracking with no selected hand detected.",
-    "cloudServerAuthentication": "LiveKit RoomService authentication passed; this is not browser media proof.",
-    "productionRehearsal": {
-      "showId": "ps_626f0fa0ece57a9b",
-      "sequence": 15,
-      "owner": "A",
-      "version": 6,
-      "wetness": 0.52,
-      "repairPatch": "coral",
-      "input": "Explicit synthetic test ballot and generated stage plates",
-      "sourceCommit": "bf5cf4df746dff48c700e8548516b0cfdc2dbc66",
-      "deploymentId": "dpl_2SJnnjbvEHn5XhCbWtwPBXruvDnv"
+    "format": "passed",
+    "diffCheck": "passed",
+    "build": "passed",
+    "reportedBy": "integration lead, final run before source freeze",
+    "changesAfterFeatureProtocol": "Opaque Twitch notification IDs accepted; current-browser chat status; regression coverage distinguishing join-token expiry and session expiry."
+  },
+  "actualNeon": {
+    "passed": 7,
+    "failed": 0,
+    "skipped": 0,
+    "capturedSourceUnchanged": true,
+    "artifact": "review-2026-11-01/feature-gates.json"
+  },
+  "production": {
+    "actualTwitch": "Host account only; actual opaque-ID failure fixed, ordered presence effects, accept/giveback ballots and both handoffs. No independent viewer claim.",
+    "soloWeatherShow": "ps_c39a971c7d948d0e",
+    "appExpiry": {
+      "status": "passed",
+      "workflowStatus": "completed",
+      "reservationClosed": true,
+      "quotaActive": false,
+      "roomsRemaining": 0,
+      "validRefreshedTokenReplayRejected": true,
+      "browserRemainedOpen": true,
+      "artifact": "review-2026-11-01/app-solo-expiry.json"
     },
-    "productionTwitchOAuth": "passed",
-    "productionEventSub": "Connected and displayed Listening for !gentle and !wild in Twitch chat.",
-    "productionMobileLanding": {
-      "viewport": "390x844",
-      "horizontalOverflow": false,
-      "documentWidth": 375,
-      "viewportWidth": 390
+    "soloParcel": {
+      "showId": "ps_fd9d44159b7b4ffb",
+      "completeStorySequence": 46,
+      "endSequence": 47,
+      "initialClosure": "incomplete;causeunknown",
+      "explicitRetryClicks": 1,
+      "closed": true,
+      "quotaActive": false,
+      "roomsRemaining": 0,
+      "artifact": "review-2026-11-01/production-solo-parcel.json"
     },
-    "productionVisionAssets": "Worker, model and SIMD WASM returned HTTP 200 and matched local files byte for byte.",
-    "productionSessionCaching": "HTTP 200 with Cache-Control: no-store, private.",
-    "productionCameraPermissionFeedback": {
-      "sourceCommit": "12df783729263a051264ddeef88a29b7aa8ccae7",
-      "reload": "passed",
-      "leaseReacquisition": "passed",
-      "waitingNoticeVisible": true,
-      "enableDisabled": true,
-      "cancelAvailable": true,
-      "privateVideoElements": 0,
-      "permissionGrant": "User allowed production and local guest origins; physical 1280x720 camera preview and Cloud transport passed.",
-      "evidence": "browser/production-camera-permission.jpg"
-    },
-    "localCameraCancellation": "Waiting notice and duplicate-request disable passed; Cancel removed pending controls and re-enabled Enable. No physical media was granted.",
-    "productionCloudMedia": {
-      "showId": "ps_fb3398cc6bde0434",
-      "director": "Canonical production deployment",
-      "guest": "Independent cookie on http://127.0.0.1:3201, local development server from the same source, same Neon/signing/LiveKit Cloud configuration",
-      "physicalDevice": "Same MacBook Pro camera, one computer and network; two participant sessions",
-      "cameraResolution": "1280x720",
-      "programResolution": "1920x1080",
-      "guestReturnResolution": "1920x1080, video-only",
-      "microphonesEnabled": false,
-      "programViewerCanPublish": false,
-      "rawCamerasInProgramRoom": false,
-      "scope": "Actual physical capture and Cloud SFU transport, not two remote humans or separate-network reliability"
-    },
-    "productionTwitchBallot": {
-      "commands": ["!gentle", "!wild"],
-      "uniqueVoters": 1,
-      "tallies": {
-        "gentle": 0,
-        "wild": 1
-      },
-      "result": "wild",
-      "source": "audience",
-      "voteEventSequences": [22, 23],
-      "secondVoteReplacedFirst": true,
-      "synthetic": false,
-      "scope": "Authorized public chat commands from the host account; not independent audience engagement"
-    },
-    "productionCloudStory": {
-      "showId": "ps_fb3398cc6bde0434",
-      "umbrellaId": "ps_fb3398cc6bde0434-umbrella-1",
-      "acceptedByB": {
-        "sequence": 27,
-        "version": 4
-      },
-      "arrivedAtB": {
-        "sequence": 28,
-        "version": 4
-      },
-      "acceptedByA": {
-        "sequence": 31,
-        "version": 6
-      },
-      "arrivedAtA": {
-        "sequence": 32,
-        "version": 6
-      },
-      "shelterSequence": 33,
-      "owner": "A",
-      "version": 6,
-      "wetness": 0.52,
-      "repairPatch": "coral",
-      "creatureMood": "wild"
-    },
-    "productionCloudRecovery": {
-      "panicSequence": 34,
-      "guestCameraWithdrawalSequence": 35,
-      "guestPublishedTracksWhileCameraOff": 0,
-      "guestCameraReenabledSequence": 36,
-      "freshReadinessSequences": [37, 38],
-      "freshAdmissionSequences": [39, 40],
-      "resumeSequence": 41,
-      "scope": "Camera off/on while media room stayed connected; prior full reconnect was separately tested with synthetic sources locally"
-    },
-    "productionCloudShutdown": {
-      "endSequence": 42,
-      "remainingRooms": 0,
-      "directorVideoElements": 0,
-      "guestVideoElements": 0,
-      "programVideoElements": 0,
-      "twitchDisconnected": true,
-      "console": "Intentional disconnect emitted user-initiated data-channel abort/closed-peer/already-unpublished warnings; preserved in shutdown observations."
-    },
-    "pendingCameraOnEnd": {
-      "focusedLifecyclePassed": 42,
-      "lateGrantStopped": true,
-      "previewAttached": false,
-      "mediaTokenRequested": false,
-      "roomCreated": false,
-      "sourceCommit": "a9fd9242ef69a9b6b5052168c9564e4d5e5e63be"
-    },
-    "finalDeploymentBrowser": {
-      "landingReload": "passed",
-      "endedProgramReload": "passed",
-      "endedProgramVideoElements": 0
-    },
-    "finalDeploymentErrorLogs": {
-      "deploymentId": "dpl_44zp8zqCqQFPLgxxP4Gofn8NdP6z",
-      "window": "last 10 minutes at inspection",
-      "limit": 20,
-      "errorRecords": 0,
-      "scope": "Short post-deploy observation, not ongoing monitoring"
-    }
+    "signedOutParcel": "Stars/deliver complete story;explicitly labeled rehearsal test ballots.",
+    "localChromeCamera": "Physical1280x720 muted preview, hand worker active/no hand detected, zero video elements on End. Tab network only; no gesture accuracy claim.",
+    "finalSignedOutLandingAndHowBuilt": "passed"
   },
   "pending": [
-    "Two consenting remote humans on separate devices/networks and physical hand accuracy",
-    "Measured control/media delay",
-    "Physical microphone behavior, echo/synchronization, OBS capture and a public broadcast"
+    "Two remote consenting humans on separate devices/networks",
+    "Physical microphones, audible echo/synchronization and actual OBS broadcast",
+    "Gesture accuracy/alignment and measured input-to-stream delay",
+    "Second-account renewed Twitch login and ordinary non-allowlisted OAuth acceptance",
+    "Reliable native hidden-document browser acceptance",
+    "Organizer source access and project-level licensing"
   ],
+  "historicalRelease": "pre-review-release-manifest.json",
   "artifacts": [
     {
-      "path": "browser/production-landing.jpg",
-      "sha256": "9aa56a2fc11dac08cdb65c238a4820fd69b78ada0eada7ab108df975a80071a2",
-      "bytes": 66885
+      "path": "checks.md",
+      "sha256": "808f0a303e8e67c5ee04160f770511c77bf297bac08bf66b996d6f3a115583eb"
     },
     {
-      "path": "browser/production-rehearsal-shelter.jpg",
-      "sha256": "c2aa28b23aa940408ba7e2eb8c52eb54465614d4557f0ce5c77ba849709128cc",
-      "bytes": 82521
+      "path": "pre-review-release-manifest.json",
+      "sha256": "25f112707b77a15793f3a6a29da68bc497a3b96047eca97db130a4dc3da5b1b7"
     },
     {
-      "path": "browser/production-rehearsal-trace.json",
-      "sha256": "3f388b03baadec2c00fda5ae8f4ee208e7fc08d4149bb721e6050bbeb2ad6131",
-      "bytes": 7780
+      "path": "pre-review-release.md",
+      "sha256": "23fe381762ee25f571e6df01bf29ee1e3712b75e3e0dc17c85997d1c68cc0ef5"
     },
     {
-      "path": "browser/local-decoder-first-frame.jpg",
-      "sha256": "88364542787345a8d25347447abb90cb3c1ca6d47a38559d20418efd2bdb52f8",
-      "bytes": 99740
+      "path": "release.md",
+      "sha256": "6ddb59a518832b4e3520abba32fd500b2c38385aaa65555f5893e6b978316b2f"
     },
     {
-      "path": "browser/local-hand-model-status.txt",
-      "sha256": "ee67bf9596a7ab79e04b98e8dd0414206e6680b0d9038a154aac8ec1e13a9629",
-      "bytes": 1027
+      "path": "review-2026-11-01/README.md",
+      "sha256": "d264a10af2fb379ad9b4318f95ca29872e2c636b884406ebbc5aef2adb3e178d"
     },
     {
-      "path": "browser/local-transport-trace.json",
-      "sha256": "3ccbdac537029e001dac030d0616afc2627acf772cdf19a95fa8798945408e07",
-      "bytes": 16052
+      "path": "review-2026-11-01/app-solo-expiry.json",
+      "sha256": "497a6b97ccdd1b024fe72474ef8558ab73a60ca4975eb25a8ed3fc2281f9180a"
     },
     {
-      "path": "browser/local-transport-rooms.json",
-      "sha256": "d8f1f4cc988671d62ed0da98aa50f237cd906da21576d9315b2b1cac5fbde5aa",
-      "bytes": 1825
+      "path": "review-2026-11-01/baseline-after-reload-early.jpg",
+      "sha256": "12939474c0b9f2208b96906dd74576335f73f7d56517ec80299d8d8958bb07bf"
     },
     {
-      "path": "browser/production-mobile-landing.jpg",
-      "sha256": "18ea1a9fb6d5b2e1e7f88234ef6e2ce511b281625d037f33adb71913c8f5e26b",
-      "bytes": 34561
+      "path": "review-2026-11-01/baseline-browser.md",
+      "sha256": "06d5a7c9903ae3f3398c5fc6cc2dc65a7f92aad34b7a9e7e3a9e9ef83561c9b1"
     },
     {
-      "path": "browser/production-twitch-status.txt",
-      "sha256": "6c28faaf10798af8ddcd1da8f3dc2f217d49e4f03f9029c29b6d523771905449",
-      "bytes": 361
+      "path": "review-2026-11-01/baseline-ended-after-lease.jpg",
+      "sha256": "ab6820d1f0151d6d5ec1be2ab101258f19fed360ee44b628bf3f724d5b8b66ed"
     },
     {
-      "path": "browser/production-camera-permission.jpg",
-      "sha256": "065090af5cea803986196721835db423547ad12b99e8426480eaf2034e99b8a4",
-      "bytes": 85138
+      "path": "review-2026-11-01/baseline-landing.jpg",
+      "sha256": "8fc733d7f9a640d9d75f7bf9af6ef40b7e9453dec84ca2911c02845ca4653956"
     },
     {
-      "path": "browser/production-cloud-connected-controls.jpg",
-      "sha256": "f0363c79856f171ca7b519a8a88e908edc8c3e4148014bf3e73e18377503a4e9",
-      "bytes": 27612
+      "path": "review-2026-11-01/baseline-pending-offer.jpg",
+      "sha256": "b44628d2b9ce834bf8cb534500d99fef1e66e39187e7f51e09b0d035fcfaa6f8"
     },
     {
-      "path": "browser/production-twitch-vote-replacement.txt",
-      "sha256": "306e152ddd4d94c476a4f420ecdedfa044ca18e6352cb6953084ba45fb6d3099",
-      "bytes": 766
+      "path": "review-2026-11-01/baseline-rehearsal-sequence8.json",
+      "sha256": "a00d25627043476bf7ea8ee57dd7e9e3e4391670fa70cf77d4034ecc8af7d8ff"
     },
     {
-      "path": "browser/production-cloud-media-rooms.json",
-      "sha256": "f261623df93d057f374f073c53f8180613d7f62da47c5351d9a0bcc7cacf971c",
-      "bytes": 2132
+      "path": "review-2026-11-01/baseline-reset-after-end.jpg",
+      "sha256": "4d97dfde08634a72a6a1818fc4c355fc9fa34719ecd02111f712c745c9bb4f4c"
     },
     {
-      "path": "browser/production-cloud-playback.json",
-      "sha256": "aadb974c7a22d1b526a4b08188f24eec7ddfa14541338bdacb2ace3ef5112853",
-      "bytes": 570
+      "path": "review-2026-11-01/cloud-refresh-replay-probe.json",
+      "sha256": "9346087ad4f5ff383afd9f78f2450ea77ca35b6d76786670fe191d2b830478ee"
     },
     {
-      "path": "browser/production-cloud-story-trace.json",
-      "sha256": "1b4b15cbb9efca1d4693138d94ad2030fc4f670b218c6ffcfd3c3b58362fd869",
-      "bytes": 17026
+      "path": "review-2026-11-01/cloud-revocation.md",
+      "sha256": "8c8721e406bcff2beefb4444ef64e67593318a1a7c2f89633096a23ee89cb0ae"
     },
     {
-      "path": "browser/production-cloud-emergency-curtain.jpg",
-      "sha256": "9e58c1ff1c61fc4075d1dd360253e44a40942b7385d85e412d8ad7bea592fe7e",
-      "bytes": 27002
+      "path": "review-2026-11-01/cloud-revoke-probe.json",
+      "sha256": "5ef06acfa49ca7d86112747fd18f10b3b88886de9bb359665f93b77563c4f324"
     },
     {
-      "path": "browser/production-cloud-camera-withdrawal.json",
-      "sha256": "c884693a15cc188d50638f8d27a6073f71fca56dd6ba5b44b73f2e02dd023a32",
-      "bytes": 448
+      "path": "review-2026-11-01/cloud-token-replay-probe.json",
+      "sha256": "7a94507a99bf659b385bce35e2acdf1f7407be516a44b35706b8f82f449f0bdc"
     },
     {
-      "path": "browser/production-cloud-ended-trace.json",
-      "sha256": "3560c31632e5f3f7a39b3281884da843bc1df0427e4c73f615bb274ad063fa10",
-      "bytes": 17354
+      "path": "review-2026-11-01/feature-browser.md",
+      "sha256": "8e331214faa800a9af6e0a784252ef53edeb19ce14fd7045c2d630d5e25e26e8"
     },
     {
-      "path": "browser/production-cloud-shutdown.json",
-      "sha256": "81723708ed3fd599f8c4944c46388a60f412158caca6b563e7defdd7a4af863f",
-      "bytes": 94
+      "path": "review-2026-11-01/feature-gates.json",
+      "sha256": "038667f15ab7a887b8d77eed525f2cd46139f72afa6bd21f0505cf44e906a1a0"
     },
     {
-      "path": "browser/production-cloud-shutdown-observations.json",
-      "sha256": "336837a6578a5cbde6f7c8ef2e301fefc5899907785648252e79161406ca7ad1",
-      "bytes": 1122
+      "path": "review-2026-11-01/feature-http-burst.json",
+      "sha256": "45b588132041f6e00a4e73b16f3b4c7efbf82bd74fba4cfd5907122bbd76bcf6"
     },
     {
-      "path": "browser/production-cloud-ended.jpg",
-      "sha256": "27edafcdca629b04b7ea92ee42e97f787139f97ae06a2ab99436ef0e0d5d4c5f",
-      "bytes": 26884
+      "path": "review-2026-11-01/feature-local-camera.json",
+      "sha256": "70c421bad9880970ddcffd254d6ce7c632a3b7d6116861cfbd4ff3e52f730740"
     },
     {
-      "path": "browser/production-final-ended.jpg",
-      "sha256": "692054ca35094b9f8570adc7be6dff413a47396e5f3d811faf0e1f89f0425bf0",
-      "bytes": 24920
+      "path": "review-2026-11-01/feature-mobile-landing.jpg",
+      "sha256": "501012f3d716cdeb80706c3528ee4232fcef4b25fc04da7c73d0455bd5fcb9ef"
     },
     {
-      "path": "browser/production-final-landing.jpg",
-      "sha256": "575e82cf16f4fce3c637e4e1050a96aa48a607172c68c03a006772c8d35a7f21",
-      "bytes": 71760
+      "path": "review-2026-11-01/feature-native-visibility.json",
+      "sha256": "953340f317768cbc6edebcfbc371589dd8c1afe76970a75d932bfd8bede6841d"
     },
     {
-      "path": "browser/production-final-deployment.json",
-      "sha256": "ee36aaef1e7a8087ff8391ff3ac308d49f6c7bed6968f208b4c3af83ee3d4535",
-      "bytes": 1169
+      "path": "review-2026-11-01/feature-parcel-garden-home-overview.jpg",
+      "sha256": "9e06ce2de031aa8fbd6cebb7f3c260c309dc21cc4eb092d9b8ed7aae949b8db1"
+    },
+    {
+      "path": "review-2026-11-01/feature-parcel-garden-home.jpg",
+      "sha256": "b117df5d8c70b798fe0b64d224a1dbe9ee48859a725fa0e3a96f92561c44eb5d"
+    },
+    {
+      "path": "review-2026-11-01/feature-parcel-garden-in-b.jpg",
+      "sha256": "908d5ef17412daf34f2782c70e622216866708751e3ca0ff1af06a9e19a20b1b"
+    },
+    {
+      "path": "review-2026-11-01/feature-story-state.json",
+      "sha256": "a16925e806cfdb0ed8495f7cebfa8713b888482d1da9f36a599b0832fece4e37"
+    },
+    {
+      "path": "review-2026-11-01/feature-weather-shared-shelter.jpg",
+      "sha256": "f0481f0b8160070510df11cb0a20b5002c55e5f28172811a8aa16fafe4ef24a9"
+    },
+    {
+      "path": "review-2026-11-01/final-guest-ended.jpg",
+      "sha256": "deca09e4fd3895a562fba21bdbff66ad8bc073cab2afdb8fe1987ca8695b52a0"
+    },
+    {
+      "path": "review-2026-11-01/final-guest-ended.json",
+      "sha256": "4d31a85e55f723610ea72f6557aecde8994f0e9a8d7e8c75f4213eee0611132b"
+    },
+    {
+      "path": "review-2026-11-01/final-production-landing.jpg",
+      "sha256": "9c2360f920876ba5ed8dbb9da6220daa4ca74fab20de8d2b709fc5f070eae418"
+    },
+    {
+      "path": "review-2026-11-01/p0-browser.md",
+      "sha256": "907528a9cdc19620d8ee569f56db3dba628b7652009d68be34378b6acdfc7c88"
+    },
+    {
+      "path": "review-2026-11-01/p0-duplicate-after-original-close.jpg",
+      "sha256": "4debdea20d071948e01c153ca7c11ef09d33af1bcbc74d44086ecff3eb833996"
+    },
+    {
+      "path": "review-2026-11-01/p0-duplicate-cue-working.jpg",
+      "sha256": "e4ecb886c5f72492788ce722cd521a7ed9f6c48adc14de1cf14a80957642e935"
+    },
+    {
+      "path": "review-2026-11-01/p0-ended-after-lease.jpg",
+      "sha256": "377aa98f1e93770e91106557fe5952331f72fb94751ddca0ef059d080e15e7aa"
+    },
+    {
+      "path": "review-2026-11-01/p0-ended-immediate.jpg",
+      "sha256": "0aecdb80279f11abd696f27fdfade0436768b5d93475786d5fded3731a12c4f5"
+    },
+    {
+      "path": "review-2026-11-01/p0-ended-mobile.jpg",
+      "sha256": "c6f2b78386dbaffefffe3739f79a2804b82d1fbb940a6d683f19df161b6382dd"
+    },
+    {
+      "path": "review-2026-11-01/p0-landing.jpg",
+      "sha256": "17ea28584d8940890cf6ae2dc72e5efcb9a0aa3c7984b7ed1275f88b6af604cf"
+    },
+    {
+      "path": "review-2026-11-01/p0-offer-accepted-after-reload.jpg",
+      "sha256": "42a187c772a02d43716020931dafd53fc2b64854d62b9317e4a05070812d34ed"
+    },
+    {
+      "path": "review-2026-11-01/p0-offer-after-reload.jpg",
+      "sha256": "587563d3e9d65352be794ae12cef8f9c5fa09c38b9b6149bdb3594ea648085f9"
+    },
+    {
+      "path": "review-2026-11-01/p0-old-guest-rejected.jpg",
+      "sha256": "95095b6c6bfc801cf1dba51f2a7666c2e879f17eae64599de51c2c3e6b1e8be4"
+    },
+    {
+      "path": "review-2026-11-01/p0-original-after-duplicate.jpg",
+      "sha256": "0b2f65c7fbbb6615c4b37360c0120fd13b832774b0bb8558261e9224f324e9f3"
+    },
+    {
+      "path": "review-2026-11-01/p0-program-after-replacement.jpg",
+      "sha256": "2aa3cdb711401223221db0ba04b7034f6c5ad865af32cf8e9a2d5b5f8d9450fc"
+    },
+    {
+      "path": "review-2026-11-01/p0-program-before-replacement.jpg",
+      "sha256": "79cff4381df53ba10cc766592a71b5e64d495010ececb82e59f6a94858248c84"
+    },
+    {
+      "path": "review-2026-11-01/p0-program-during-replacement.jpg",
+      "sha256": "f9d06ed3fdceaadd977fcba37027ed030995f69daf2bc323db1a56aa9b29be08"
+    },
+    {
+      "path": "review-2026-11-01/p0-program-explicitly-unpaired.jpg",
+      "sha256": "4fa017bfda48de596c47d3c2585e9952de2e4004a53b5174fcd0a5f28045959b"
+    },
+    {
+      "path": "review-2026-11-01/p0-program-paired-while-held.jpg",
+      "sha256": "423ad6c9cbfe91da42560dbde8fabdbfc62b0c16f5d1919417939e903cc483d5"
+    },
+    {
+      "path": "review-2026-11-01/p0-reliability-results.json",
+      "sha256": "5629559f89f98b023a8b7f56611835a1d82646751f76894465a7237e2e98e015"
+    },
+    {
+      "path": "review-2026-11-01/p0-synthetic-two-tracks.jpg",
+      "sha256": "f6ab7710a1e7a7ed4f081f55bdc895143731eb79aa723a674df427bb691a4e51"
+    },
+    {
+      "path": "review-2026-11-01/p0-tab-lifecycle-results.json",
+      "sha256": "4776b1ce78914e039cad327d2d33325de9933afc3672c2225d948f1ad106990b"
+    },
+    {
+      "path": "review-2026-11-01/p0-tab-lifecycle.md",
+      "sha256": "7617d6735e2bcb3dd22dba76ba256dc4866371af8df2b16cf5f95d5dad27ee28"
+    },
+    {
+      "path": "review-2026-11-01/production-chrome-camera.json",
+      "sha256": "cb108b1c694f6aaadc3f7f9d2bdc7b1bb04d13ab1931e49f938155148ec26338"
+    },
+    {
+      "path": "review-2026-11-01/production-expired.jpg",
+      "sha256": "9e48e4bd73ce7097958f41b43120c95b6fc5956850df176d655ddccd546253a0"
+    },
+    {
+      "path": "review-2026-11-01/production-parcel-ended.jpg",
+      "sha256": "a333d1c0dbef628db365a91888c53bb93b74944b44ada011b017fb9348ebb488"
+    },
+    {
+      "path": "review-2026-11-01/production-parcel-stars-gift.jpg",
+      "sha256": "0ab8e6c8d482be117e251aec3723150ec23d43aea9a969d6420a9db1639c6712"
+    },
+    {
+      "path": "review-2026-11-01/production-parcel-state.json",
+      "sha256": "6c3c8830e06e3ba85e3e08fe5173bd2860694acd419f37dc5341bff2889a8da7"
+    },
+    {
+      "path": "review-2026-11-01/production-reconnect-logs.json",
+      "sha256": "82f119f050b8204a3aea0c30d6f2c1efff1c8f17f4e1ce67b988171005f1c363"
+    },
+    {
+      "path": "review-2026-11-01/production-solo-parcel.json",
+      "sha256": "1052c319bed38346b6658c4d1da6f4a2f5209453bbb4b376791bbd204c8a53da"
+    },
+    {
+      "path": "review-2026-11-01/production-solo-state.json",
+      "sha256": "ac11e993f8c4dd59804fb7afc9c4a4fb59b8c24f8c8594152e4b01cb913d24b3"
+    },
+    {
+      "path": "review-2026-11-01/production-twitch-discovery.json",
+      "sha256": "5c53df98ecad11c48e67b72ae119fef7f53fb0d7d0efcd081dfce832954d6449"
+    },
+    {
+      "path": "review-2026-11-01/production-twitch-fix.md",
+      "sha256": "a996a21baff6a4c67c2dd44406dce8b8d6e1ba58baf258de6559505b2431b451"
+    },
+    {
+      "path": "review-2026-11-01/production-verification.md",
+      "sha256": "18bde296eb132452de04d600e8164f12ede000bb6be482a50880e8f201c13fbb"
+    },
+    {
+      "path": "review-implementation.md",
+      "sha256": "3529817def84b952e78d759a668bd744fb38e0327ccefc338e639dca051de0c1"
     }
-  ],
-  "limits": "Observed physical-camera Cloud test uses two sessions sharing one device/computer/network, with microphones disabled. Actual Twitch commands came from the authorized host account. Neither this test nor synthetic tests establishes remote-human performance, voice quality, hand accuracy, or measured latency. Camera footage and private consent receipts are excluded from Git; trace derivatives omit consent events 6 and 14 and identify the redaction.",
-  "initialProductionVerification": {
-    "sourceCommit": "bf5cf4df746dff48c700e8548516b0cfdc2dbc66",
-    "deploymentId": "dpl_2SJnnjbvEHn5XhCbWtwPBXruvDnv",
-    "checks": [
-      "Full public rehearsal",
-      "Production OAuth and EventSub listening",
-      "Mobile landing overflow",
-      "Hosted vision asset byte matching",
-      "Private no-store session response"
-    ]
-  },
-  "productionCloudVerification": {
-    "sourceCommit": "12df783729263a051264ddeef88a29b7aa8ccae7",
-    "deploymentId": "dpl_BQ2GG9TznHmoqatAx8YoBzT9nhTQ",
-    "verification": "Final deployment passed physical-camera LiveKit Cloud story, actual Twitch vote replacement, both receiver-owned handoffs, shelter, emergency curtain, camera withdrawal/re-admission, resume, and end with no remaining rooms. Production director/Program and isolated local development guest shared one camera/computer/network. Initial public synthetic rehearsal provenance is retained separately.",
-    "evidenceCommit": "66b85e5",
-    "showId": "ps_fb3398cc6bde0434"
-  }
+  ]
 }

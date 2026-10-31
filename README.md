@@ -10,7 +10,7 @@ _Illustrated rehearsal, not camera footage or evidence of remote performers._
 
 **[Open the live site](https://portal-stage-eight.vercel.app)** · [How it works](docs/architecture.md) · [Verification record](docs/evidence/README.md)
 
-This review branch adds the expanded audience choices, local camera trial, capped solo sessions, and Midnight Parcel. Their browser and deployment checks are tracked separately from the earlier release in the [review checkpoint](docs/evidence/review-implementation.md).
+The deployed review release adds expanded audience choices, a local camera trial, capped solo sessions, and Midnight Parcel. [Production verification](docs/evidence/review-2026-11-01/production-verification.md) records actual host-account Twitch handoffs, signed-out rehearsal, physical Chrome camera initialization, and the remaining remote-human checks.
 
 ## Try it in 60 seconds
 

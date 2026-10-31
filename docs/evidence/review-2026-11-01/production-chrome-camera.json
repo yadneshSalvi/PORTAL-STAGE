@@ -1,0 +1,41 @@
+{
+  "observedAt": "2026-10-31T21:48:44.448Z",
+  "showId": "ps_1039d24c67241fae",
+  "origin": "https://portal-stage-eight.vercel.app",
+  "browser": "Chrome",
+  "frame": {
+    "width": 1280,
+    "height": 720,
+    "readyState": 4,
+    "muted": true,
+    "paused": false
+  },
+  "handStatus": "Tracking active \u2014 no selected hand detected.",
+  "network": [
+    {
+      "type": "request",
+      "origin": "https://portal-stage-eight.vercel.app",
+      "path": "/api/shows/ps_1039d24c67241fae"
+    },
+    {
+      "type": "request",
+      "origin": "https://portal-stage-eight.vercel.app",
+      "path": "/api/shows/ps_1039d24c67241fae/lease"
+    },
+    {
+      "type": "request",
+      "origin": "https://portal-stage-eight.vercel.app",
+      "path": "/vision/hand-worker.js"
+    }
+  ],
+  "truncated": false,
+  "hasMore": false,
+  "scope": "Tab network events only; worker internal requests not captured. No gesture recognition accuracy claimed.",
+  "end": {
+    "observedAt": "2026-10-31T21:49:02.663Z",
+    "videoElements": 0,
+    "confirmedEnd": true
+  },
+  "servedRuntimeCommit": "5bf1112ea03e04fd46aa542b349aa7482c30acd2",
+  "subsequentRuntimeChange": "16b1100 changes Twitch connection status only; camera code unchanged"
+}

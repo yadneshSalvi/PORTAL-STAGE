@@ -1,4 +1,12 @@
-# Implementation checks — 31 October 2026
+# Implementation checks — review release
+
+Source `96fea8781dd86bf23a95126247b1e703b8babde9` passed **370 tests**, with seven opt-in tests skipped (35 files passed, two skipped), whole-tree typecheck, formatting, diff check, and the optimized 18-page build. Build ID: `jKHgKbotO8fc4sJHSBn3c`. The integration lead ran these gates before freezing source. Vercel separately passed the optimized build and deployed `dpl_mUKo1r1j3ojraoWWmKWgToPeGCp5`.
+
+Root separately ran all **seven actual-Neon integration tests** successfully. Their six recorded server/test files remain byte-identical in the final source. A labeled synthetic HTTP test accepted 100 unique ballots in five batches, verified replacement, deduplication, grace, and stale-round rejection. It is one test observation, not a Twitch performance claim. [Exact checkpoints and hashes](review-2026-11-01/feature-gates.json) and [HTTP result](review-2026-11-01/feature-http-burst.json).
+
+Actual production Twitch commands found and verified the fix for opaque notification IDs. Camera and media observations, including a real ping-timeout recovery, are in [production verification](review-2026-11-01/production-verification.md). These checks do not establish remote-human microphones, gesture accuracy, or OBS broadcast reliability.
+
+## Earlier release — 31 October 2026
 
 These are observed tool results, not a performance recording.
 
