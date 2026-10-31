@@ -2,6 +2,10 @@
 
 This ledger separates implemented behavior, observed checks, and evidence still to collect. A labeled rehearsal reproduces the protocol; it does not establish remote-human performance.
 
+**Review branch:** [the 1 November implementation checkpoint](review-implementation.md) covers the subsequent reliability, audience, local-camera, public solo and Midnight Parcel work. Its source gates and actual root observations are separate from the earlier release below. See [review browser/provider evidence](review-2026-11-01/) for its verified conditions; expanded app Workflow and new story acceptance must not be inferred from the old release.
+
+## Earlier deployed release
+
 **Release status: deployed; public rehearsal, physical-camera Cloud story, real Twitch ballot replacement, emergency recovery, and shutdown verified.** The canonical URL is [portal-stage-eight.vercel.app](https://portal-stage-eight.vercel.app). Deployment `dpl_44zp8zqCqQFPLgxxP4Gofn8NdP6z` is Ready for source commit `a9fd9242ef69a9b6b5052168c9564e4d5e5e63be`. A dedicated LiveKit Cloud project has recording disabled and configured credentials; server RoomService authentication passed. The cloud run used two independent sessions sharing one physical camera/computer/network, with microphones disabled; separate remote-human performance remains to be verified. See the [release record and artifact hashes](release.md).
 
 The latest full automated run passed **184 tests** across 20 files, with three opt-in database tests skipped. That run includes the final no-hand status, camera request pending/cancellation, and late-grant-after-end regressions; whole-tree typecheck also passed. The **three actual Neon integration tests passed in a separate configured run**. Formatting passed; the optimized build generated 16 pages. See the [check record](checks.md) for exact conditions.

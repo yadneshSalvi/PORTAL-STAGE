@@ -12,18 +12,40 @@ Use Node.js 22.x, a current Chromium browser with WebGL/WebRTC, and headphones f
 | `DATABASE_URL`                                         | PostgreSQL/Neon connection; required in production                          |
 | `TWITCH_CLIENT_ID`, `TWITCH_CLIENT_SECRET`             | Twitch application credentials kept server-side                             |
 | `TWITCH_REDIRECT_URI`                                  | Exact registered `/auth/twitch/callback` URL on this origin                 |
-| `TWITCH_ALLOWED_HOSTS`                                 | Comma-separated invited Twitch login names or user IDs                      |
+| `TWITCH_ALLOWED_HOSTS`                                 | Invited two-performer hosts; public capped solo does not require this list  |
 | `LIVEKIT_URL`, `LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET` | Private media transport credentials; secure WSS in production               |
 
 Register `http://localhost:3200/auth/twitch/callback` for development and the exact deployed callback for production. OAuth asks only for `user:read:chat`. A fresh authorization-code grant is encrypted in the database. Copied bootstrap credentials are never silently refreshed or used as a deployed host identity.
 
 Vercel runs the bounded control API. LiveKit runs the media transport; the director browser renders the show. Redis, Blob storage, and model-provider credentials are not required. Production refuses ephemeral storage. Set the Vercel Node runtime to **22.x**. Keep `.env*`, `.local/`, `.vercel/`, recordings, and `plans/` out of deployment/source uploads.
 
+Public solo also uses the pinned Workflow 5.2.3 integration in `next.config.ts`. Vercel must expose its system environment variables, including `VERCEL_DEPLOYMENT_ID`; generated workflow routes are rebuilt from source rather than committed. No separate cron process is needed. A show obtains no media access until scheduling returns a durable run receipt. A scheduler failure is visible, retains the daily charge, and cannot silently become an uncapped media session.
+
+| Solo setting                    | Default                                        | Enforced range                                         |
+| ------------------------------- | ---------------------------------------------- | ------------------------------------------------------ |
+| `PORTAL_PUBLIC_SOLO`            | Enabled when providers/Postgres are configured | Set `0` to disable public solo; rehearsal remains open |
+| `PORTAL_SOLO_PER_ACCOUNT_DAILY` | 3 starts per UTC day                           | 1–10                                                   |
+| `PORTAL_SOLO_GLOBAL_DAILY`      | 30 starts per UTC day                          | 1–100                                                  |
+| `PORTAL_SOLO_GLOBAL_CONCURRENT` | 5 active reservations                          | 1–10                                                   |
+| `PORTAL_SOLO_SESSION_SECONDS`   | 1200 seconds                                   | 60–1800                                                |
+
+The deadline is immutable once reserved. Reset does not extend it; an expired solo session requires a new charged reservation. End closes early. If provider closure is incomplete, **Retry media closure** retries the same fenced cleanup; capacity remains reserved until it succeeds. The scheduled cleanup also retries. Service outages can delay physical removal, so this is not a hard real-time disconnection guarantee.
+
 ## Solo rehearsal
 
-Choose **Start a rehearsal**, then follow the next cue: open the curtain, open the weather choice, cast an explicitly labeled test ballot, close/apply the weather, offer, accept, hatch, return the umbrella, and shelter. A later choice from the same fixture replaces its earlier ballot. Empty rounds visibly use Director's choice. Save a variation, load it, and start a new episode to see its configured rules.
+Choose an episode and **Start a rehearsal**, then follow its next cue. Borrowed Weather includes weather, name, mood and ending choices around the umbrella's round trip. Midnight Parcel chooses contents, stamps a tagged parcel, opens it in the receiving room, brings it home, and chooses where the stars or garden remain. A later choice from the same test voter replaces its earlier ballot. Empty or tied rounds stop for an explicit Director's choice. Save a variation, load it, and start a new episode to see its configured rules.
 
 The stage uses original generated test plates and test votes. Neither is presented as remote people or actual Twitch participation. A prompt same-tab reload preserves its cue and offers still within their original expiry. Genuine lease expiry shows recovery under a holding curtain. Ended shows offer New rehearsal and New show, even after the old lease expires.
+
+**Try a local camera & hand cues** is a separate optional path in ordinary rehearsal. Give local-preview consent, enable the camera, confirm framing/hand selection, enable cues, and arm them. It uses native camera capture, no microphone or LiveKit room. Camera frames and landmarks stay local; deliberate handoff commands still update show state. Cancelling a pending permission request fences its late result. Camera off, lost consent/authority, page exit, and End stop capture. Opening a separate Program preview does not copy this private camera into another page. See [hand-cue limits](gestures.md).
+
+## A real solo Twitch show
+
+Sign in with any eligible Twitch account and choose **Create a solo Twitch show** while capacity is available. Connect/consent/calibrate your camera, mark ready, and admit A. B is an original illustrated Audience Room; it has no camera or fabricated consent. Connect chat, open the curtain, and follow the authored choices. An offer to B opens `!accept`/`!wait`; applying the resolved result authorizes the server's Audience Room actor. `!giveback`/`!keep` controls the return; you still accept as A yourself. Buttons cannot impersonate a real second performer in duet mode.
+
+The host's browser relays EventSub command notifications in batches of up to twenty, with a queue of at most two hundred and one in-flight batch. One transient network/server failure is retried with the same event IDs. Later Twitch timestamps replace earlier choices, including out-of-order delivery; messages sent no later than close have a three-second delivery grace. Ties/empty rounds need deliberate resolution. A visible intake warning remains if a batch fails; a healthy socket does not establish delivery of that batch.
+
+For optimized local Workflow testing, both `next dev` and `next start` use the installed local world. Set `WORKFLOW_LOCAL_BASE_URL` to the reachable director server origin and `WORKFLOW_LOCAL_DATA_DIR` to an isolated ignored directory such as `.local/workflow-review`. Keep that server process running for local timers. This filesystem/in-memory-queue world is local test infrastructure, not proof of Vercel durability. Use a short explicit `PORTAL_SOLO_SESSION_SECONDS=60` only for a declared isolated expiry test; do not alter an existing reservation's deadline. Cloud revocation and the deployed timer need their own acceptance.
 
 ## Two consenting performers
 
@@ -31,8 +53,8 @@ The stage uses original generated test plates and test votes. Neither is present
 2. Send a private invitation to the second performer. Invitations expire after 15 minutes and exchange for a signed browser session. Use a separate browser/profile for the guest.
 3. Enable camera/microphone only through explicit buttons. Preview is local before connecting. Broadcast consent and optional recording permission are separate. Camera-only performance is supported.
 4. Calibrate the shelter, connect backstage, mark Ready, and let the director admit each performer. Reconnection requires readiness/admission again; microphones return muted.
-5. Raise the curtain. Connect chat and open a generous weather window. Viewers send `!gentle` or `!wild`; later choices replace earlier ones until close. A host override is explicitly labeled Director's choice.
-6. The holder offers the umbrella; the actual receiver accepts. Acceptance commits the new owner before the full crossing begins. Hatch Pip, improvise, transfer again, and shelter.
+5. Raise the curtain. Connect chat and follow the episode's choice windows; later choices replace earlier ones until close. An empty/tied result needs an explicit, labeled Director's choice.
+6. The holder offers the prop; the actual receiver accepts. Acceptance commits the new owner before the full crossing begins. Continue the visitor or parcel consequence, improvise, transfer again, and choose an ending.
 7. End the show to unpublish media, revoke invitations/output pairing, and close the round. Saving a preset does not record media.
 
 ## Output and audio

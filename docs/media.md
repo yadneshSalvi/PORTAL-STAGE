@@ -18,6 +18,8 @@ Configuration guidance uses the server's structured error code: `media_unconfigu
 
 ## Private and public paths
 
+Solo retains these private/public room boundaries with only the real director in backstage. B is illustrated in the compositor and receives no token. The solo room configuration caps backstage at one participant and Program at four. A durable reservation, confirmed expiry schedule, current consent/framing and exact renderer incarnation are checked before grant issuance. The [closure design](architecture.md#public-solo-capacity-and-closure) explains short initial tokens, the identity ledger, refreshed-token revocation and outage limits.
+
 | Room      | Publisher                             | Track name / source                                                          | Receivers                                                           |
 | --------- | ------------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------- |
 | Backstage | Performer A or B                      | `portal-camera` / camera; `portal-microphone` / microphone                   | Director receives peer camera/mic; a guest receives direct host mic |
@@ -53,6 +55,8 @@ The sender keeps one data publish in flight and only the latest pending point, w
 Transient positions expire after 1500 ms, checked by the 250 ms watchdog, and fall back to the durable calibrated anchor. Disconnect, peer departure, epoch change, lost admission, and Hold clear their use. Sequence numbers remain monotonic through camera toggles in one room. The protocol is designed for lossy presentation: these bounds and automated checks do not establish a measured update rate or physical hand alignment.
 
 ## Local synthetic transport check
+
+Ordinary local-camera rehearsal is separate from this transport test. `LocalRehearsalCamera` uses native video capture and an independent preview, requests no microphone, and has no room/token/publish API. Its cancellation/consent/end/departure tests assert the late track is stopped. Camera/anchor overrides remain in the director page; another Program preview remains illustrated. Real production Chrome/network evidence is recorded separately by the root.
 
 `allowSyntheticMedia` plus rehearsal mode exposes `enableTestCamera()`. The server must independently allow local-development rehearsal grants. This original moving test plate burns **SYNTHETIC MEDIA / TRANSPORT TEST**, its slot, and an elapsed timer into the transmitted pixels. It requests no camera or microphone. It can exercise the actual WebRTC, return, and output routes, but does not prove two human performers, remote-network performance, camera permissions, or audience participation. Ordinary public rehearsal does not connect media rooms.
 

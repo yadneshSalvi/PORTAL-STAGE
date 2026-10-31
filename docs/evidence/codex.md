@@ -16,6 +16,16 @@ Concrete development contributions in this build:
 
 No runtime LLM controls the performance. Codex assisted development of the application, tests, documentation, original geometry, and interaction design. Human decisions and browser review remain part of the main conversation.
 
+The subsequent improvement review used the user-requested GPT-6 Astra lead and two GPT-6.1 Sol workers with disjoint media and theater ownership. P0 commits `2de2871` and `8406045` address exact-page renderer recovery and independent Program pairing. The [review checkpoint](review-implementation.md) records the next integrated source boundary. Concrete review contributions include:
+
+- [Typed choice grammar](../../src/lib/show-grammar.ts) and [server audience tests](../../tests/audience-authorship.test.ts): explicit empty/tied outcomes, timestamp-ordered replacement, a server-only solo audience actor, and distinct parcel consequences.
+- [Bounded batch relay](../../src/lib/twitch-batch.ts) and [failure/redelivery tests](../../tests/twitch-batch.test.ts): same-identity retry after an uncertain response, one flight, cancellation, and visible intake failure.
+- [Local camera lifecycle](../../src/media/local-rehearsal-camera.ts) and [late-grant tests](../../tests/media-local-rehearsal-camera.test.ts): no room/token path, video-only capture, explicit cancellation, and stop on End/departure.
+- [Solo reservation](../../src/server/solo-policy.ts), [durable expiry workflow](../../src/workflows/solo-expiry.ts), and [fault-injection tests](../../tests/solo-reservations.test.ts): quota/receipt ordering, unissued-orphan recovery, issuance-versus-closure fencing, explicit cached-token revocation, and retry without extending a reservation.
+- [Authored cue regression](../../src/components/cue-flow.test.ts): both complete episodes through actual server actions, plus durable progress after chat evicts acceptance from the public event tail.
+
+The root independently owns browser observations, actual Neon tests, Cloud revocation probes, and deployment. Those results are recorded under [review evidence](review-2026-11-01/) with their own conditions; test doubles and authored artwork do not stand in for viewers or performers.
+
 Shared infrastructure is disclosed: the atomic document-store and Twitch grant-maintenance baseline were adapted from this user's LIVEFORGE project. PORTAL STAGE has separate storage names, authorization configuration, UI, original assets, media architecture, show protocol, and demo story. It does not reuse LIVEFORGE's generated games or present shared scaffolding as the novel mechanism.
 
 For a submission excerpt, capture the real main conversation, one relevant diff, and its actual passing check. Keep the surrounding source/trace available. This document is an index to genuine work, not a substitute conversation or a claim that a planning-only session built the app.
