@@ -793,6 +793,103 @@ describe("LiveKit browser lifecycle", () => {
       expect(media.getSnapshot().error?.code).toBe("authorization");
     },
   );
+  it.each(["solo", "live"] as const)(
+    "%s camera, microphone and Program outlive a 120-second join grant; only solo stops at its 20-minute session deadline",
+    async (mode) => {
+      const localStart = Date.now();
+      const serverStart = localStart - 5 * 60_000;
+      const grantExpiresAt = serverStart + 120_000;
+      const sessionEndsAt = serverStart + 20 * 60_000;
+      const initial =
+        mode === "solo"
+          ? soloOptions({ serverNow: serverStart })
+          : options({ serverNow: serverStart });
+      if (initial.show.solo) initial.show.solo.endsAt = sessionEndsAt;
+      // Keep authority valid independently of the token/session clocks. Lease
+      // renewal itself is covered in controller-lease.test.ts.
+      initial.show.renderLease.expiresAt = serverStart + 30 * 60_000;
+      const shortGrants: Array<{ purpose: string; expiresAt: number }> = [];
+      const media = controller(initial, {
+        requestToken: async (current, purpose) => {
+          const grant = {
+            ...(await requestToken(current, purpose)),
+            expiresAt: grantExpiresAt,
+          };
+          shortGrants.push(grant);
+          return grant;
+        },
+      });
+      await media.enableCamera();
+      await media.connect();
+      await media.enableMicrophone();
+      const captured = new TestMediaTrack();
+      await media.publishProgram({
+        captureStream: () => new TestStream([captured]),
+      } as unknown as HTMLCanvasElement);
+      expect(shortGrants).toEqual([
+        expect.objectContaining({
+          purpose: "director",
+          expiresAt: grantExpiresAt,
+        }),
+        expect.objectContaining({
+          purpose: "output-publish",
+          expiresAt: grantExpiresAt,
+        }),
+      ]);
+      const expectActive = () => {
+        expect(media.getSnapshot()).toMatchObject({
+          connected: true,
+          cameraEnabled: true,
+          cameraPublished: true,
+          microphoneEnabled: true,
+          microphonePublished: true,
+          programPublishing: true,
+          error: null,
+        });
+        expect(cameras[0].stop).not.toHaveBeenCalled();
+        expect(microphones[0].stop).not.toHaveBeenCalled();
+        expect(captured.stop).not.toHaveBeenCalled();
+        for (const room of rooms)
+          expect(room.disconnect).not.toHaveBeenCalled();
+        expect(requestToken).toHaveBeenCalledTimes(2);
+      };
+      expectActive();
+
+      // Jump the clock without replaying 20 minutes of unrelated watchdog
+      // ticks. The next 250ms tick lands exactly on each chosen boundary;
+      // the original server offset remains valid throughout both jumps.
+      vi.setSystemTime(localStart + 120_000 - 250);
+      await vi.advanceTimersByTimeAsync(250);
+      expect(Date.now() - 5 * 60_000).toBe(grantExpiresAt);
+      expectActive();
+      await vi.advanceTimersByTimeAsync(250);
+      expect(Date.now() - 5 * 60_000).toBeGreaterThan(grantExpiresAt);
+      expectActive();
+
+      vi.setSystemTime(localStart + 20 * 60_000 - 250);
+      await vi.advanceTimersByTimeAsync(249);
+      expect(Date.now() - 5 * 60_000).toBe(sessionEndsAt - 1);
+      expectActive();
+      await vi.advanceTimersByTimeAsync(1);
+      expect(Date.now() - 5 * 60_000).toBe(sessionEndsAt);
+      expect(initial.show.renderLease.expiresAt).toBeGreaterThan(sessionEndsAt);
+      expect(initial.show.phase).toBe("live");
+      if (mode === "solo") {
+        expect(media.getSnapshot()).toMatchObject({
+          connected: false,
+          cameraEnabled: false,
+          microphoneEnabled: false,
+          programPublishing: false,
+          error: { code: "authorization" },
+        });
+        expect(cameras[0].stop).toHaveBeenCalledOnce();
+        expect(microphones[0].stop).toHaveBeenCalledOnce();
+        expect(captured.stop).toHaveBeenCalled();
+        for (const room of rooms)
+          expect(room.disconnect).toHaveBeenCalledWith(true);
+      } else expectActive();
+    },
+  );
   it("stops active solo capture and output at the server-offset deadline and cannot reopen by extending a local snapshot", async () => {
     const serverNow = Date.now() - 5 * 60_000;
     const initial = soloOptions({ serverNow });
