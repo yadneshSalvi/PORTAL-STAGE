@@ -305,7 +305,7 @@ export function OutputPanel({
           broadcasting.
         </li>
       </ol>
-      {show.mode === "rehearsal" ? (
+      {show.mode === "rehearsal" && !transportTesting ? (
         <a
           className="button button-gold full-width"
           href={`/program?show=${encodeURIComponent(show.id)}${transportTesting ? "&transport=1" : ""}`}
@@ -348,7 +348,7 @@ export function OutputPanel({
           <ExternalLink size={17} />
         </button>
       )}
-      {show.mode !== "rehearsal" ? (
+      {show.mode !== "rehearsal" || transportTesting ? (
         <div className="guest-replacement">
           <button
             className="button button-dark full-width"
