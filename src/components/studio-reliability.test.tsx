@@ -6,12 +6,49 @@ import { canIssueDirectorAction } from "./studio-controls";
 import { GuestEnded } from "./guest-ended";
 import {
   StudioAuthorityNotice,
+  StudioChatStatus,
   StudioVisibilityNotice,
 } from "./studio-notices";
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
 
 describe("studio reliability states", () => {
+  it("requires this browser's subscribed connector before showing Twitch Listening after reload", () => {
+    const show = createRecord("ps_chat_reload", "director", "solo", 1000).state;
+    show.phase = "live";
+    show.twitch.connected = true;
+    const render = (
+      connection: "disconnected" | "connecting" | "connected",
+      enabled = true,
+      leaseValid = true,
+    ) =>
+      renderToStaticMarkup(
+        <StudioChatStatus
+          show={show}
+          connection={connection}
+          enabled={enabled}
+          leaseValid={leaseValid}
+        />,
+      );
+    const reloaded = render("disconnected", false);
+    expect(reloaded).toContain("Reconnect required");
+    expect(reloaded).not.toContain("Listening");
+    expect(reloaded).not.toContain('class="connection-indicator connected"');
+    expect(render("connecting")).toContain("Connecting…");
+    expect(render("connecting")).not.toContain("Listening");
+    expect(render("connected")).toContain("Listening");
+    expect(render("connected")).toContain(
+      'class="connection-indicator connected"',
+    );
+    expect(render("connected", false)).not.toContain("Listening");
+    expect(render("connected", true, false)).not.toContain("Listening");
+    show.phase = "ended";
+    expect(render("connected")).toContain("Not connected");
+    expect(render("connected")).not.toContain("Listening");
+    show.mode = "rehearsal";
+    expect(render("connected")).toContain("Test ballots");
+    expect(render("connected")).not.toContain("Listening");
+  });
   it("shows manual legacy recovery without automatically moving or resetting the prop", () => {
     const show = createRecord(
       "ps_unknown_progress_ui",

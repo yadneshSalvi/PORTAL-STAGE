@@ -9,7 +9,7 @@ const api = <T = unknown>(path: string, body: unknown) =>
 
 const EVENTSUB_URL =
   "wss://eventsub.wss.twitch.tv/ws?keepalive_timeout_seconds=30";
-type ClientState =
+export type ClientState =
   "connecting" | "connected" | "gap" | "revoked" | "disconnected";
 interface Envelope {
   metadata?: { message_type?: string; subscription_type?: string };

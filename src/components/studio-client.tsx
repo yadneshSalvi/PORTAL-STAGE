@@ -44,7 +44,10 @@ import type {
 import { isAudienceRoom, isStageReady, propLabel } from "@/lib/show-grammar";
 import { getSession } from "@/lib/client";
 import type { SessionInfo } from "@/lib/contracts";
-import { TwitchConnector } from "@/lib/twitch-client";
+import {
+  TwitchConnector,
+  type ClientState as TwitchClientState,
+} from "@/lib/twitch-client";
 import { useMediaRoom } from "@/media/use-media-room";
 import { useLocalRehearsalCamera } from "@/media/use-local-rehearsal-camera";
 import { LocalVideoDiagnostics } from "@/media/local-video-diagnostics";
@@ -66,6 +69,7 @@ import {
 import { useNow, useShowController } from "./use-show-controller";
 import {
   StudioAuthorityNotice,
+  StudioChatStatus,
   StudioVisibilityNotice,
 } from "./studio-notices";
 import { canIssueDirectorAction } from "./studio-controls";
@@ -318,6 +322,7 @@ function StudioWorkspace({
     [calibration, setCalibration] = useState<GestureCalibration | null>(null),
     [gestureArmed, setGestureArmed] = useState(false),
     [chatEnabled, setChatEnabled] = useState(false),
+    [chatState, setChatState] = useState<TwitchClientState>("disconnected"),
     [chatMessage, setChatMessage] = useState(""),
     [localTest, setLocalTest] = useState(false),
     [localHost, setLocalHost] = useState(false),
@@ -485,7 +490,10 @@ function StudioWorkspace({
       return;
     const connector = new TwitchConnector(
       show.id,
-      (_state, message) => setChatMessage(message),
+      (state, message) => {
+        setChatState(state);
+        setChatMessage(message);
+      },
       () => {
         void refresh();
       },
@@ -889,19 +897,12 @@ function StudioWorkspace({
                       : "Not connected"}
                 </strong>
               </div>
-              <div className="connection-item">
-                <span
-                  className={`connection-indicator ${show.twitch.connected ? "connected" : ""}`}
-                />
-                <span>Twitch chat</span>
-                <strong>
-                  {isRehearsal
-                    ? "Test ballots"
-                    : show.twitch.connected
-                      ? "Listening"
-                      : "Not connected"}
-                </strong>
-              </div>
+              <StudioChatStatus
+                show={show}
+                enabled={chatEnabled}
+                leaseValid={leaseValid}
+                connection={chatState}
+              />
               <div className="connection-item">
                 <span
                   className={`connection-indicator ${media.programPublishing || isRehearsal ? "connected" : ""}`}

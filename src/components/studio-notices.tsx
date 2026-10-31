@@ -1,8 +1,43 @@
 import { EyeOff, ShieldCheck } from "lucide-react";
-import type { ShowPhase } from "@/lib/contracts";
+import type { ShowPhase, ShowState } from "@/lib/contracts";
+import type { ClientState as TwitchClientState } from "@/lib/twitch-client";
 
 type LeaseStatus =
   "loading" | "acquiring" | "active" | "lost" | "ended" | "unavailable";
+
+export function StudioChatStatus({
+  show,
+  enabled,
+  leaseValid,
+  connection,
+}: {
+  show: Pick<ShowState, "mode" | "phase" | "twitch">;
+  enabled: boolean;
+  leaseValid: boolean;
+  connection: TwitchClientState;
+}) {
+  const rehearsal = show.mode === "rehearsal";
+  const active = !rehearsal && enabled && leaseValid && show.phase !== "ended";
+  const listening = active && connection === "connected";
+  const label = rehearsal
+    ? "Test ballots"
+    : listening
+      ? "Listening"
+      : active && connection === "connecting"
+        ? "Connecting…"
+        : show.phase !== "ended" && show.twitch.connected
+          ? "Reconnect required"
+          : "Not connected";
+  return (
+    <div className="connection-item">
+      <span
+        className={`connection-indicator ${listening ? "connected" : ""}`}
+      />
+      <span>Twitch chat</span>
+      <strong>{label}</strong>
+    </div>
+  );
+}
 
 export function StudioAuthorityNotice({
   phase,
