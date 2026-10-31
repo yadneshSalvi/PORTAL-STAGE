@@ -25,6 +25,56 @@ function canvas() {
 }
 
 describe("truthful stage camera labels", () => {
+  it.each([
+    {
+      episode: "borrowed-weather",
+      roomA: "MOON GARDEN",
+      roomB: "ROOFTOP AT DUSK",
+    },
+    {
+      episode: "midnight-parcel",
+      roomA: "MIDNIGHT POST",
+      roomB: "RECEIVING ROOM",
+    },
+  ] as const)(
+    "labels the $episode rehearsal scenery without mislabeling local cameras or the audience room",
+    ({ episode, roomA, roomB }) => {
+      const show = createRecord(
+        "ps_episode_labels",
+        "director",
+        "rehearsal",
+        1000,
+        null,
+        episode,
+      ).state;
+      show.phase = "live";
+      const illustrated = canvas();
+      drawProgramText(illustrated.context, show, 1100);
+      expect(illustrated.labels).toContain(`TEST PLATE A · ${roomA}`);
+      expect(illustrated.labels).toContain(`TEST PLATE B · ${roomB}`);
+
+      const camera = canvas();
+      drawProgramText(
+        camera.context,
+        show,
+        1100,
+        { A: true, B: false },
+        { localCameraA: true },
+      );
+      expect(camera.labels).toContain("LOCAL CAMERA A · THIS BROWSER ONLY");
+      expect(camera.labels).not.toContain(`TEST PLATE A · ${roomA}`);
+      expect(camera.labels).toContain(`TEST PLATE B · ${roomB}`);
+
+      show.mode = "solo";
+      const solo = canvas();
+      drawProgramText(solo.context, show, 1100);
+      expect(solo.labels).toContain(show.participants.A.name);
+      expect(solo.labels).toContain("THE AUDIENCE ROOM · ILLUSTRATED");
+      expect(solo.labels.some((label) => label.startsWith("TEST PLATE"))).toBe(
+        false,
+      );
+    },
+  );
   it("puts the current safe options and actual tallies inside the Program picture", () => {
     const show = createRecord(
       "ps_tallies",

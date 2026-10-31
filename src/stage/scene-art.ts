@@ -287,12 +287,20 @@ export function drawProgramText(
   for (const slot of ["A", "B"] as Slot[]) {
     const p = show.participants[slot],
       room = ROOMS[slot];
+    const rehearsalRoom =
+      show.episode === "midnight-parcel"
+        ? slot === "A"
+          ? "MIDNIGHT POST"
+          : "RECEIVING ROOM"
+        : slot === "A"
+          ? "MOON GARDEN"
+          : "ROOFTOP AT DUSK";
     text(
       ctx,
       show.mode === "rehearsal"
         ? options.localCameraA && slot === "A"
           ? "LOCAL CAMERA A · THIS BROWSER ONLY"
-          : `TEST PLATE ${slot} · ${slot === "A" ? "MOON GARDEN" : "ROOFTOP AT DUSK"}`
+          : `TEST PLATE ${slot} · ${rehearsalRoom}`
         : show.mode === "solo" && slot === "B"
           ? "THE AUDIENCE ROOM · ILLUSTRATED"
           : p.name,

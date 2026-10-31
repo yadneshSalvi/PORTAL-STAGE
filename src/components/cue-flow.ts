@@ -129,9 +129,7 @@ export function nextCue(show: ShowState): Cue {
       "✦",
       selected?.label || "A choice is ready.",
       selected?.description || definition.question,
-      kind === "weather"
-        ? "Let it rain"
-        : `Bring ${selected?.label.toLowerCase() || "this choice"} on stage`,
+      kind === "weather" ? "Let it rain" : "Bring this choice on stage",
       kind === "weather"
         ? { type: "apply-weather", roundId: round.id }
         : { type: "apply-choice", roundId: round.id },
