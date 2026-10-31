@@ -27,6 +27,7 @@ import {
   type GestureCalibration,
 } from "@/vision/calibration";
 import { StatusPill } from "./ui";
+import { CameraPermissionNotice } from "./camera-permission-notice";
 export type MediaRoom = ReturnType<typeof useMediaRoom>;
 export function DeviceSetup({
   show,
@@ -167,6 +168,8 @@ export function DeviceSetup({
       <div className="device-buttons">
         <button
           className={`button button-dark ${media.cameraEnabled ? "device-on" : ""}`}
+          disabled={media.cameraRequestPending && !media.cameraEnabled}
+          aria-busy={media.cameraRequestPending}
           onClick={() => {
             void (
               media.cameraEnabled ? media.disableCamera() : media.enableCamera()
@@ -190,6 +193,12 @@ export function DeviceSetup({
           {media.microphoneEnabled ? "Mute microphone" : "Enable microphone"}
         </button>
       </div>
+      <CameraPermissionNotice
+        pending={media.cameraRequestPending}
+        onCancel={() => {
+          void media.disableCamera().catch(() => undefined);
+        }}
+      />
       {media.devices.length ? (
         <div className="field-two-columns device-selectors">
           <label className="field-label">

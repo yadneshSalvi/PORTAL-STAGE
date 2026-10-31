@@ -89,6 +89,7 @@ export function initialMediaSnapshot(): MediaSnapshot {
     connected: false,
     status: "idle",
     cameraEnabled: false,
+    cameraRequestPending: false,
     microphoneEnabled: false,
     cameraPublished: false,
     microphonePublished: false,
@@ -333,8 +334,14 @@ export class MediaRoomController {
   }
 
   enableCamera = async () => {
-    if (this.camera || !this.ensureCaptureAllowed()) return;
+    if (
+      this.camera ||
+      this.snapshot.cameraRequestPending ||
+      !this.ensureCaptureAllowed()
+    )
+      return;
     const generation = ++this.cameraGeneration;
+    this.patch({ cameraRequestPending: true, error: null });
     try {
       const sdk = await this.sdk();
       if (generation !== this.cameraGeneration) return;
@@ -363,6 +370,12 @@ export class MediaRoomController {
         this.patch({
           permissions: { ...this.snapshot.permissions, camera: "denied" },
         });
+    } finally {
+      if (
+        generation === this.cameraGeneration &&
+        this.snapshot.cameraRequestPending
+      )
+        this.patch({ cameraRequestPending: false });
     }
   };
   enableTestCamera = async () => {
@@ -426,6 +439,7 @@ export class MediaRoomController {
     this.patch({
       localPreview: video,
       cameraEnabled: true,
+      cameraRequestPending: false,
       syntheticCamera: synthetic,
     });
     this.rebuildVideos();
@@ -466,6 +480,7 @@ export class MediaRoomController {
     this.patch({
       localPreview: null,
       cameraEnabled: false,
+      cameraRequestPending: false,
       cameraPublished: false,
       syntheticCamera: false,
     });

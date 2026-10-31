@@ -1,0 +1,273 @@
+{
+  "exportedAt": "2026-10-31T13:38:48.935Z",
+  "mode": "rehearsal",
+  "showId": "ps_626f0fa0ece57a9b",
+  "sequence": 15,
+  "umbrella": {
+    "id": "ps_626f0fa0ece57a9b-umbrella-1",
+    "armed": true,
+    "owner": "A",
+    "version": 6,
+    "wetness": 0.52,
+    "transfer": {
+      "id": "ps_626f0fa0ece57a9b-transfer-12",
+      "to": "A",
+      "from": "B",
+      "status": "arrived",
+      "arrivedAt": 1793453920706,
+      "expiresAt": 1793453938749,
+      "offeredAt": 1793453918749,
+      "committedAt": 1793453919220,
+      "commitSequence": 13
+    },
+    "repairPatch": "coral"
+  },
+  "creature": {
+    "id": "ps_626f0fa0ece57a9b-pip-1",
+    "mood": "wild",
+    "hatched": true,
+    "hatchedAt": 1793453918277,
+    "shelterOwner": "A"
+  },
+  "round": {
+    "id": "ps_626f0fa0ece57a9b-round-4",
+    "result": "wild",
+    "source": "rehearsal",
+    "status": "applied",
+    "tallies": {
+      "wild": 1,
+      "gentle": 0
+    },
+    "closedAt": 1793453908001,
+    "closesAt": 1793453927742,
+    "openedAt": 1793453897742,
+    "uniqueVoters": 1,
+    "lastMessageAt": 1793453905387
+  },
+  "events": [
+    {
+      "at": 1793453891469,
+      "id": "ps_626f0fa0ece57a9b:1",
+      "type": "show.created",
+      "actor": "director",
+      "owner": "A",
+      "propId": "ps_626f0fa0ece57a9b-umbrella-1",
+      "summary": "Labeled solo rehearsal created with synthetic test plates.",
+      "sequence": 1,
+      "propVersion": 1
+    },
+    {
+      "at": 1793453892998,
+      "id": "ps_626f0fa0ece57a9b:2",
+      "type": "renderer.acquired",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "epoch": 1
+      },
+      "propId": "ps_626f0fa0ece57a9b-umbrella-1",
+      "summary": "One director tab acquired the canonical stage.",
+      "sequence": 2,
+      "propVersion": 1
+    },
+    {
+      "at": 1793453894036,
+      "id": "ps_626f0fa0ece57a9b:3",
+      "type": "action.start",
+      "actor": "director",
+      "owner": "A",
+      "propId": "ps_626f0fa0ece57a9b-umbrella-1",
+      "summary": "The curtain rose on two admitted performers.",
+      "sequence": 3,
+      "propVersion": 1
+    },
+    {
+      "at": 1793453897742,
+      "id": "ps_626f0fa0ece57a9b:4",
+      "type": "action.open-round",
+      "actor": "director",
+      "owner": "A",
+      "propId": "ps_626f0fa0ece57a9b-umbrella-1",
+      "summary": "The weather window opened: !gentle or !wild. Each account has one replaceable choice.",
+      "sequence": 4,
+      "propVersion": 1
+    },
+    {
+      "at": 1793453905387,
+      "id": "ps_626f0fa0ece57a9b:5",
+      "type": "round.vote",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "choice": "wild",
+        "roundId": "ps_626f0fa0ece57a9b-round-4",
+        "replaced": false,
+        "synthetic": true,
+        "messageRef": "fixture:375953ab"
+      },
+      "propId": "ps_626f0fa0ece57a9b-umbrella-1",
+      "summary": "A labeled test ballot chose wild.",
+      "sequence": 5,
+      "propVersion": 1
+    },
+    {
+      "at": 1793453908001,
+      "id": "ps_626f0fa0ece57a9b:6",
+      "type": "round.closed",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "wild": 1,
+        "gentle": 0,
+        "source": "rehearsal",
+        "voters": 1,
+        "roundId": "ps_626f0fa0ece57a9b-round-4"
+      },
+      "propId": "ps_626f0fa0ece57a9b-umbrella-1",
+      "summary": "Rehearsal ballots chose: wild.",
+      "sequence": 6,
+      "propVersion": 1
+    },
+    {
+      "at": 1793453914672,
+      "id": "ps_626f0fa0ece57a9b:7",
+      "type": "action.apply-weather",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "source": "rehearsal",
+        "roundId": "ps_626f0fa0ece57a9b-round-4",
+        "weather": "wild"
+      },
+      "propId": "ps_626f0fa0ece57a9b-umbrella-1",
+      "summary": "Labeled rehearsal ballot: wild weather is now on stage.",
+      "sequence": 7,
+      "propVersion": 2
+    },
+    {
+      "at": 1793453915182,
+      "id": "ps_626f0fa0ece57a9b:8",
+      "type": "action.offer",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "to": "B",
+        "from": "A",
+        "transferId": "ps_626f0fa0ece57a9b-transfer-8"
+      },
+      "propId": "ps_626f0fa0ece57a9b-umbrella-1",
+      "summary": "Test plate A offered the same umbrella to Test plate B. Ownership remains with A.",
+      "sequence": 8,
+      "propVersion": 3
+    },
+    {
+      "at": 1793453915635,
+      "id": "ps_626f0fa0ece57a9b:9",
+      "type": "action.accept",
+      "actor": "director",
+      "owner": "B",
+      "detail": {
+        "to": "B",
+        "from": "A",
+        "patch": "coral",
+        "wetness": 0.52,
+        "transferId": "ps_626f0fa0ece57a9b-transfer-8"
+      },
+      "propId": "ps_626f0fa0ece57a9b-umbrella-1",
+      "summary": "Acceptance committed owner B before the crossing animation. Patch and wetness are retained.",
+      "sequence": 9,
+      "propVersion": 4
+    },
+    {
+      "at": 1793453917091,
+      "id": "ps_626f0fa0ece57a9b:10",
+      "type": "action.arrive",
+      "actor": "director",
+      "owner": "B",
+      "detail": {
+        "transferId": "ps_626f0fa0ece57a9b-transfer-8",
+        "commitSequence": 9
+      },
+      "propId": "ps_626f0fa0ece57a9b-umbrella-1",
+      "summary": "The renderer acknowledged arrival. Owner B was already committed; ownership was not written again.",
+      "sequence": 10,
+      "propVersion": 4
+    },
+    {
+      "at": 1793453918277,
+      "id": "ps_626f0fa0ece57a9b:11",
+      "type": "action.hatch",
+      "actor": "director",
+      "owner": "B",
+      "detail": {
+        "weather": "wild",
+        "creatureId": "ps_626f0fa0ece57a9b-pip-1"
+      },
+      "propId": "ps_626f0fa0ece57a9b-umbrella-1",
+      "summary": "Pip hatched from the same umbrella's runoff with wild behavior.",
+      "sequence": 11,
+      "propVersion": 4
+    },
+    {
+      "at": 1793453918749,
+      "id": "ps_626f0fa0ece57a9b:12",
+      "type": "action.offer",
+      "actor": "director",
+      "owner": "B",
+      "detail": {
+        "to": "A",
+        "from": "B",
+        "transferId": "ps_626f0fa0ece57a9b-transfer-12"
+      },
+      "propId": "ps_626f0fa0ece57a9b-umbrella-1",
+      "summary": "Test plate B offered the same umbrella to Test plate A. Ownership remains with B.",
+      "sequence": 12,
+      "propVersion": 5
+    },
+    {
+      "at": 1793453919220,
+      "id": "ps_626f0fa0ece57a9b:13",
+      "type": "action.accept",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "to": "A",
+        "from": "B",
+        "patch": "coral",
+        "wetness": 0.52,
+        "transferId": "ps_626f0fa0ece57a9b-transfer-12"
+      },
+      "propId": "ps_626f0fa0ece57a9b-umbrella-1",
+      "summary": "Acceptance committed owner A before the crossing animation. Patch and wetness are retained.",
+      "sequence": 13,
+      "propVersion": 6
+    },
+    {
+      "at": 1793453920706,
+      "id": "ps_626f0fa0ece57a9b:14",
+      "type": "action.arrive",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "transferId": "ps_626f0fa0ece57a9b-transfer-12",
+        "commitSequence": 13
+      },
+      "propId": "ps_626f0fa0ece57a9b-umbrella-1",
+      "summary": "The renderer acknowledged arrival. Owner A was already committed; ownership was not written again.",
+      "sequence": 14,
+      "propVersion": 6
+    },
+    {
+      "at": 1793453922227,
+      "id": "ps_626f0fa0ece57a9b:15",
+      "type": "action.shelter",
+      "actor": "director",
+      "owner": "A",
+      "propId": "ps_626f0fa0ece57a9b-umbrella-1",
+      "summary": "Pip found the same umbrella. The performers can share the shelter.",
+      "sequence": 15,
+      "propVersion": 6
+    }
+  ],
+  "scope": "Current state and recent server events; rehearsal is synthetic, not remote-media or audience evidence."
+}

@@ -24,6 +24,7 @@ import { LocalVideoDiagnostics } from "@/media/local-video-diagnostics";
 import type { GestureCalibration } from "@/vision/calibration";
 import { useGestureInput } from "@/vision/use-gesture-input";
 import { DeviceSetup } from "./device-setup";
+import { CameraPermissionNotice } from "./camera-permission-notice";
 import { Wordmark } from "./brand";
 import { EmptyRoom, ErrorNotice, LoadingScreen, StatusPill } from "./ui";
 import { useShowController } from "./use-show-controller";
@@ -486,6 +487,8 @@ function GuestWorkspace({
           <div className="guest-quick-devices">
             <button
               className="button button-dark"
+              disabled={media.cameraRequestPending && !media.cameraEnabled}
+              aria-busy={media.cameraRequestPending}
               onClick={() => {
                 void (
                   media.cameraEnabled
@@ -513,6 +516,15 @@ function GuestWorkspace({
                 : "Enable microphone"}
             </button>
           </div>
+        ) : null}
+        {media.connected ? (
+          <CameraPermissionNotice
+            pending={media.cameraRequestPending}
+            announce={false}
+            onCancel={() => {
+              void media.disableCamera().catch(() => undefined);
+            }}
+          />
         ) : null}
         {error ? (
           <ErrorNotice onDismiss={() => setError("")}>{error}</ErrorNotice>

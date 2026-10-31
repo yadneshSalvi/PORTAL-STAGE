@@ -782,6 +782,28 @@
 .story-progress > div > span:last-of-type {
   overflow-wrap: anywhere;
 }
+.camera-permission-notice {
+  padding: 14px;
+  margin: 0 0 20px;
+  border: 1px solid #64d8c840;
+  border-radius: 6px;
+  background: #64d8c80a;
+}
+.camera-permission-notice > p {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: #b2dacf;
+  font-size: 14px;
+  line-height: 1.8;
+}
+.camera-permission-notice > p > svg {
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+.camera-permission-notice > button {
+  margin-top: 12px;
+}
 @media (max-width: 740px) {
   .guest-on-air .guest-performance {
     display: flex;

@@ -391,7 +391,77 @@ describe("LiveKit browser lifecycle", () => {
     expect(requestToken).not.toHaveBeenCalled();
     expect(rooms).toHaveLength(0);
     expect(media.getSnapshot().status).toBe("idle");
+    expect(media.getSnapshot().cameraRequestPending).toBe(false);
     expect(navigator.mediaDevices.getUserMedia).not.toHaveBeenCalled();
+  });
+  it("reports an active camera request and prevents duplicate capture while permission is outstanding", async () => {
+    let resolve!: (track: TestTrack) => void;
+    createVideo.mockImplementationOnce(
+      () =>
+        new Promise<TestTrack>((done) => {
+          resolve = done;
+        }),
+    );
+    const media = controller();
+    const enabling = media.enableCamera();
+    expect(media.getSnapshot().cameraRequestPending).toBe(true);
+    await media.enableCamera();
+    await flush();
+    expect(createVideo).toHaveBeenCalledTimes(1);
+    expect(media.getSnapshot()).toMatchObject({
+      cameraRequestPending: true,
+      cameraEnabled: false,
+      localPreview: null,
+    });
+    const track = new TestTrack();
+    resolve(track);
+    await enabling;
+    expect(media.getSnapshot()).toMatchObject({
+      cameraRequestPending: false,
+      cameraEnabled: true,
+    });
+    expect(track.attach).toHaveBeenCalledTimes(1);
+  });
+  it("clears pending camera feedback when capture succeeds even if publication is still waiting", async () => {
+    const media = controller();
+    await media.connect();
+    let publish!: () => void;
+    rooms[0].localParticipant.publishTrack.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          publish = () => resolve({ trackSid: "local-track" });
+        }),
+    );
+    const enabling = media.enableCamera();
+    await flush();
+    expect(media.getSnapshot()).toMatchObject({
+      cameraRequestPending: false,
+      cameraEnabled: true,
+      cameraPublished: false,
+    });
+    publish();
+    await enabling;
+    expect(media.getSnapshot().cameraPublished).toBe(true);
+  });
+  it("clears a rejected camera request and allows an explicit retry", async () => {
+    createVideo.mockRejectedValueOnce(
+      new DOMException("camera denied", "NotAllowedError"),
+    );
+    const media = controller();
+    await media.enableCamera();
+    expect(media.getSnapshot()).toMatchObject({
+      cameraRequestPending: false,
+      cameraEnabled: false,
+      permissions: { camera: "denied" },
+      error: { code: "permission-denied" },
+    });
+    await media.enableCamera();
+    expect(createVideo).toHaveBeenCalledTimes(2);
+    expect(media.getSnapshot()).toMatchObject({
+      cameraRequestPending: false,
+      cameraEnabled: true,
+      error: null,
+    });
   });
   it("previews only after explicit camera enable and publishes only after explicit connect", async () => {
     const media = controller();
@@ -446,13 +516,74 @@ describe("LiveKit browser lifecycle", () => {
     const media = controller();
     const enabling = media.enableCamera();
     await flush();
+    expect(media.getSnapshot().cameraRequestPending).toBe(true);
     await media.disableCamera();
+    expect(media.getSnapshot().cameraRequestPending).toBe(false);
     const lateTrack = new TestTrack();
     resolve(lateTrack);
     await enabling;
     expect(lateTrack.stop).toHaveBeenCalled();
     expect(lateTrack.attach).not.toHaveBeenCalled();
     expect(media.getSnapshot().cameraEnabled).toBe(false);
+    expect(media.getSnapshot().cameraRequestPending).toBe(false);
+  });
+  it("does not let a cancelled capture resolution clear a newer request's pending state", async () => {
+    const resolutions: Array<(track: TestTrack) => void> = [];
+    for (let i = 0; i < 2; i++)
+      createVideo.mockImplementationOnce(
+        () =>
+          new Promise<TestTrack>((resolve) => {
+            resolutions.push(resolve);
+          }),
+      );
+    const media = controller();
+    const cancelled = media.enableCamera();
+    await flush();
+    await media.disableCamera();
+    const current = media.enableCamera();
+    await flush();
+    const staleTrack = new TestTrack();
+    resolutions[0](staleTrack);
+    await cancelled;
+    expect(staleTrack.stop).toHaveBeenCalled();
+    expect(staleTrack.attach).not.toHaveBeenCalled();
+    expect(media.getSnapshot().cameraRequestPending).toBe(true);
+    const currentTrack = new TestTrack();
+    resolutions[1](currentTrack);
+    await current;
+    expect(media.getSnapshot()).toMatchObject({
+      cameraRequestPending: false,
+      cameraEnabled: true,
+    });
+    expect(currentTrack.stop).not.toHaveBeenCalled();
+    expect(currentTrack.attach).toHaveBeenCalledTimes(1);
+  });
+  it("disconnect immediately cancels capture intent and stops a track granted afterwards", async () => {
+    let resolve!: (track: TestTrack) => void;
+    createVideo.mockImplementationOnce(
+      () =>
+        new Promise<TestTrack>((done) => {
+          resolve = done;
+        }),
+    );
+    const media = controller();
+    await media.connect();
+    const enabling = media.enableCamera();
+    await flush();
+    expect(media.getSnapshot().cameraRequestPending).toBe(true);
+    const disconnecting = media.disconnect();
+    expect(media.getSnapshot().cameraRequestPending).toBe(false);
+    const lateTrack = new TestTrack();
+    resolve(lateTrack);
+    await Promise.all([enabling, disconnecting]);
+    expect(lateTrack.stop).toHaveBeenCalled();
+    expect(lateTrack.attach).not.toHaveBeenCalled();
+    expect(rooms[0].localParticipant.publishTrack).not.toHaveBeenCalled();
+    expect(media.getSnapshot()).toMatchObject({
+      cameraRequestPending: false,
+      cameraEnabled: false,
+      localPreview: null,
+    });
   });
   it("switches only an already enabled input and leaves disabled inputs private", async () => {
     const media = controller();

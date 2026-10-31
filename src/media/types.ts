@@ -63,6 +63,8 @@ export type MediaSnapshot = {
   connected: boolean;
   status: MediaStatus;
   cameraEnabled: boolean;
+  /** Active explicit capture attempt; independent of Permissions API state. */
+  cameraRequestPending: boolean;
   microphoneEnabled: boolean;
   cameraPublished: boolean;
   microphonePublished: boolean;

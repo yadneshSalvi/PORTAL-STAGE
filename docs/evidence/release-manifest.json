@@ -1,0 +1,110 @@
+{
+  "format": "portal-stage.release-evidence/v1",
+  "evidenceAsOf": "2026-10-31T13:40:59Z",
+  "sourceCommit": "bf5cf4df746dff48c700e8548516b0cfdc2dbc66",
+  "repository": "https://github.com/yadneshSalvi/PORTAL-STAGE",
+  "deployment": {
+    "id": "dpl_2SJnnjbvEHn5XhCbWtwPBXruvDnv",
+    "url": "https://portal-stage-eight.vercel.app",
+    "status": "Ready",
+    "verification": "Public rehearsal, production OAuth and EventSub listening passed; browser cloud media and actual PORTAL ballots remain pending."
+  },
+  "checks": {
+    "lastFullAutomatedRun": {
+      "passed": 176,
+      "skipped": 3,
+      "passedFiles": 20,
+      "skippedFiles": 1,
+      "seconds": 8.59,
+      "condition": "Before the subsequent no-hand status copy change."
+    },
+    "finalVisionRegression": {
+      "passed": 35,
+      "condition": "After the no-hand copy change; model and cue gates unchanged."
+    },
+    "actualNeonIntegration": {
+      "passed": 3,
+      "condition": "Separate opt-in run with random test rows created and deleted."
+    },
+    "typecheck": "passed",
+    "formatting": "passed",
+    "optimizedBuild": "passed",
+    "localSyntheticMedia": "Full two-session protocol and recovery passed through a real local SFU.",
+    "localDecoderRegression": "First pictures, preview open/close and guest reconnect passed without the initial workaround.",
+    "localHandRuntime": "Successful inference on synthetic frames displayed active tracking with no selected hand detected.",
+    "cloudServerAuthentication": "LiveKit RoomService authentication passed; this is not browser media proof.",
+    "productionRehearsal": {
+      "showId": "ps_626f0fa0ece57a9b",
+      "sequence": 15,
+      "owner": "A",
+      "version": 6,
+      "wetness": 0.52,
+      "repairPatch": "coral",
+      "input": "Explicit synthetic test ballot and generated stage plates"
+    },
+    "productionTwitchOAuth": "passed",
+    "productionEventSub": "Connected and displayed Listening for !gentle and !wild in Twitch chat.",
+    "productionMobileLanding": {
+      "viewport": "390x844",
+      "horizontalOverflow": false,
+      "documentWidth": 375,
+      "viewportWidth": 390
+    },
+    "productionVisionAssets": "Worker, model and SIMD WASM returned HTTP 200 and matched local files byte for byte.",
+    "productionSessionCaching": "HTTP 200 with Cache-Control: no-store, private."
+  },
+  "pending": [
+    "Production browser-to-cloud media using physical devices",
+    "Actual PORTAL Twitch command-to-ballot verification",
+    "Two consenting remote humans on separate networks and physical hand accuracy",
+    "Physical microphone behavior, echo/synchronization, OBS capture and a public broadcast"
+  ],
+  "artifacts": [
+    {
+      "path": "browser/production-landing.jpg",
+      "sha256": "9aa56a2fc11dac08cdb65c238a4820fd69b78ada0eada7ab108df975a80071a2",
+      "bytes": 66885
+    },
+    {
+      "path": "browser/production-rehearsal-shelter.jpg",
+      "sha256": "c2aa28b23aa940408ba7e2eb8c52eb54465614d4557f0ce5c77ba849709128cc",
+      "bytes": 82521
+    },
+    {
+      "path": "browser/production-rehearsal-trace.json",
+      "sha256": "3f388b03baadec2c00fda5ae8f4ee208e7fc08d4149bb721e6050bbeb2ad6131",
+      "bytes": 7780
+    },
+    {
+      "path": "browser/local-decoder-first-frame.jpg",
+      "sha256": "88364542787345a8d25347447abb90cb3c1ca6d47a38559d20418efd2bdb52f8",
+      "bytes": 99740
+    },
+    {
+      "path": "browser/local-hand-model-status.txt",
+      "sha256": "ee67bf9596a7ab79e04b98e8dd0414206e6680b0d9038a154aac8ec1e13a9629",
+      "bytes": 1027
+    },
+    {
+      "path": "browser/local-transport-trace.json",
+      "sha256": "3ccbdac537029e001dac030d0616afc2627acf772cdf19a95fa8798945408e07",
+      "bytes": 16052
+    },
+    {
+      "path": "browser/local-transport-rooms.json",
+      "sha256": "d8f1f4cc988671d62ed0da98aa50f237cd906da21576d9315b2b1cac5fbde5aa",
+      "bytes": 1825
+    },
+    {
+      "path": "browser/production-mobile-landing.jpg",
+      "sha256": "18ea1a9fb6d5b2e1e7f88234ef6e2ce511b281625d037f33adb71913c8f5e26b",
+      "bytes": 34561
+    },
+    {
+      "path": "browser/production-twitch-status.txt",
+      "sha256": "6c28faaf10798af8ddcd1da8f3dc2f217d49e4f03f9029c29b6d523771905449",
+      "bytes": 361
+    }
+  ],
+  "limits": "Screenshots and traces are observed evidence. Synthetic media, server authentication and automated tests do not establish remote-human performance or measured end-to-end latency."
+}
