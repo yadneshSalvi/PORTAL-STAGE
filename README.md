@@ -10,7 +10,7 @@ The software provides the stagecraft. The people provide the performance. There 
 
 The landing page and **Start a rehearsal** require no Twitch account, camera, microphone, or paid account. Rehearsal uses clearly labeled synthetic plates and test ballots. It demonstrates the real saved show protocol and authored effects; it is not evidence of two remote humans or genuine Twitch participation.
 
-**Live at [portal-stage-eight.vercel.app](https://portal-stage-eight.vercel.app).** The complete public rehearsal, production Twitch sign-in, and EventSub connection are verified. Cloud browser media and physical devices remain to be checked. The [release record](docs/evidence/release.md) identifies the deployed source and remaining verification.
+**Live at [portal-stage-eight.vercel.app](https://portal-stage-eight.vercel.app).** The public rehearsal and a physical-camera LiveKit Cloud walkthrough passed, including actual Twitch vote replacement, both umbrella handoffs, emergency recovery, and shutdown. The cloud test used two independent sessions on one computer/network with microphones disabled. The [release record](docs/evidence/release.md) identifies the deployed source and remaining remote-performance checks.
 
 For a live show, an invited host connects Twitch, creates a show, invites a second performer backstage, and acquires the canonical renderer. Device preview, broadcast consent, recording consent, readiness, and director admission are separate steps. Viewers remain on Twitch. They do not join the private media room.
 
@@ -51,7 +51,8 @@ See [architecture](docs/architecture.md), [media](docs/media.md), [gestures](doc
 - An actual two-session local LiveKit walkthrough completed both accepted transfers, hatching, shelter, emergency hold, disconnect/reconnect, fresh admission, resume, and end. Its moving video plates are explicitly synthetic.
 - A fresh optimized browser regression showed both cameras on the first curtain without opening a preview. Decoder playback survived preview open/close and guest reconnect; the source-reset failure is covered by an installed-SDK regression.
 - The production rehearsal completed a labeled wild test ballot, both crossings, hatch, and shelter with the same umbrella at version 6 and 52% wetness. Production Twitch OAuth and EventSub listening also passed.
-- PORTAL's public command-to-ballot check, browser-to-cloud media, physical camera/microphone checks, remote-human performance, and OBS capture remain pending.
+- The final deployment passed physical-camera Cloud transport, a real `!gentle` → `!wild` replacement ballot, both receiver-owned handoffs, shelter, emergency curtain, camera withdrawal/re-admission, and end with no remaining cloud rooms. This used one camera/computer/network and the host’s own Twitch account.
+- Two remote humans, physical hand accuracy, microphones/echo, measured delay, and OBS capture remain to be checked. No camera footage or private consent receipts are committed.
 
 The [check record](docs/evidence/checks.md) and [browser record](docs/evidence/browser/2026-10-31-local.md) give the conditions and evidence behind these results.
 

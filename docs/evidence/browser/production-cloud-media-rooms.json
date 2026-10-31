@@ -1,0 +1,90 @@
+{
+  "observedAt": "2026-10-31T16:41:00.537Z",
+  "test": "Physical camera, shared computer/network, two independent browser sessions; LiveKit Cloud transport",
+  "rooms": [
+    {
+      "room": "portal-ps_fb3398cc6bde0434-program",
+      "participants": [
+        {
+          "role": "output-publisher",
+          "slot": null,
+          "permission": {
+            "canPublish": true,
+            "canSubscribe": false
+          },
+          "tracks": [
+            {
+              "name": "portal-program",
+              "source": 3,
+              "width": 1920,
+              "height": 1080,
+              "muted": false
+            },
+            {
+              "name": "portal-program-audio",
+              "source": 4,
+              "width": 0,
+              "height": 0,
+              "muted": false
+            }
+          ]
+        },
+        {
+          "role": "program",
+          "slot": null,
+          "permission": {
+            "canPublish": false,
+            "canSubscribe": true
+          },
+          "tracks": []
+        }
+      ]
+    },
+    {
+      "room": "portal-ps_fb3398cc6bde0434-backstage",
+      "participants": [
+        {
+          "role": "director",
+          "slot": "A",
+          "permission": {
+            "canPublish": true,
+            "canSubscribe": true
+          },
+          "tracks": [
+            {
+              "name": "portal-camera",
+              "source": 1,
+              "width": 1280,
+              "height": 720,
+              "muted": false
+            },
+            {
+              "name": "portal-return",
+              "source": 3,
+              "width": 1920,
+              "height": 1080,
+              "muted": false
+            }
+          ]
+        },
+        {
+          "role": "performer",
+          "slot": "B",
+          "permission": {
+            "canPublish": true,
+            "canSubscribe": true
+          },
+          "tracks": [
+            {
+              "name": "portal-camera",
+              "source": 1,
+              "width": 1280,
+              "height": 720,
+              "muted": false
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,13 +1,13 @@
 {
   "format": "portal-stage.release-evidence/v1",
-  "evidenceAsOf": "2026-10-31T13:48:40Z",
+  "evidenceAsOf": "2026-10-31T16:42:38Z",
   "sourceCommit": "12df783729263a051264ddeef88a29b7aa8ccae7",
   "repository": "https://github.com/yadneshSalvi/PORTAL-STAGE",
   "deployment": {
     "id": "dpl_BQ2GG9TznHmoqatAx8YoBzT9nhTQ",
     "url": "https://portal-stage-eight.vercel.app",
     "status": "Ready",
-    "verification": "Final production reload, lease reacquisition and camera waiting UI passed. Full public rehearsal/OAuth/EventSub evidence belongs to the initial deployment; those unchanged flows were not rerun in full.",
+    "verification": "Final deployment passed physical-camera LiveKit Cloud story, actual Twitch vote replacement, both receiver-owned handoffs, shelter, emergency curtain, camera withdrawal/re-admission, resume, and end with no remaining rooms. Production director/Program and isolated local development guest shared one camera/computer/network. Initial public synthetic rehearsal provenance is retained separately.",
     "uniqueUrl": "https://portal-stage-ol7f5e7o6-yadneshsalvis-projects.vercel.app"
   },
   "checks": {
@@ -63,15 +63,86 @@
       "enableDisabled": true,
       "cancelAvailable": true,
       "privateVideoElements": 0,
-      "permissionGrant": "pending user browser action",
+      "permissionGrant": "User allowed production and local guest origins; physical 1280x720 camera preview and Cloud transport passed.",
       "evidence": "browser/production-camera-permission.jpg"
     },
-    "localCameraCancellation": "Waiting notice and duplicate-request disable passed; Cancel removed pending controls and re-enabled Enable. No physical media was granted."
+    "localCameraCancellation": "Waiting notice and duplicate-request disable passed; Cancel removed pending controls and re-enabled Enable. No physical media was granted.",
+    "productionCloudMedia": {
+      "showId": "ps_fb3398cc6bde0434",
+      "director": "Canonical production deployment",
+      "guest": "Independent cookie on http://127.0.0.1:3201, local development server from the same source, same Neon/signing/LiveKit Cloud configuration",
+      "physicalDevice": "Same MacBook Pro camera, one computer and network; two participant sessions",
+      "cameraResolution": "1280x720",
+      "programResolution": "1920x1080",
+      "guestReturnResolution": "1920x1080, video-only",
+      "microphonesEnabled": false,
+      "programViewerCanPublish": false,
+      "rawCamerasInProgramRoom": false,
+      "scope": "Actual physical capture and Cloud SFU transport, not two remote humans or separate-network reliability"
+    },
+    "productionTwitchBallot": {
+      "commands": ["!gentle", "!wild"],
+      "uniqueVoters": 1,
+      "tallies": {
+        "gentle": 0,
+        "wild": 1
+      },
+      "result": "wild",
+      "source": "audience",
+      "voteEventSequences": [22, 23],
+      "secondVoteReplacedFirst": true,
+      "synthetic": false,
+      "scope": "Authorized public chat commands from the host account; not independent audience engagement"
+    },
+    "productionCloudStory": {
+      "showId": "ps_fb3398cc6bde0434",
+      "umbrellaId": "ps_fb3398cc6bde0434-umbrella-1",
+      "acceptedByB": {
+        "sequence": 27,
+        "version": 4
+      },
+      "arrivedAtB": {
+        "sequence": 28,
+        "version": 4
+      },
+      "acceptedByA": {
+        "sequence": 31,
+        "version": 6
+      },
+      "arrivedAtA": {
+        "sequence": 32,
+        "version": 6
+      },
+      "shelterSequence": 33,
+      "owner": "A",
+      "version": 6,
+      "wetness": 0.52,
+      "repairPatch": "coral",
+      "creatureMood": "wild"
+    },
+    "productionCloudRecovery": {
+      "panicSequence": 34,
+      "guestCameraWithdrawalSequence": 35,
+      "guestPublishedTracksWhileCameraOff": 0,
+      "guestCameraReenabledSequence": 36,
+      "freshReadinessSequences": [37, 38],
+      "freshAdmissionSequences": [39, 40],
+      "resumeSequence": 41,
+      "scope": "Camera off/on while media room stayed connected; prior full reconnect was separately tested with synthetic sources locally"
+    },
+    "productionCloudShutdown": {
+      "endSequence": 42,
+      "remainingRooms": 0,
+      "directorVideoElements": 0,
+      "guestVideoElements": 0,
+      "programVideoElements": 0,
+      "twitchDisconnected": true,
+      "console": "Intentional disconnect emitted user-initiated data-channel abort/closed-peer/already-unpublished warnings; preserved in shutdown observations."
+    }
   },
   "pending": [
-    "Production browser-to-cloud media using physical devices",
-    "Actual PORTAL Twitch command-to-ballot verification",
-    "Two consenting remote humans on separate networks and physical hand accuracy",
+    "Two consenting remote humans on separate devices/networks and physical hand accuracy",
+    "Measured control/media delay",
     "Physical microphone behavior, echo/synchronization, OBS capture and a public broadcast"
   ],
   "artifacts": [
@@ -124,9 +195,64 @@
       "path": "browser/production-camera-permission.jpg",
       "sha256": "065090af5cea803986196721835db423547ad12b99e8426480eaf2034e99b8a4",
       "bytes": 85138
+    },
+    {
+      "path": "browser/production-cloud-connected-controls.jpg",
+      "sha256": "f0363c79856f171ca7b519a8a88e908edc8c3e4148014bf3e73e18377503a4e9",
+      "bytes": 27612
+    },
+    {
+      "path": "browser/production-twitch-vote-replacement.txt",
+      "sha256": "306e152ddd4d94c476a4f420ecdedfa044ca18e6352cb6953084ba45fb6d3099",
+      "bytes": 766
+    },
+    {
+      "path": "browser/production-cloud-media-rooms.json",
+      "sha256": "f261623df93d057f374f073c53f8180613d7f62da47c5351d9a0bcc7cacf971c",
+      "bytes": 2132
+    },
+    {
+      "path": "browser/production-cloud-playback.json",
+      "sha256": "aadb974c7a22d1b526a4b08188f24eec7ddfa14541338bdacb2ace3ef5112853",
+      "bytes": 570
+    },
+    {
+      "path": "browser/production-cloud-story-trace.json",
+      "sha256": "1b4b15cbb9efca1d4693138d94ad2030fc4f670b218c6ffcfd3c3b58362fd869",
+      "bytes": 17026
+    },
+    {
+      "path": "browser/production-cloud-emergency-curtain.jpg",
+      "sha256": "9e58c1ff1c61fc4075d1dd360253e44a40942b7385d85e412d8ad7bea592fe7e",
+      "bytes": 27002
+    },
+    {
+      "path": "browser/production-cloud-camera-withdrawal.json",
+      "sha256": "c884693a15cc188d50638f8d27a6073f71fca56dd6ba5b44b73f2e02dd023a32",
+      "bytes": 448
+    },
+    {
+      "path": "browser/production-cloud-ended-trace.json",
+      "sha256": "3560c31632e5f3f7a39b3281884da843bc1df0427e4c73f615bb274ad063fa10",
+      "bytes": 17354
+    },
+    {
+      "path": "browser/production-cloud-shutdown.json",
+      "sha256": "81723708ed3fd599f8c4944c46388a60f412158caca6b563e7defdd7a4af863f",
+      "bytes": 94
+    },
+    {
+      "path": "browser/production-cloud-shutdown-observations.json",
+      "sha256": "336837a6578a5cbde6f7c8ef2e301fefc5899907785648252e79161406ca7ad1",
+      "bytes": 1122
+    },
+    {
+      "path": "browser/production-cloud-ended.jpg",
+      "sha256": "27edafcdca629b04b7ea92ee42e97f787139f97ae06a2ab99436ef0e0d5d4c5f",
+      "bytes": 26884
     }
   ],
-  "limits": "Screenshots and traces are observed evidence. Synthetic media, server authentication and automated tests do not establish remote-human performance or measured end-to-end latency.",
+  "limits": "Observed physical-camera Cloud test uses two sessions sharing one device/computer/network, with microphones disabled. Actual Twitch commands came from the authorized host account. Neither this test nor synthetic tests establishes remote-human performance, voice quality, hand accuracy, or measured latency. Camera footage and private consent receipts are excluded from Git; trace derivatives omit consent events 6 and 14 and identify the redaction.",
   "initialProductionVerification": {
     "sourceCommit": "bf5cf4df746dff48c700e8548516b0cfdc2dbc66",
     "deploymentId": "dpl_2SJnnjbvEHn5XhCbWtwPBXruvDnv",

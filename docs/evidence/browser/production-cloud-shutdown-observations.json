@@ -1,0 +1,33 @@
+{
+  "observedAt": "2026-10-31T16:42:38Z",
+  "showId": "ps_fb3398cc6bde0434",
+  "finalSequence": 42,
+  "director": {
+    "cameraRoom": "Not connected",
+    "twitchChat": "Not connected",
+    "program": "Not publishing",
+    "videoElements": 0
+  },
+  "guest": {
+    "connection": "Not connected",
+    "videoElements": 0
+  },
+  "program": {
+    "heading": "Until the next impossible thing.",
+    "videoElements": 0
+  },
+  "scope": "Read-only UI observations after End the show. Physical microphones remained disabled; no recording or Twitch broadcast was started.",
+  "shutdownConsoleObservations": {
+    "at": "2026-10-31T16:42:08Z",
+    "guest": [
+      "DataChannel User-Initiated Abort on lossy/reliable/data-track channels",
+      "publisher data channel closed unexpectedly",
+      "could not createOffer with closed peer connection"
+    ],
+    "director": [
+      "track was not unpublished because no publication was found",
+      "could not createOffer with closed peer connection"
+    ],
+    "effectObserved": "Messages occurred during intentional end/disconnect. No active rooms or media elements remained."
+  }
+}

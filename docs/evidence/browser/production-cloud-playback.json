@@ -1,0 +1,29 @@
+{
+  "observedAt": "2026-10-31T16:41:05.279Z",
+  "test": "Physical camera sessions share one computer/network; microphones disabled",
+  "program": [
+    {
+      "currentTime": 228.86116,
+      "height": 1080,
+      "paused": false,
+      "readyState": 4,
+      "width": 1920
+    }
+  ],
+  "guest": [
+    {
+      "currentTime": 201.628026,
+      "height": 1080,
+      "paused": false,
+      "readyState": 4,
+      "width": 1920
+    },
+    {
+      "currentTime": 239.524253,
+      "height": 720,
+      "paused": false,
+      "readyState": 4,
+      "width": 1280
+    }
+  ]
+}

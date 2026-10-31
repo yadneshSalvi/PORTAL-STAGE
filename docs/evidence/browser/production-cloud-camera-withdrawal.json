@@ -1,0 +1,25 @@
+{
+  "observedAt": "2026-10-31T16:41:32.268Z",
+  "test": "Guest withdrew camera while curtain held",
+  "participants": [
+    {
+      "role": "director",
+      "slot": "A",
+      "tracks": [
+        {
+          "name": "portal-camera",
+          "muted": false
+        },
+        {
+          "name": "portal-return",
+          "muted": false
+        }
+      ]
+    },
+    {
+      "role": "performer",
+      "slot": "B",
+      "tracks": []
+    }
+  ]
+}

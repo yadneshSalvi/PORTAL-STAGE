@@ -1,0 +1,49 @@
+First observed tally:
+YOUR NEXT CUE
+03
+✦
+Give the room a moment.
+
+Close the choice when you are ready. With no ballots, your selected fallback becomes Director’s choice.
+
+Close the weather choice
+Keyboard:
+Space
+for this cue
+AUDIENCE CHOICE
+24s
+Set the storm.
+
+One choice per viewer. A later valid command replaces it.
+
+!gentle
+A shy little friend
+1
+!wild
+A little mischief
+0
+
+Replacement observed tally:
+YOUR NEXT CUE
+03
+✦
+Give the room a moment.
+
+Close the choice when you are ready. With no ballots, your selected fallback becomes Director’s choice.
+
+Close the weather choice
+Keyboard:
+Space
+for this cue
+AUDIENCE CHOICE
+7s
+Set the storm.
+
+One choice per viewer. A later valid command replaces it.
+
+!gentle
+A shy little friend
+0
+!wild
+A little mischief
+1
