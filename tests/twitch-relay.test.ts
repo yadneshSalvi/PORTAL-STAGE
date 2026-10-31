@@ -31,6 +31,28 @@ function notification() {
   };
 }
 describe("minimal bounded Twitch relay", () => {
+  it.each([
+    "BTPLNWL9eUwyraAOcqg4S1F70EKKx1j2JPOfvz2IAgg=",
+    "Axj/xO9m6nhD1qgz9jQZ/K31IQMz+WlnAXHQWpSGpRA=",
+  ])("preserves an opaque provider notification ID: %s", (messageId) => {
+    const incoming = notification();
+    incoming.metadata.message_id = messageId;
+    expect(compactChatEnvelope(incoming)?.metadata.message_id).toBe(messageId);
+  });
+  it.each(["", "x".repeat(129), 123, null])(
+    "rejects an unbounded or non-string opaque identifier: %s",
+    (invalid) => {
+      for (const field of ["notification", "subscription", "chat"] as const) {
+        const incoming = notification();
+        if (field === "notification")
+          Object.assign(incoming.metadata, { message_id: invalid });
+        else if (field === "subscription")
+          Object.assign(incoming.payload.subscription, { id: invalid });
+        else Object.assign(incoming.payload.event, { message_id: invalid });
+        expect(compactChatEnvelope(incoming)).toBeNull();
+      }
+    },
+  );
   it("preserves authorization, identity and precise timing while stripping unrelated provider fields", () => {
     const relay = compactChatEnvelope(notification());
     expect(relay).toMatchObject({

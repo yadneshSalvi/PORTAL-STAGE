@@ -29,7 +29,7 @@ const object = (value: unknown): Record<string, unknown> =>
     ? (value as Record<string, unknown>)
     : {};
 const identifier = (value: unknown): value is string =>
-  typeof value === "string" && /^[a-zA-Z0-9_-]{1,128}$/.test(value);
+  typeof value === "string" && value.length > 0 && value.length <= 128;
 const account = (value: unknown): value is string =>
   typeof value === "string" && /^\d{1,30}$/.test(value);
 const display = (value: unknown) =>
