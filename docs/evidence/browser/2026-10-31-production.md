@@ -2,6 +2,8 @@
 
 Observed on 31 October 2026 at [portal-stage-eight.vercel.app](https://portal-stage-eight.vercel.app). Initial production release: source `bf5cf4df746dff48c700e8548516b0cfdc2dbc66`, Vercel deployment `dpl_2SJnnjbvEHn5XhCbWtwPBXruvDnv`, reported Ready.
 
+The final camera-feedback update is source `12df783729263a051264ddeef88a29b7aa8ccae7`, deployment `dpl_BQ2GG9TznHmoqatAx8YoBzT9nhTQ`, also Ready on the same canonical URL. The full story below was verified on the initial release; the final patch changes camera-request lifecycle and feedback, with its focused production check recorded below.
+
 ## Public experience
 
 The public landing loaded without a Vercel login or other access gate. Its primary action created a labeled solo rehearsal. On show `ps_626f0fa0ece57a9b`, the browser exercised the full story: curtain, weather choice, one labeled wild test ballot, close choice, rain, offer and accept to B, Pip, offer and accept back to A, then shared shelter.
@@ -25,6 +27,10 @@ The production hand worker, hand-landmark model, and SIMD WASM returned HTTP200 
 Dedicated LiveKit Cloud credentials authenticated successfully against its room service and are stored as server configuration. The account dashboard showed the Build plan and a $0 next invoice at the time of inspection. These are setup observations, not a claim of unlimited free usage or verified browser media.
 
 ## Remaining media verification
+
+After the final deployment, an explicit document reload and director-lease takeover loaded the new camera controls. Enable camera displayed the waiting notice, disabled duplicate requests, and exposed an enabled Cancel camera request control. No private preview video element existed because permission remained pending. The local browser had separately verified that Cancel removes the notice and restores the enabled camera button; the final full automated run passed 183 tests, with three opt-in database tests skipped.
+
+![Final production camera permission feedback](production-camera-permission.jpg)
 
 The real camera check reached the in-app browser permission boundary. The app has requested access; the browser prompt requires the user's click because the computer-use tool cannot operate the Codex application's native permission UI. The live show remains backstage with no published Program.
 

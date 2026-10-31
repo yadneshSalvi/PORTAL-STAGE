@@ -1,26 +1,27 @@
 {
   "format": "portal-stage.release-evidence/v1",
-  "evidenceAsOf": "2026-10-31T13:40:59Z",
-  "sourceCommit": "bf5cf4df746dff48c700e8548516b0cfdc2dbc66",
+  "evidenceAsOf": "2026-10-31T13:48:40Z",
+  "sourceCommit": "12df783729263a051264ddeef88a29b7aa8ccae7",
   "repository": "https://github.com/yadneshSalvi/PORTAL-STAGE",
   "deployment": {
-    "id": "dpl_2SJnnjbvEHn5XhCbWtwPBXruvDnv",
+    "id": "dpl_BQ2GG9TznHmoqatAx8YoBzT9nhTQ",
     "url": "https://portal-stage-eight.vercel.app",
     "status": "Ready",
-    "verification": "Public rehearsal, production OAuth and EventSub listening passed; browser cloud media and actual PORTAL ballots remain pending."
+    "verification": "Final production reload, lease reacquisition and camera waiting UI passed. Full public rehearsal/OAuth/EventSub evidence belongs to the initial deployment; those unchanged flows were not rerun in full.",
+    "uniqueUrl": "https://portal-stage-ol7f5e7o6-yadneshsalvis-projects.vercel.app"
   },
   "checks": {
     "lastFullAutomatedRun": {
-      "passed": 176,
+      "passed": 183,
       "skipped": 3,
       "passedFiles": 20,
       "skippedFiles": 1,
-      "seconds": 8.59,
-      "condition": "Before the subsequent no-hand status copy change."
+      "seconds": 2.06,
+      "condition": "Includes the camera permission pending/cancellation patch and prior vision status change."
     },
     "finalVisionRegression": {
       "passed": 35,
-      "condition": "After the no-hand copy change; model and cue gates unchanged."
+      "condition": "Earlier focused no-hand status check; covered by the latest full run."
     },
     "actualNeonIntegration": {
       "passed": 3,
@@ -40,7 +41,9 @@
       "version": 6,
       "wetness": 0.52,
       "repairPatch": "coral",
-      "input": "Explicit synthetic test ballot and generated stage plates"
+      "input": "Explicit synthetic test ballot and generated stage plates",
+      "sourceCommit": "bf5cf4df746dff48c700e8548516b0cfdc2dbc66",
+      "deploymentId": "dpl_2SJnnjbvEHn5XhCbWtwPBXruvDnv"
     },
     "productionTwitchOAuth": "passed",
     "productionEventSub": "Connected and displayed Listening for !gentle and !wild in Twitch chat.",
@@ -51,7 +54,19 @@
       "viewportWidth": 390
     },
     "productionVisionAssets": "Worker, model and SIMD WASM returned HTTP 200 and matched local files byte for byte.",
-    "productionSessionCaching": "HTTP 200 with Cache-Control: no-store, private."
+    "productionSessionCaching": "HTTP 200 with Cache-Control: no-store, private.",
+    "productionCameraPermissionFeedback": {
+      "sourceCommit": "12df783729263a051264ddeef88a29b7aa8ccae7",
+      "reload": "passed",
+      "leaseReacquisition": "passed",
+      "waitingNoticeVisible": true,
+      "enableDisabled": true,
+      "cancelAvailable": true,
+      "privateVideoElements": 0,
+      "permissionGrant": "pending user browser action",
+      "evidence": "browser/production-camera-permission.jpg"
+    },
+    "localCameraCancellation": "Waiting notice and duplicate-request disable passed; Cancel removed pending controls and re-enabled Enable. No physical media was granted."
   },
   "pending": [
     "Production browser-to-cloud media using physical devices",
@@ -104,7 +119,23 @@
       "path": "browser/production-twitch-status.txt",
       "sha256": "6c28faaf10798af8ddcd1da8f3dc2f217d49e4f03f9029c29b6d523771905449",
       "bytes": 361
+    },
+    {
+      "path": "browser/production-camera-permission.jpg",
+      "sha256": "065090af5cea803986196721835db423547ad12b99e8426480eaf2034e99b8a4",
+      "bytes": 85138
     }
   ],
-  "limits": "Screenshots and traces are observed evidence. Synthetic media, server authentication and automated tests do not establish remote-human performance or measured end-to-end latency."
+  "limits": "Screenshots and traces are observed evidence. Synthetic media, server authentication and automated tests do not establish remote-human performance or measured end-to-end latency.",
+  "initialProductionVerification": {
+    "sourceCommit": "bf5cf4df746dff48c700e8548516b0cfdc2dbc66",
+    "deploymentId": "dpl_2SJnnjbvEHn5XhCbWtwPBXruvDnv",
+    "checks": [
+      "Full public rehearsal",
+      "Production OAuth and EventSub listening",
+      "Mobile landing overflow",
+      "Hosted vision asset byte matching",
+      "Private no-store session response"
+    ]
+  }
 }

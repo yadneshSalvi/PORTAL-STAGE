@@ -2,7 +2,7 @@
 
 This ledger separates implemented behavior, observed checks, and evidence still to collect. A labeled rehearsal reproduces the protocol; it does not establish remote-human performance.
 
-**Release status: deployed; public rehearsal, production OAuth, and EventSub listening verified.** The canonical URL is [portal-stage-eight.vercel.app](https://portal-stage-eight.vercel.app). Deployment `dpl_2SJnnjbvEHn5XhCbWtwPBXruvDnv` is Ready for source commit `bf5cf4df746dff48c700e8548516b0cfdc2dbc66`. A dedicated LiveKit Cloud project has recording disabled and configured credentials; server RoomService authentication passed. Browser cloud media and actual PORTAL ballots remain pending. See the [release record and artifact hashes](release.md).
+**Release status: deployed; public rehearsal, production OAuth, and EventSub listening verified.** The canonical URL is [portal-stage-eight.vercel.app](https://portal-stage-eight.vercel.app). Deployment `dpl_BQ2GG9TznHmoqatAx8YoBzT9nhTQ` is Ready for source commit `12df783729263a051264ddeef88a29b7aa8ccae7`. A dedicated LiveKit Cloud project has recording disabled and configured credentials; server RoomService authentication passed. Browser cloud media and actual PORTAL ballots remain pending. See the [release record and artifact hashes](release.md).
 
 The latest full automated run passed **183 tests** across 20 files, with three opt-in database tests skipped. That run includes the final no-hand status and camera request pending/cancellation regressions; whole-tree typecheck also passed. The **three actual Neon integration tests passed in a separate configured run**. Formatting passed; the optimized build generated 16 pages. See the [check record](checks.md) for exact conditions.
 
@@ -30,7 +30,7 @@ npm run build
 
 Run the build with development servers stopped or in an isolated copy/cache. `tests/postgres-lease.test.ts` is skipped unless `PORTAL_TEST_DATABASE_URL` is supplied. It creates random fixture rows and deletes only those rows afterward; prefer a dedicated test database. Ordinary tests require no provider credentials.
 
-The signed-out production walkthrough completed the test ballot, rain, both crossings, hatch, and shared shelter in show `ps_626f0fa0ece57a9b`. Its umbrella returned to A at version 6 and 52% wetness. The [release manifest](release-manifest.json) records this observation and the checks still pending.
+The signed-out production walkthrough on initial source `bf5cf4d` completed the test ballot, rain, both crossings, hatch, and shared shelter in show `ps_626f0fa0ece57a9b`. Its umbrella returned to A at version 6 and 52% wetness. The final deployment separately passed reload, lease reacquisition, and camera waiting-state UI checks. The [release manifest](release-manifest.json) records both verification scopes and the checks still pending.
 
 ## Remaining performance evidence
 
