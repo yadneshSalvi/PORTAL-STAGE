@@ -1,4 +1,7 @@
 import { api as requestApi } from "./client";
+import { parseAudienceCommand } from "./show-grammar";
+import { TwitchEventBatcher } from "./twitch-batch";
+import { compactChatEnvelope, type ChatRelayEnvelope } from "./twitch-relay";
 const errorMessage = (error: unknown) =>
   error instanceof Error ? error.message : "The chat connection failed.";
 const api = <T = unknown>(path: string, body: unknown) =>
@@ -30,7 +33,8 @@ export class TwitchConnector {
   private attempts = 0;
   private keepaliveMs = 32000;
   private lastHealthyReport = 0;
-  private queue = Promise.resolve();
+  private batcher: TwitchEventBatcher<ChatRelayEnvelope> | null = null;
+  private intakeWarning = "";
 
   constructor(
     private showId: string,
@@ -47,10 +51,25 @@ export class TwitchConnector {
   start() {
     if (!this.stopped) return;
     this.stopped = false;
+    this.intakeWarning = "";
+    this.batcher = new TwitchEventBatcher(
+      (envelopes) =>
+        api(`/api/shows/${this.showId}/twitch/events`, {
+          envelopes,
+          ...this.authority(),
+        }),
+      (error) => {
+        this.intakeWarning = `Chat is connected, but some commands may not have reached the stage. ${errorMessage(error)}`;
+        this.onState("connected", this.intakeWarning);
+      },
+      () => this.onEvent(),
+    );
     this.open(EVENTSUB_URL);
   }
   stop() {
     this.stopped = true;
+    this.batcher?.stop();
+    this.batcher = null;
     if (this.heartbeat) clearTimeout(this.heartbeat);
     if (this.retry) clearTimeout(this.retry);
     for (const socket of this.sockets) socket.close(1000, "Host disconnected");
@@ -146,7 +165,8 @@ export class TwitchConnector {
               previous.close(1000, "Twitch session migrated");
             this.onState(
               "connected",
-              "Listening for !gentle and !wild in Twitch chat.",
+              this.intakeWarning ||
+                "Listening for this scene’s choices and !rain, !thunder, !cheer.",
             );
             this.onEvent();
           })
@@ -175,21 +195,10 @@ export class TwitchConnector {
       ) {
         if (socket === this.active) this.touchHeartbeat(socket);
         const text = data.payload?.event?.message?.text || "";
-        if (!/^!(gentle|wild)(?:\s|$)/i.test(text)) return;
-        // Preserve arrival order. Unrelated chat is never forwarded or retained.
-        this.queue = this.queue.then(async () => {
-          if (this.stopped) return;
-          try {
-            await api(`/api/shows/${this.showId}/twitch/events`, {
-              envelope: data,
-              ...this.authority(),
-            });
-            this.onEvent();
-          } catch (error) {
-            this.onState("connected", errorMessage(error));
-            this.onEvent();
-          }
-        });
+        if (!parseAudienceCommand(text)) return;
+        // Unrelated chat is never forwarded or retained. One bounded request covers up to twenty choices.
+        const relay = compactChatEnvelope(data);
+        if (relay) this.batcher?.push(relay);
       }
     };
     socket.onclose = () => {

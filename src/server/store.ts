@@ -157,6 +157,7 @@ export class PostgresStore implements DocumentStore {
         revision = revision + 1, updated_at = now()
       WHERE id = $1 AND value->>'ownerId' = $2
         AND value #>> '{state,renderLease,clientId}' = $3
+        AND (value #>> '{state,mode}' <> 'solo' OR (value #>> '{state,solo,endsAt}')::bigint > (${now}))
         AND (value #>> '{state,epoch}')::bigint = $4
         AND (value #>> '{state,renderLease,epoch}')::bigint = $4
         AND (value #>> '{state,renderLease,expiresAt}')::bigint > (${now})

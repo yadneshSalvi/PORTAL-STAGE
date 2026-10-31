@@ -1,6 +1,12 @@
 import { z } from "zod";
 import type { ActionEnvelope } from "@/lib/contracts";
 import { HttpError } from "./errors";
+import {
+  CHOICES,
+  EPISODES,
+  PRESENCE_EFFECTS,
+  ROUND_KINDS,
+} from "@/lib/show-grammar";
 const slot = z.enum(["A", "B"]);
 const point = z
   .object({
@@ -21,6 +27,9 @@ export const presetSchema = z
     roundSeconds: z.number().int().min(15).max(90),
     reducedMotion: z.boolean(),
     ending: z.enum(["shared-shelter", "playful-chase"]),
+    episode: z.enum(EPISODES).optional(),
+    defaultContents: z.enum(["stars", "garden"]).optional(),
+    parcelEnding: z.enum(["deliver", "keep"]).optional(),
   })
   .strict();
 const simple = (type: string) => z.object({ type: z.literal(type) }).strict();
@@ -33,10 +42,38 @@ const actions = z.union([
     "panic",
     "reset",
     "restore-rehearsal",
-    "open-round",
+    "stamp-parcel",
+    "open-parcel",
+    "finish-parcel",
     "hatch",
     "shelter",
   ].map(simple),
+  z
+    .object({
+      type: z.literal("open-round"),
+      kind: z.enum(ROUND_KINDS).optional(),
+      previousRoundId: z.string().min(1).max(128).nullable(),
+    })
+    .strict(),
+  z
+    .object({
+      type: z.literal("resolve-round"),
+      choice: z.enum(CHOICES),
+      roundId: z.string().min(1).max(128),
+    })
+    .strict(),
+  z
+    .object({
+      type: z.literal("apply-choice"),
+      roundId: z.string().min(1).max(128),
+    })
+    .strict(),
+  z
+    .object({
+      type: z.literal("rehearsal-effect"),
+      effect: z.enum(PRESENCE_EFFECTS),
+    })
+    .strict(),
   ...["admit", "hide"].map((type) =>
     z.object({ type: z.literal(type), slot }).strict(),
   ),
@@ -97,20 +134,23 @@ const actions = z.union([
   z
     .object({
       type: z.literal("close-round"),
-      fallback: z.enum(["gentle", "wild"]).optional(),
+      fallback: z.enum(CHOICES).optional(),
+      roundId: z.string().min(1).max(128),
     })
     .strict(),
   z
     .object({
       type: z.literal("apply-weather"),
       weather: z.enum(["gentle", "wild"]).optional(),
+      roundId: z.string().min(1).max(128).nullable(),
     })
     .strict(),
   z
     .object({
       type: z.literal("rehearsal-vote"),
-      choice: z.enum(["gentle", "wild"]),
+      choice: z.enum(CHOICES),
       voter: z.string().regex(/^[\w-]{1,64}$/),
+      roundId: z.string().min(1).max(128),
     })
     .strict(),
   z.object({ type: z.literal("save-preset"), preset: presetSchema }).strict(),

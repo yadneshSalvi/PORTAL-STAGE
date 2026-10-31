@@ -2,6 +2,7 @@ import { randomBytes } from "node:crypto";
 import {
   AccessToken,
   RoomServiceClient,
+  RoomConfiguration,
   TrackSource,
   type VideoGrant,
 } from "livekit-server-sdk";
@@ -13,6 +14,8 @@ import { rate, recordEvent, requireDirector, requireLease } from "./core";
 import { actorFor, loadRecord, showKey } from "./shows";
 import { getStore } from "./store";
 import type { ShowRecord } from "./records";
+import { requireSoloAccess } from "./solo-policy";
+import { closeSoloReservation } from "./solo-closure";
 export const mediaRoom = (id: string, output = false) =>
   `portal-${id}-${output ? "program" : "backstage"}`;
 export function mediaService() {
@@ -54,6 +57,7 @@ export async function mintMediaToken(
     output = outputView || purpose === "output-publish";
   const record = await loadRecord(id),
     actor = await actorFor(record, request, outputView);
+  requireSoloAccess(record);
   assert(
     record.state.phase !== "ended",
     409,
@@ -61,10 +65,10 @@ export async function mintMediaToken(
     "This show's media room has closed.",
   );
   assert(
-    record.state.mode === "live" || localMediaTestingEnabled(),
+    record.state.mode !== "rehearsal" || localMediaTestingEnabled(),
     403,
     "rehearsal_media",
-    "Public rehearsal uses generated stage plates without billable media rooms. Live media requires an invited host.",
+    "Public rehearsal stays in your browser without a media room. Sign in for a capped solo stage or an invited duet.",
   );
   const rendererId =
       typeof body.rendererId === "string" ? body.rendererId : undefined,
@@ -118,17 +122,6 @@ export async function mintMediaToken(
   );
   const room = mediaRoom(id, output),
     service = mediaService();
-  await service.createRoom({
-    name: room,
-    emptyTimeout: 60,
-    departureTimeout: 30,
-    maxParticipants: output ? 4 : 3,
-    metadata: JSON.stringify({
-      showId: id,
-      purpose: output ? "program-only" : "private-backstage",
-      recordings: false,
-    }),
-  });
   const slot: Slot | null = output ? null : actor.slot;
   const identity = outputView
     ? `program-${randomBytes(10).toString("hex")}`
@@ -179,12 +172,22 @@ export async function mintMediaToken(
       TrackSource.SCREEN_SHARE,
       TrackSource.SCREEN_SHARE_AUDIO,
     ];
+  const expiresAt = Math.min(
+    Date.now() + 120_000,
+    record.soloReservation?.expiresAt ?? Number.MAX_SAFE_INTEGER,
+  );
+  assert(
+    expiresAt - Date.now() >= 1000,
+    409,
+    "solo_closed",
+    "The solo session deadline has arrived.",
+  );
   const token = new AccessToken(
     process.env.LIVEKIT_API_KEY,
     process.env.LIVEKIT_API_SECRET,
     {
       identity,
-      ttl: 120,
+      ttl: Math.max(1, Math.floor((expiresAt - Date.now()) / 1000)),
       metadata: JSON.stringify({
         role,
         slot,
@@ -198,71 +201,144 @@ export async function mintMediaToken(
     },
   );
   token.addGrant(grant);
+  if (record.state.mode === "solo")
+    token.roomConfig = new RoomConfiguration({
+      name: room,
+      emptyTimeout: 60,
+      departureTimeout: 30,
+      maxParticipants: output ? 4 : 1,
+      metadata: JSON.stringify({
+        showId: id,
+        purpose: output ? "program-only" : "private-backstage",
+        recordings: false,
+      }),
+    });
   // Issue before the final database fence: revocation can invalidate even a token
   // that was reserved but has not connected to LiveKit yet.
   const signedToken = await token.toJwt();
-  // Recheck after the room operation so withdrawn consent cannot race token issuance.
-  await getStore().update<ShowRecord, void>(showKey(id), (value) => {
-    assert(
-      value.state.phase !== "ended" &&
-        (output
-          ? (value.outputGeneration ?? value.inviteGeneration) ===
-            (record.outputGeneration ?? record.inviteGeneration)
-          : purpose !== "performer" ||
-            value.inviteGeneration === record.inviteGeneration),
-      409,
-      "media_revoked",
-      "This media session was revoked before it could connect.",
-    );
-    if (purpose === "director" || purpose === "output-publish")
-      requireLease(
-        value,
-        rendererId,
-        epoch,
-        Date.now(),
-        incarnationId,
-        incarnationSequence,
-      );
-    if (outputView) {
-      const identities = (value.outputIdentities ??= []);
+  if (record.state.mode === "solo") {
+    await getStore().update<ShowRecord, void>(showKey(id), (value) => {
+      requireSoloAccess(value);
       assert(
-        identities.length < 64,
+        value.soloReservation?.id === record.soloReservation?.id,
         409,
-        "output_capacity",
-        "Unpair previous outputs before connecting more Program viewers.",
+        "solo_closed",
+        "This media request belongs to an older reservation.",
       );
-      identities.push(identity);
-    }
-    if (!output) {
-      value.state.transport = "livekit";
+      if (purpose === "director" || purpose === "output-publish")
+        requireLease(
+          value,
+          rendererId,
+          epoch,
+          Date.now(),
+          incarnationId,
+          incarnationSequence,
+        );
+      const issued = value.soloReservation!.issued;
+      const previous = issued.find(
+        (item) => item.identity === identity && item.room === room,
+      );
       assert(
-        value.participantSessions[slot!] === actor.id &&
-          value.state.participants[slot!].consentBroadcast,
-        403,
+        previous || issued.length < 128,
+        429,
+        "solo_media_limit",
+        "This solo session has reached its media reconnection allowance.",
+      );
+      if (previous)
+        Object.assign(previous, { issuedAt: Date.now(), expiresAt });
+      else issued.push({ identity, room, issuedAt: Date.now(), expiresAt });
+    });
+  }
+  try {
+    if (record.state.mode !== "solo")
+      await service.createRoom({
+        name: room,
+        emptyTimeout: 60,
+        departureTimeout: 30,
+        maxParticipants: output ? 4 : 3,
+        metadata: JSON.stringify({
+          showId: id,
+          purpose: output ? "program-only" : "private-backstage",
+          recordings: false,
+        }),
+      });
+    // Solo rooms are created only by a validated, scoped join token. There is no
+    // late CreateRoom RPC that could recreate a room after its expiry workflow closed it.
+    // Recheck after signing/ledger writes (and duet room I/O) so withdrawal cannot race issuance.
+    await getStore().update<ShowRecord, void>(showKey(id), (value) => {
+      requireSoloAccess(value);
+      assert(
+        value.state.phase !== "ended" &&
+          (output
+            ? (value.outputGeneration ?? value.inviteGeneration) ===
+              (record.outputGeneration ?? record.inviteGeneration)
+            : purpose !== "performer" ||
+              value.inviteGeneration === record.inviteGeneration),
+        409,
         "media_revoked",
-        "This performer's media access was revoked.",
+        "This media session was revoked before it could connect.",
       );
-      const p = value.state.participants[slot!];
-      p.ready = false;
-      p.admitted = false;
-      p.connected = false;
-      p.camera = false;
-      p.microphone = false;
-      recordEvent(
-        value,
-        "media.grant",
-        slot!,
-        "A short-lived private media grant was issued. Reconnection requires readiness and admission again.",
-        Date.now(),
-      );
-    }
-  });
+      if (purpose === "director" || purpose === "output-publish")
+        requireLease(
+          value,
+          rendererId,
+          epoch,
+          Date.now(),
+          incarnationId,
+          incarnationSequence,
+        );
+      if (outputView) {
+        const identities = (value.outputIdentities ??= []);
+        assert(
+          identities.length < 64,
+          409,
+          "output_capacity",
+          "Unpair previous outputs before connecting more Program viewers.",
+        );
+        identities.push(identity);
+      }
+      if (!output) {
+        value.state.transport = "livekit";
+        assert(
+          value.participantSessions[slot!] === actor.id &&
+            value.state.participants[slot!].consentBroadcast,
+          403,
+          "media_revoked",
+          "This performer's media access was revoked.",
+        );
+        const p = value.state.participants[slot!];
+        p.ready = false;
+        p.admitted = false;
+        p.connected = false;
+        p.camera = false;
+        p.microphone = false;
+        recordEvent(
+          value,
+          "media.grant",
+          slot!,
+          "A short-lived private media grant was issued. Reconnection requires readiness and admission again.",
+          Date.now(),
+        );
+      }
+    });
+  } catch (error) {
+    if (
+      record.soloReservation &&
+      Date.now() >= record.soloReservation.expiresAt
+    )
+      await closeSoloReservation(
+        id,
+        record.soloReservation.id,
+        record.soloReservation.generation,
+      ).catch(() => undefined);
+    throw error;
+  }
   return {
     url: process.env.LIVEKIT_URL!,
     token: signedToken,
     room,
     identity,
-    expiresAt: Date.now() + 120_000,
+    expiresAt,
     slot,
     purpose: purpose as MediaToken["purpose"],
   };

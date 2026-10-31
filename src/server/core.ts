@@ -8,10 +8,31 @@ import {
   type ShowState,
   type Slot,
   type Weather,
+  type EpisodeId,
+  type ParcelState,
 } from "@/lib/contracts";
 import { assert, HttpError } from "./errors";
-import type { Actor, RateBucket, ShowRecord } from "./records";
+import type { Actor, ShowRecord } from "./records";
+import { recordEvent, rate } from "./protocol-events";
 import { hashData } from "./security";
+import { fenceExpiredSolo, requireSoloAccess } from "./solo-policy";
+import {
+  CREATURE_NAMES,
+  DELIVERY_GRACE_MS,
+  isAudienceRoom,
+  isStageReady,
+  propLabel,
+} from "@/lib/show-grammar";
+import {
+  castVote,
+  closeRound,
+  finalizeRound,
+  openRound,
+  presenceEffect,
+  rememberDecision,
+  resolveRound,
+} from "./audience";
+export { castVote } from "./audience";
 
 export const LEASE_MS = 45_000;
 export const PRESENCE_MS = 45_000;
@@ -37,6 +58,12 @@ const DIRECTOR_ACTIONS = new Set([
   "open-round",
   "close-round",
   "apply-weather",
+  "apply-choice",
+  "resolve-round",
+  "rehearsal-effect",
+  "stamp-parcel",
+  "open-parcel",
+  "finish-parcel",
   "hatch",
   "shelter",
   "save-preset",
@@ -69,19 +96,114 @@ function participant(
     lastSeenAt: rehearsal ? now : null,
   };
 }
+function initialParcel(id: string): ParcelState {
+  return {
+    tag: `MP-${id.replace(/^ps_/, "").slice(-8).toUpperCase()}`,
+    damage: 0,
+    contents: null,
+    stamped: false,
+    opened: false,
+    openedAt: null,
+    transformedRoom: null,
+    ending: null,
+  };
+}
+function episodePreset(episode: EpisodeId) {
+  return episode === "midnight-parcel"
+    ? {
+        ...DEFAULT_PRESET,
+        id: episode,
+        episode,
+        name: "Midnight Parcel",
+        episodeTitle: "Midnight Parcel",
+        defaultContents: "stars" as const,
+        parcelEnding: "deliver" as const,
+      }
+    : { ...DEFAULT_PRESET, episode };
+}
+/** Old saved weather shows keep their original prop, cue and ballot identities. */
+export function hydrateRecord(record: ShowRecord) {
+  const s = record.state;
+  s.episode ??= "borrowed-weather";
+  s.parcel ??= s.episode === "midnight-parcel" ? initialParcel(s.id) : null;
+  s.decisions ??= {};
+  s.presenceEffects ??= [];
+  s.solo ??= null;
+  if (s.umbrella.acceptedTransfers === undefined) {
+    const inceptionRetained = s.events.some(
+      (event) =>
+        event.propId === s.umbrella.id &&
+        ["show.created", "action.reset"].includes(event.type),
+    );
+    const untouched =
+      s.umbrella.version === 1 &&
+      s.umbrella.owner === "A" &&
+      !s.umbrella.transfer;
+    s.umbrella.acceptedTransfers =
+      inceptionRetained || untouched
+        ? s.events.filter(
+            (event) =>
+              event.type === "action.accept" && event.propId === s.umbrella.id,
+          ).length
+        : null;
+  }
+}
+function authorizeAudienceActor(
+  record: ShowRecord,
+  actor: Actor,
+  action: ShowAction,
+) {
+  const s = record.state,
+    round = s.round;
+  assert(
+    s.mode === "solo" &&
+      actor.slot === "B" &&
+      round &&
+      actor.roundId === round.id &&
+      actor.id === `audience:${round.id}` &&
+      round.status === "closed" &&
+      !round.needsDirectorChoice &&
+      round.epoch === s.epoch &&
+      round.boundPropVersion === s.umbrella.version &&
+      round.boundTransferId === (s.umbrella.transfer?.id ?? null),
+    403,
+    "audience_actor",
+    "The Audience Room needs a current, resolved handoff choice.",
+  );
+  const allowed =
+    round.kind === "accept"
+      ? (action.type === "accept" && round.result === "accept") ||
+        (action.type === "decline" && round.result === "wait")
+      : round.kind === "giveback" &&
+        round.result === "giveback" &&
+        action.type === "offer";
+  assert(
+    allowed,
+    403,
+    "audience_actor",
+    "This audience choice does not authorize that handoff.",
+  );
+}
 export function createRecord(
   id: string,
   ownerId: string,
   mode: ShowMode,
   now: number,
   channel: string | null = null,
+  episode: EpisodeId = "borrowed-weather",
 ): ShowRecord {
   const rehearsal = mode === "rehearsal";
   const state: ShowState = {
     id,
     mode,
+    episode,
+    parcel: episode === "midnight-parcel" ? initialParcel(id) : null,
+    decisions: {},
+    presenceEffects: [],
+    solo: null,
     transport: rehearsal ? "fixture" : "livekit",
-    title: "Borrowed Weather",
+    title:
+      episode === "midnight-parcel" ? "Midnight Parcel" : "Borrowed Weather",
     phase: "backstage",
     beat: "overture",
     sequence: 0,
@@ -93,12 +215,20 @@ export function createRecord(
     channel,
     participants: {
       A: participant("A", rehearsal, now),
-      B: participant("B", rehearsal, now),
+      B:
+        mode === "solo"
+          ? {
+              ...participant("B", false, now),
+              name: "Audience Room",
+              joined: false,
+            }
+          : participant("B", rehearsal, now),
     },
     umbrella: {
-      id: `${id}-umbrella-1`,
+      id: `${id}-${episode === "midnight-parcel" ? "parcel" : "umbrella"}-1`,
       owner: "A",
       version: 1,
+      acceptedTransfers: 0,
       repairPatch: "coral",
       wetness: 0,
       armed: true,
@@ -114,8 +244,8 @@ export function createRecord(
       shelterOwner: "A",
     },
     round: null,
-    preset: { ...DEFAULT_PRESET },
-    savedPresets: [{ ...DEFAULT_PRESET }],
+    preset: episodePreset(episode),
+    savedPresets: [episodePreset(episode)],
     events: [],
     renderLease: { clientId: null, epoch: 1, expiresAt: 0 },
     twitch: {
@@ -147,57 +277,14 @@ export function createRecord(
     "director",
     rehearsal
       ? "Labeled solo rehearsal created with synthetic test plates."
-      : "Private show created; performers enter backstage before admission.",
+      : mode === "solo"
+        ? "Solo show created: one real streamer and a software Audience Room controlled by Twitch choices."
+        : "Private show created; performers enter backstage before admission.",
     now,
   );
   return record;
 }
-export function recordEvent(
-  record: ShowRecord,
-  type: string,
-  actor: "director" | Slot | "twitch" | "system",
-  summary: string,
-  now: number,
-  detail?: Record<string, string | number | boolean | null>,
-) {
-  const s = record.state;
-  s.sequence += 1;
-  s.updatedAt = now;
-  s.events.push({
-    id: `${s.id}:${s.sequence}`,
-    sequence: s.sequence,
-    at: now,
-    type,
-    actor,
-    summary,
-    propId: s.umbrella.id,
-    propVersion: s.umbrella.version,
-    owner: s.umbrella.owner,
-    ...(detail ? { detail } : {}),
-  });
-  if (s.events.length > 2000) s.events.splice(0, s.events.length - 2000);
-}
-export function rate(
-  buckets: Record<string, RateBucket>,
-  key: string,
-  max: number,
-  windowMs: number,
-  now = Date.now(),
-) {
-  let bucket = buckets[key];
-  if (!bucket || now - bucket.at >= windowMs)
-    bucket = buckets[key] = { at: now, count: 0 };
-  assert(
-    bucket.count < max,
-    429,
-    "rate_limit",
-    "This control is moving too quickly. Wait a moment and retry.",
-  );
-  bucket.count += 1;
-  if (Object.keys(buckets).length > 200)
-    for (const [id, value] of Object.entries(buckets))
-      if (now - value.at > 3600_000) delete buckets[id];
-}
+export { recordEvent, rate } from "./protocol-events";
 export function requireDirector(actor: Actor) {
   assert(
     actor.role === "director",
@@ -305,6 +392,8 @@ export function acquireLease(
       "Director authority changed; the uncommitted offer was cancelled.",
       now,
     );
+    if (s.round && ["open", "closing"].includes(s.round.status))
+      s.round.status = "cancelled";
     for (const p of Object.values(s.participants)) {
       p.ready = false;
       p.admitted = false;
@@ -333,6 +422,47 @@ export function acquireLease(
     { epoch: s.epoch },
   );
 }
+function cancelBoundHandoffRound(
+  record: ShowRecord,
+  transferId: string | null,
+  reason: string,
+  now: number,
+) {
+  const round = record.state.round;
+  if (
+    !round ||
+    !["accept", "giveback"].includes(round.kind ?? "weather") ||
+    round.boundTransferId !== transferId ||
+    !["open", "closing", "closed"].includes(round.status)
+  )
+    return;
+  round.status = "cancelled";
+  recordEvent(record, "round.cancelled", "system", reason, now, {
+    roundId: round.id,
+    transferId,
+    result: round.result,
+    source: round.source,
+    voters: round.uniqueVoters,
+    ...Object.fromEntries(
+      Object.entries(round.tallies).map(([choice, count]) => [
+        `tally_${choice}`,
+        count ?? 0,
+      ]),
+    ),
+  });
+}
+function handoffRoundChanged(record: ShowRecord) {
+  const s = record.state,
+    round = s.round;
+  return Boolean(
+    round &&
+    ["accept", "giveback"].includes(round.kind ?? "weather") &&
+    ["open", "closing", "closed"].includes(round.status) &&
+    (round.epoch !== s.epoch ||
+      round.boundPropVersion !== s.umbrella.version ||
+      round.boundTransferId !== (s.umbrella.transfer?.id ?? null)),
+  );
+}
 function cancelPendingOffer(record: ShowRecord, reason: string, now: number) {
   const transfer = record.state.umbrella.transfer;
   if (transfer?.status === "offered") {
@@ -341,6 +471,12 @@ function cancelPendingOffer(record: ShowRecord, reason: string, now: number) {
     recordEvent(record, "transfer.cancelled", "system", reason, now, {
       transferId: transfer.id,
     });
+    cancelBoundHandoffRound(
+      record,
+      transfer.id,
+      "The waiting handoff was cancelled. Its unapplied audience choice is cancelled too; the recorded ballots remain in the trace.",
+      now,
+    );
   }
 }
 function hideParticipant(
@@ -360,6 +496,37 @@ function hideParticipant(
 export function expireState(record: ShowRecord, now: number): boolean {
   const before = record.state.sequence,
     s = record.state;
+  if (fenceExpiredSolo(record, now) && s.phase !== "ended") {
+    s.phase = "ended";
+    s.beat = "curtain";
+    record.outputGeneration =
+      (record.outputGeneration ?? record.inviteGeneration) + 1;
+    record.inviteGeneration += 1;
+    cancelPendingOffer(
+      record,
+      "The solo session deadline arrived before acceptance.",
+      now,
+    );
+    if (s.round && ["open", "closing"].includes(s.round.status))
+      s.round.status = "cancelled";
+    for (const p of Object.values(s.participants))
+      Object.assign(p, {
+        connected: false,
+        camera: false,
+        microphone: false,
+        ready: false,
+        admitted: false,
+      });
+    s.twitch.connected = false;
+    s.twitch.status = "Solo session ended.";
+    recordEvent(
+      record,
+      "solo.expired",
+      "system",
+      "The solo session deadline arrived. Further media issuance and show cues are closed.",
+      now,
+    );
+  }
   if (
     s.umbrella.transfer?.status === "offered" &&
     s.umbrella.transfer.expiresAt <= now
@@ -373,10 +540,25 @@ export function expireState(record: ShowRecord, now: number): boolean {
       "The offer expired before acceptance; ownership did not change.",
       now,
     );
+    cancelBoundHandoffRound(
+      record,
+      s.umbrella.transfer.id,
+      "The offer expired before its audience handoff was applied. Make a fresh offer; ownership is unchanged.",
+      now,
+    );
   }
+  if (handoffRoundChanged(record))
+    cancelBoundHandoffRound(
+      record,
+      s.round!.boundTransferId ?? null,
+      "The prop or stage changed before this handoff choice was applied. Ask again for the current handoff; its recorded ballots remain in the trace.",
+      now,
+    );
   if (s.round?.status === "open" && s.round.closesAt <= now)
-    closeRound(record, s.preset.defaultWeather, now);
-  if (s.mode === "live" || s.transport === "livekit") {
+    closeRound(record, undefined, now);
+  if (s.round?.status === "closing" && (s.round.graceEndsAt ?? 0) <= now)
+    finalizeRound(record, now);
+  if (s.mode !== "rehearsal" || s.transport === "livekit") {
     for (const slot of ["A", "B"] as Slot[]) {
       const p = s.participants[slot];
       if (p.connected && p.lastSeenAt && now - p.lastSeenAt > PRESENCE_MS) {
@@ -426,7 +608,8 @@ export function expireState(record: ShowRecord, now: number): boolean {
     s.twitch.connected = false;
     s.twitch.status =
       "Connection gap. Missed Twitch messages cannot be replayed.";
-    if (s.round?.status === "open") s.round.status = "cancelled";
+    if (s.round && ["open", "closing"].includes(s.round.status))
+      s.round.status = "cancelled";
     recordEvent(
       record,
       "twitch.gap",
@@ -440,10 +623,15 @@ export function expireState(record: ShowRecord, now: number): boolean {
 export function needsExpiry(record: ShowRecord, now: number) {
   const s = record.state;
   return (
+    handoffRoundChanged(record) ||
+    (s.mode === "solo" &&
+      s.phase !== "ended" &&
+      Boolean(s.solo && s.solo.endsAt <= now)) ||
     (s.umbrella.transfer?.status === "offered" &&
       s.umbrella.transfer.expiresAt <= now) ||
     (s.round?.status === "open" && s.round.closesAt <= now) ||
-    ((s.mode === "live" || s.transport === "livekit") &&
+    (s.round?.status === "closing" && (s.round.graceEndsAt ?? 0) <= now) ||
+    ((s.mode !== "rehearsal" || s.transport === "livekit") &&
       ((s.phase === "live" && s.renderLease.expiresAt <= now) ||
         Object.values(s.participants).some(
           (p) =>
@@ -465,6 +653,16 @@ function active(s: ShowState) {
 function ownSlot(record: ShowRecord, actor: Actor, requested?: Slot): Slot {
   const slot = requested ?? actor.slot;
   assert(
+    !(
+      slot === "B" &&
+      record.state.mode === "solo" &&
+      actor.role !== "audience"
+    ),
+    403,
+    "audience_room_only",
+    "The software Audience Room is controlled by its current audience choice.",
+  );
+  assert(
     slot &&
       (slot === actor.slot ||
         (actor.role === "director" &&
@@ -475,109 +673,6 @@ function ownSlot(record: ShowRecord, actor: Actor, requested?: Slot): Slot {
     "A performer can control only their own camera and gestures.",
   );
   return slot;
-}
-function closeRound(record: ShowRecord, fallback: Weather, now: number) {
-  const round = record.state.round;
-  assert(
-    round?.status === "open",
-    409,
-    "round_closed",
-    "There is no open weather choice to close.",
-  );
-  round.status = "closed";
-  round.closedAt = now;
-  const { gentle, wild } = round.tallies;
-  round.result = gentle === wild ? fallback : gentle > wild ? "gentle" : "wild";
-  round.source =
-    round.uniqueVoters === 0 || gentle === wild
-      ? "director"
-      : record.state.mode === "rehearsal"
-        ? "rehearsal"
-        : "audience";
-  recordEvent(
-    record,
-    "round.closed",
-    "director",
-    `${round.source === "director" ? "Director's choice" : round.source === "rehearsal" ? "Rehearsal ballots chose" : "Twitch audience chose"}: ${round.result}.`,
-    now,
-    {
-      roundId: round.id,
-      voters: round.uniqueVoters,
-      gentle,
-      wild,
-      source: round.source,
-    },
-  );
-}
-export function castVote(
-  record: ShowRecord,
-  voter: string,
-  messageId: string,
-  choice: Weather,
-  sentAt: number,
-  now: number,
-  synthetic: boolean,
-) {
-  const s = record.state,
-    round = s.round;
-  assert(
-    round?.status === "open" &&
-      now < round.closesAt &&
-      sentAt >= round.openedAt &&
-      sentAt < round.closesAt,
-    409,
-    "vote_window",
-    "That command is outside the open round. Join the next weather choice.",
-  );
-  assert(
-    s.phase === "live",
-    409,
-    "stage_held",
-    "Audience choices are paused while the stage is held.",
-  );
-  assert(
-    synthetic
-      ? s.mode === "rehearsal"
-      : s.mode === "live" && s.twitch.connected,
-    409,
-    "vote_source",
-    "This vote source is not eligible for the current show.",
-  );
-  if (record.messageIds.includes(messageId)) return;
-  assert(
-    record.messageIds.length < 5000,
-    409,
-    "vote_capacity",
-    "This show's audience event budget is full. Start a fresh show.",
-  );
-  assert(
-    record.ballots[voter] || Object.keys(record.ballots).length < 2000,
-    409,
-    "round_capacity",
-    "This round has reached its participant limit.",
-  );
-  record.messageIds.push(messageId);
-  const previous = record.ballots[voter];
-  if (previous) round.tallies[previous] -= 1;
-  else round.uniqueVoters += 1;
-  record.ballots[voter] = choice;
-  round.tallies[choice] += 1;
-  round.lastMessageAt = now;
-  if (!synthetic) s.twitch.lastEventAt = now;
-  recordEvent(
-    record,
-    "round.vote",
-    synthetic ? "director" : "twitch",
-    `${synthetic ? "A labeled test ballot" : "A Twitch account"} ${previous ? "replaced its choice with" : "chose"} ${choice}.`,
-    now,
-    {
-      roundId: round.id,
-      choice,
-      replaced: Boolean(previous),
-      messageRef: messageId.slice(0, 16),
-      synthetic,
-    },
-  );
 }
 /** Pure synchronous mutation: safe to replay inside a database compare-and-swap transaction. */
 function remember(record: ShowRecord, key: string, hash: string, now: number) {
@@ -601,8 +696,10 @@ export function applyAction(
     "read_only",
     "Program output is read-only.",
   );
+  hydrateRecord(record);
   const action = envelope.action,
     s = record.state;
+  if (actor.role === "audience") authorizeAudienceActor(record, actor, action);
   const key = `${actor.id}:${envelope.idempotencyKey}`;
   const hash = hashData({
     action,
@@ -630,14 +727,52 @@ export function applyAction(
   );
   assert(
     s.phase !== "ended" ||
-      ["reset", "save-preset", "load-preset", "presence", "leave"].includes(
-        action.type,
-      ),
+      [
+        "end",
+        "reset",
+        "save-preset",
+        "load-preset",
+        "presence",
+        "leave",
+      ].includes(action.type),
     409,
     "show_ended",
     "The show has ended. Start a fresh episode to continue.",
   );
+  if (
+    s.mode === "solo" &&
+    !["end", "panic", "hold", "hide", "leave"].includes(action.type) &&
+    !(action.type === "consent" && !action.broadcast) &&
+    !(action.type === "ready" && !action.ready)
+  )
+    requireSoloAccess(record, now);
   if (DIRECTOR_ACTIONS.has(action.type)) requireDirector(actor);
+  if (action.type === "open-round") {
+    assert(
+      action.previousRoundId === (s.round?.id ?? null),
+      409,
+      "round_stale",
+      "The audience choice changed before this request arrived. Read the current choice before trying again.",
+    );
+  } else if (
+    [
+      "close-round",
+      "resolve-round",
+      "apply-choice",
+      "rehearsal-vote",
+      "apply-weather",
+    ].includes(action.type)
+  ) {
+    const roundId = (action as { roundId?: string | null }).roundId;
+    assert(
+      roundId !== undefined &&
+        roundId === (s.round?.id ?? null) &&
+        (action.type === "apply-weather" || typeof roundId === "string"),
+      409,
+      "round_stale",
+      "This request belongs to an earlier audience choice. Read the current choice before trying again.",
+    );
+  }
   if (
     actor.role === "director" &&
     !["panic", "hold", "end", "hide", "leave"].includes(action.type) &&
@@ -657,7 +792,7 @@ export function applyAction(
       envelope.expectedVersion === s.umbrella.version,
       409,
       "stale_prop",
-      "The umbrella changed. Read its current owner before trying again.",
+      "The prop changed. Read its current owner before trying again.",
     );
     assert(
       envelope.epoch === s.epoch,
@@ -679,7 +814,12 @@ export function applyAction(
     60_000,
     now,
   );
-  const who = actor.role === "director" ? "director" : actor.slot!;
+  const who =
+    actor.role === "director"
+      ? "director"
+      : actor.role === "audience"
+        ? "audience"
+        : actor.slot!;
   let detail: Record<string, string | number | boolean | null> | undefined;
   let summary = "";
   switch (action.type) {
@@ -691,21 +831,17 @@ export function applyAction(
         "This episode has already started.",
       );
       assert(
-        Object.values(s.participants).every(
-          (p) =>
-            p.ready &&
-            p.admitted &&
-            p.consentBroadcast &&
-            p.connected &&
-            p.camera,
-        ),
+        (["A", "B"] as Slot[]).every((slot) => isStageReady(s, slot)),
         409,
         "not_ready",
-        "Both performers must consent, be ready, and be admitted before the curtain rises.",
+        "All required performers must consent, be ready, and be admitted before the curtain rises.",
       );
       s.phase = "live";
       s.beat = "overture";
-      summary = "The curtain rose on two admitted performers.";
+      summary =
+        s.mode === "solo"
+          ? "The curtain rose on one admitted streamer and the illustrated Audience Room."
+          : "The curtain rose on two admitted performers.";
       break;
     case "hold":
       assert(
@@ -720,7 +856,8 @@ export function applyAction(
         "The director held the stage before acceptance.",
         now,
       );
-      if (s.round?.status === "open") s.round.status = "cancelled";
+      if (s.round && ["open", "closing"].includes(s.round.status))
+        s.round.status = "cancelled";
       summary =
         "The director held the stage; committed prop ownership is preserved.";
       break;
@@ -733,29 +870,28 @@ export function applyAction(
           now,
           "Emergency curtain cancelled an uncommitted offer.",
         );
-      if (s.round?.status === "open") s.round.status = "cancelled";
+      if (s.round && ["open", "closing"].includes(s.round.status))
+        s.round.status = "cancelled";
       summary =
         "Emergency curtain closed immediately; performers need readiness and re-admission.";
       break;
     case "resume":
       assert(s.phase === "hold", 409, "not_held", "The stage is not on hold.");
       assert(
-        Object.values(s.participants).every(
-          (p) =>
-            p.ready &&
-            p.admitted &&
-            p.connected &&
-            p.consentBroadcast &&
-            p.camera,
-        ),
+        (["A", "B"] as Slot[]).every((slot) => isStageReady(s, slot)),
         409,
         "not_ready",
-        "Restore both performers' readiness and admission before resuming.",
+        "Restore the required performers' readiness and admission before resuming.",
       );
       s.phase = "live";
       summary = "The director resumed the committed scene.";
       break;
     case "end":
+      if (s.phase === "ended") break;
+      if (record.soloReservation) {
+        record.soloReservation.status = "closing";
+        if (s.solo) s.solo.status = "closing";
+      }
       s.phase = "ended";
       s.beat = "curtain";
       record.outputGeneration =
@@ -767,12 +903,20 @@ export function applyAction(
         s.participants[slot].camera = false;
         s.participants[slot].microphone = false;
       }
-      if (s.round?.status === "open") s.round.status = "cancelled";
+      if (s.round && ["open", "closing"].includes(s.round.status))
+        s.round.status = "cancelled";
       s.twitch.connected = false;
       s.twitch.status = "Show ended.";
       summary = "The show ended; invitations and output grants were revoked.";
       break;
     case "reset": {
+      assert(
+        s.mode !== "solo" ||
+          (s.phase !== "ended" && Boolean(s.solo && s.solo.endsAt > now)),
+        409,
+        "solo_closed",
+        "Create a new solo reservation after this session ends; resetting cannot extend its deadline.",
+      );
       assert(
         s.phase === "ended" || s.phase === "hold" || s.phase === "backstage",
         409,
@@ -784,11 +928,18 @@ export function applyAction(
       s.weather = null;
       s.rainStartedAt = null;
       s.round = null;
+      s.decisions = {};
+      s.presenceEffects = [];
+      s.parcel =
+        s.episode === "midnight-parcel"
+          ? initialParcel(`${s.id}-${s.sequence + 1}`)
+          : null;
       record.ballots = {};
       s.umbrella = {
-        id: `${s.id}-umbrella-${s.sequence + 1}`,
+        id: `${s.id}-${propLabel(s)}-${s.sequence + 1}`,
         owner: "A",
         version: 1,
+        acceptedTransfers: 0,
         repairPatch: "coral",
         wetness: 0,
         armed: true,
@@ -828,7 +979,7 @@ export function applyAction(
       for (const slot of ["A", "B"] as Slot[])
         s.participants[slot] = participant(slot, true, now);
       summary =
-        "Returned to labeled synthetic plates and closed media transport. The umbrella, creature, and saved rules are preserved.";
+        "Returned to labeled synthetic plates and closed media transport. The committed prop, scene, and saved rules are preserved.";
       break;
     case "consent": {
       const slot = ownSlot(record, actor, action.slot),
@@ -861,7 +1012,7 @@ export function applyAction(
       if (
         !p.connected &&
         action.connected &&
-        (s.mode === "live" || s.transport === "livekit")
+        (s.mode !== "rehearsal" || s.transport === "livekit")
       ) {
         p.ready = false;
         p.admitted = false;
@@ -916,6 +1067,12 @@ export function applyAction(
       break;
     }
     case "admit": {
+      assert(
+        !isAudienceRoom(s, action.slot),
+        403,
+        "audience_room_only",
+        "The Audience Room is software, not a performer awaiting admission.",
+      );
       const p = s.participants[action.slot];
       assert(
         p.ready &&
@@ -961,26 +1118,32 @@ export function applyAction(
         actor.role === "director" || actor.slot === s.umbrella.owner,
         403,
         "prop_owner",
-        "Only the umbrella's holder may arm their cue.",
+        "Only the prop's holder may arm their cue.",
       );
       s.umbrella.armed = action.armed;
-      summary = `The umbrella cue is ${action.armed ? "armed" : "disarmed"}.`;
+      summary = `The ${propLabel(s)} cue is ${action.armed ? "armed" : "disarmed"}.`;
       break;
     case "offer": {
       active(s);
+      assert(
+        !s.parcel || s.parcel.stamped,
+        409,
+        "parcel_stamp",
+        "Stamp the parcel before its first crossing.",
+      );
       const from = ownSlot(record, actor, action.from),
         to = OTHER_SLOT[from];
       assert(
         s.umbrella.owner === from,
         409,
         "prop_owner",
-        "Only the current holder may offer this umbrella.",
+        "Only the current holder may offer this prop.",
       );
       assert(
         s.umbrella.armed,
         409,
         "not_armed",
-        "Arm the umbrella cue before offering it.",
+        "Arm the prop cue before offering it.",
       );
       assert(
         !s.umbrella.transfer ||
@@ -990,27 +1153,29 @@ export function applyAction(
         "Finish or cancel the current handoff first.",
       );
       assert(
-        [from, to].every((slot) => {
-          const p = s.participants[slot];
-          return (
-            p.ready &&
-            p.admitted &&
-            p.connected &&
-            p.camera &&
-            p.consentBroadcast
-          );
-        }),
+        [from, to].every((slot) => isStageReady(s, slot)),
         409,
         "receiver_unavailable",
-        "Both performers must be ready and on stage before a handoff.",
+        "The required stage participants must be ready before a handoff.",
       );
+      if (actor.role !== "audience")
+        cancelBoundHandoffRound(
+          record,
+          s.umbrella.transfer?.id ?? null,
+          "A fresh offer replaced the earlier handoff choice. Its recorded ballots remain in the trace.",
+          now,
+        );
       const id = `${s.id}-transfer-${s.sequence + 1}`;
       s.umbrella.transfer = {
         id,
         from,
         to,
         offeredAt: now,
-        expiresAt: now + 20_000,
+        expiresAt:
+          now +
+          (s.mode === "solo" && to === "B"
+            ? s.preset.roundSeconds * 1000 + DELIVERY_GRACE_MS + 30_000
+            : 20_000),
         status: "offered",
         committedAt: null,
         commitSequence: null,
@@ -1018,7 +1183,8 @@ export function applyAction(
       };
       s.umbrella.version += 1;
       s.beat = "crossing";
-      summary = `${s.participants[from].name} offered the same umbrella to ${s.participants[to].name}. Ownership remains with ${from}.`;
+      if (s.mode === "solo" && to === "B") openRound(record, "accept", now);
+      summary = `${s.participants[from].name} offered the same ${propLabel(s)} to ${s.participants[to].name}. Ownership remains with ${from}.`;
       detail = { transferId: id, from, to };
       break;
     }
@@ -1036,7 +1202,7 @@ export function applyAction(
         transfer.expiresAt > now,
         409,
         "offer_expired",
-        "The offer expired; its sender still owns the umbrella.",
+        "The offer expired; its sender still owns the prop.",
       );
       assert(
         slot === transfer.to && s.umbrella.owner === transfer.from,
@@ -1045,16 +1211,7 @@ export function applyAction(
         "Only this offer's receiver may accept it.",
       );
       assert(
-        [transfer.from, transfer.to].every((key) => {
-          const p = s.participants[key];
-          return (
-            p.connected &&
-            p.ready &&
-            p.admitted &&
-            p.camera &&
-            p.consentBroadcast
-          );
-        }),
+        [transfer.from, transfer.to].every((slot) => isStageReady(s, slot)),
         409,
         "receiver_unavailable",
         "A performer went backstage before acceptance. Ownership did not change.",
@@ -1062,11 +1219,14 @@ export function applyAction(
       // This assignment is part of the durable CAS commit. Renderers may animate only its returned snapshot.
       s.umbrella.owner = transfer.to;
       s.umbrella.version += 1;
+      if (s.umbrella.acceptedTransfers !== null)
+        s.umbrella.acceptedTransfers += 1;
       s.creature.shelterOwner = transfer.to;
+      if (s.parcel) s.parcel.damage = Math.min(1, s.parcel.damage + 0.18);
       transfer.status = "accepted";
       transfer.committedAt = now;
       transfer.commitSequence = s.sequence + 1;
-      summary = `Acceptance committed owner ${transfer.to} before the crossing animation. Patch and wetness are retained.`;
+      summary = `Acceptance committed owner ${transfer.to} before the crossing animation. ${s.parcel ? "The same parcel tag and accumulated handling marks are retained" : "Patch and wetness are retained"}.`;
       detail = {
         transferId: transfer.id,
         from: transfer.from,
@@ -1094,7 +1254,14 @@ export function applyAction(
       );
       transfer.status = action.type === "decline" ? "declined" : "cancelled";
       s.umbrella.version += 1;
-      summary = `The offer was ${transfer.status} before commit. Owner ${s.umbrella.owner} retains the umbrella.`;
+      summary = `The offer was ${transfer.status} before commit. Owner ${s.umbrella.owner} retains the ${propLabel(s)}.`;
+      if (actor.role !== "audience")
+        cancelBoundHandoffRound(
+          record,
+          transfer.id,
+          "The receiver declined or the sender cancelled this offer. Its unapplied handoff choice is cancelled too.",
+          now,
+        );
       break;
     }
     case "arrive": {
@@ -1117,6 +1284,12 @@ export function applyAction(
       break;
     }
     case "recall":
+      cancelBoundHandoffRound(
+        record,
+        s.umbrella.transfer?.id ?? null,
+        "Director recall replaced the pending handoff choice. Its recorded ballots remain in the trace.",
+        now,
+      );
       s.umbrella.owner = action.to;
       s.umbrella.version += 1;
       s.umbrella.transfer = null;
@@ -1125,37 +1298,112 @@ export function applyAction(
       break;
     case "open-round":
       active(s);
-      assert(
-        s.mode === "rehearsal" || s.twitch.connected,
-        409,
-        "chat_offline",
-        "Connect Twitch chat before opening an audience round. A director weather cue remains available.",
-      );
-      assert(
-        s.round?.status !== "open",
-        409,
-        "round_open",
-        "A weather choice is already open.",
-      );
-      s.round = {
-        id: `${s.id}-round-${s.sequence + 1}`,
-        status: "open",
-        openedAt: now,
-        closesAt: now + s.preset.roundSeconds * 1000,
-        closedAt: null,
-        tallies: { gentle: 0, wild: 0 },
-        uniqueVoters: 0,
-        result: null,
-        source: null,
-        lastMessageAt: null,
-      };
-      record.ballots = {};
-      s.beat = "weather";
-      summary =
-        "The weather window opened: !gentle or !wild. Each account has one replaceable choice.";
+      openRound(record, action.kind ?? "weather", now);
       break;
     case "close-round":
-      closeRound(record, action.fallback ?? s.preset.defaultWeather, now);
+      closeRound(record, action.fallback, now);
+      break;
+    case "resolve-round":
+      resolveRound(record, action.choice, now);
+      break;
+    case "apply-choice": {
+      active(s);
+      const round = s.round;
+      assert(
+        round?.status === "closed" &&
+          round.result &&
+          round.source &&
+          !round.needsDirectorChoice,
+        409,
+        "choice_unresolved",
+        "Close this choice and resolve any tie before applying it.",
+      );
+      const kind = round.kind ?? "weather",
+        choice = round.result;
+      assert(
+        kind !== "weather",
+        409,
+        "weather_cue",
+        "Use the weather cue to bring this rain on stage.",
+      );
+      if (kind === "name") s.preset.creatureName = CREATURE_NAMES[choice]!;
+      if (kind === "mood") {
+        s.creature.mood = choice === "curious" ? "wild" : "gentle";
+        s.preset.creatureCuriosity = choice === "curious" ? 0.95 : 0.2;
+      }
+      if (kind === "ending")
+        s.preset.ending =
+          choice === "share" ? "shared-shelter" : "playful-chase";
+      if (kind === "contents") {
+        assert(
+          s.parcel && !s.parcel.opened,
+          409,
+          "parcel_opened",
+          "Choose the contents before opening the parcel.",
+        );
+        s.parcel.contents = choice as "stars" | "garden";
+      }
+      if (kind === "parcel-ending") {
+        assert(
+          s.parcel?.opened,
+          409,
+          "parcel_closed",
+          "Open the parcel before choosing its final home.",
+        );
+        s.parcel.ending = choice as "deliver" | "keep";
+      }
+      if (kind === "accept" || kind === "giveback") {
+        assert(
+          s.mode === "solo" &&
+            round.epoch === s.epoch &&
+            round.boundPropVersion === s.umbrella.version &&
+            round.boundTransferId === (s.umbrella.transfer?.id ?? null),
+          409,
+          "audience_choice_stale",
+          "The prop changed while this audience choice was open. Ask again for its current handoff.",
+        );
+        if (kind === "accept" || choice === "giveback") {
+          const handoff: ShowAction =
+            kind === "accept"
+              ? {
+                  type: choice === "accept" ? "accept" : "decline",
+                  transferId: s.umbrella.transfer!.id,
+                  slot: "B",
+                }
+              : { type: "offer", from: "B" };
+          applyAction(
+            record,
+            {
+              id: `audience:${round.id}`,
+              role: "audience",
+              slot: "B",
+              roundId: round.id,
+            },
+            {
+              action: handoff,
+              idempotencyKey: `audience-${round.id}`,
+              expectedVersion: s.umbrella.version,
+              epoch: s.epoch,
+            },
+            now,
+          );
+        }
+      }
+      rememberDecision(record, now);
+      summary = `${round.source === "audience" ? "Twitch audience" : round.source === "rehearsal" ? "Labeled rehearsal choice" : "Director's choice"} applied ${kind}: ${choice}.`;
+      detail = { roundId: round.id, kind, choice, source: round.source };
+      break;
+    }
+    case "rehearsal-effect":
+      presenceEffect(
+        record,
+        "fixture",
+        `fixture:${envelope.idempotencyKey}`,
+        action.effect,
+        now,
+        now,
+        true,
+      );
       break;
     case "rehearsal-vote":
       assert(
@@ -1177,21 +1425,39 @@ export function applyAction(
     case "apply-weather": {
       active(s);
       assert(
-        action.weather || s.round?.status === "closed",
+        action.weather ||
+          (s.round?.status === "closed" &&
+            (s.round.kind ?? "weather") === "weather" &&
+            s.round.result &&
+            !s.round.needsDirectorChoice),
         409,
         "round_open",
         "Close the audience round before applying its weather.",
       );
-      const weather = action.weather ?? s.round!.result!;
+      const weather = action.weather ?? (s.round!.result as Weather);
+      assert(
+        s.episode !== "midnight-parcel",
+        409,
+        "episode_cue",
+        "Midnight Parcel uses contents, stamps and delivery cues.",
+      );
       if (action.weather) {
-        if (s.round) {
+        if (s.round && (s.round.kind ?? "weather") === "weather") {
           s.round.status = "applied";
           s.round.result = weather;
           s.round.source = "director";
         }
+        s.decisions.weather = {
+          choice: weather,
+          source: "director",
+          voters: 0,
+          contributors: [],
+          at: now,
+          roundId: `director-weather-${s.sequence + 1}`,
+        };
         summary = `Director's choice: ${weather} weather. ${weather === "gentle" ? "Soft rain will hatch a shy shelter-seeker" : "Heavy rain will hatch an energetic umbrella-chaser"}.`;
       } else {
-        s.round!.status = "applied";
+        rememberDecision(record, now);
         summary = `${s.round!.source === "audience" ? "Twitch audience" : s.round!.source === "rehearsal" ? "Labeled rehearsal ballot" : "Director's choice"}: ${weather} weather is now on stage.`;
       }
       s.weather = weather;
@@ -1213,6 +1479,12 @@ export function applyAction(
     }
     case "hatch":
       active(s);
+      assert(
+        s.episode !== "midnight-parcel",
+        409,
+        "episode_cue",
+        "Open the parcel to reveal its contents.",
+      );
       assert(
         s.weather && s.umbrella.wetness > 0,
         409,
@@ -1247,6 +1519,57 @@ export function applyAction(
           ? `${s.preset.creatureName} found the same umbrella. The performers can share the shelter.`
           : `${s.preset.creatureName} invites one last playful chase after the same umbrella.`;
       break;
+    case "stamp-parcel":
+      active(s);
+      assert(
+        s.parcel &&
+          s.parcel.contents &&
+          !s.parcel.stamped &&
+          s.umbrella.owner === "A",
+        409,
+        "parcel_stamp",
+        "Choose the contents, then stamp the unopened parcel in the sender's room.",
+      );
+      s.parcel.stamped = true;
+      s.parcel.damage = 0.12;
+      s.umbrella.version += 1;
+      s.beat = "sorting";
+      summary = `Parcel ${s.parcel.tag} received its persistent stamp and first handling mark.`;
+      break;
+    case "open-parcel":
+      active(s);
+      assert(
+        s.parcel?.stamped &&
+          s.parcel.contents &&
+          !s.parcel.opened &&
+          s.umbrella.owner === "B" &&
+          s.umbrella.transfer?.status === "arrived",
+        409,
+        "parcel_unavailable",
+        "The stamped parcel must arrive in the receiving room before it can open.",
+      );
+      s.parcel.opened = true;
+      s.parcel.openedAt = now;
+      s.parcel.transformedRoom = "B";
+      s.umbrella.version += 1;
+      s.beat = "unpacking";
+      summary = `The same parcel ${s.parcel.tag} opened into ${s.parcel.contents === "stars" ? "a constellation" : "a midnight garden"} in room B.`;
+      break;
+    case "finish-parcel":
+      active(s);
+      assert(
+        s.parcel?.opened &&
+          s.parcel.ending &&
+          s.umbrella.owner === "A" &&
+          s.umbrella.transfer?.status === "arrived",
+        409,
+        "parcel_return",
+        "Return the same parcel and choose the gift's final home before the ending.",
+      );
+      s.parcel.transformedRoom = s.parcel.ending === "deliver" ? "B" : "A";
+      s.beat = "delivery";
+      summary = `Parcel ${s.parcel.tag} returned with its handling marks. Its ${s.parcel.contents} now belongs to room ${s.parcel.transformedRoom}.`;
+      break;
     case "save-preset":
       assert(
         s.savedPresets.some((p) => p.id === action.preset.id) ||
@@ -1270,7 +1593,7 @@ export function applyAction(
         "Finish the handoff before changing the episode preset.",
       );
       assert(
-        s.round?.status !== "open",
+        !s.round || !["open", "closing"].includes(s.round.status),
         409,
         "round_open",
         "Close the weather window before changing its rules.",
@@ -1281,6 +1604,12 @@ export function applyAction(
         404,
         "preset_not_found",
         "That variation has not been saved.",
+      );
+      assert(
+        (preset.episode ?? "borrowed-weather") === s.episode,
+        409,
+        "episode_preset",
+        "Create a new show to change episodes; this variation belongs to another show grammar.",
       );
       s.preset = { ...preset };
       s.title = preset.episodeTitle;
@@ -1295,7 +1624,7 @@ export function applyAction(
       p.camera = false;
       p.microphone = false;
       p.lastSeenAt = now;
-      summary = `${p.name} left the stage. Any already committed umbrella owner is preserved.`;
+      summary = `${p.name} left the stage. The committed ${propLabel(s)} owner is preserved.`;
       break;
     }
     default:

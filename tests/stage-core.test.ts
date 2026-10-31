@@ -11,13 +11,19 @@ import {
   castVote,
   createRecord,
   expireState,
+  hydrateRecord,
   LEASE_MS,
   needsExpiry,
   PRESENCE_MS,
+  recordEvent,
 } from "../src/server/core";
 import type { Actor, ShowRecord } from "../src/server/records";
 import { parseAction } from "../src/server/schema";
 import { HttpError } from "../src/server/errors";
+import {
+  captureFixtureAction,
+  type FixtureAction,
+} from "./helpers/show-action";
 
 const DIRECTOR: Actor = { id: "host-session", role: "director", slot: "A" };
 const GUEST: Actor = { id: "guest-session", role: "performer", slot: "B" };
@@ -53,11 +59,11 @@ class Stage {
     return this.record.state;
   }
   envelope(
-    action: ShowAction,
+    action: FixtureAction,
     overrides: Partial<ActionEnvelope> = {},
   ): ActionEnvelope {
     return parseAction({
-      action,
+      action: captureFixtureAction(action, this.state),
       idempotencyKey: `request-${String(++this.key).padStart(7, "0")}`,
       expectedVersion: this.state.umbrella.version,
       rendererId: RENDERER,
@@ -73,7 +79,7 @@ class Stage {
     return this.state;
   }
   run(
-    action: ShowAction,
+    action: FixtureAction,
     actor = DIRECTOR,
     overrides: Partial<ActionEnvelope> = {},
   ) {
@@ -340,11 +346,13 @@ describe("server-committed, persistent prop ownership", () => {
     expect(stage.state.umbrella).toMatchObject({
       owner: "B",
       version: committed,
+      acceptedTransfers: 1,
     });
     stage.run({ type: "recall", to: "A" });
     expect(stage.state.umbrella).toMatchObject({
       owner: "A",
       version: committed + 1,
+      acceptedTransfers: 1,
       transfer: null,
     });
     expect(stage.state.events.at(-1)?.type).toBe("action.recall");
@@ -353,6 +361,56 @@ describe("server-committed, persistent prop ownership", () => {
         (event) => event.type === "action.accept" && event.owner === "B",
       ),
     ).toBe(true);
+  });
+  it("migrates accepted-transfer progress before projection and keeps it after event eviction", () => {
+    const stage = new Stage();
+    for (let i = 0; i < 2; i++) {
+      const offer = stage.offer();
+      stage.accept();
+      stage.run({ type: "arrive", transferId: offer.id });
+    }
+    delete (stage.state.umbrella as Partial<typeof stage.state.umbrella>)
+      .acceptedTransfers;
+    hydrateRecord(stage.record);
+    expect(stage.state.umbrella.acceptedTransfers).toBe(2);
+    stage.state.events = [];
+    hydrateRecord(stage.record);
+    expect(stage.state.umbrella.acceptedTransfers).toBe(2);
+    stage.run({ type: "hold" });
+    stage.run({ type: "reset" });
+    expect(stage.state.umbrella.acceptedTransfers).toBe(0);
+  });
+  it("marks legacy progress unknown when its capped history no longer proves the transfers", () => {
+    const stage = new Stage();
+    for (let i = 0; i < 2; i++) {
+      const offer = stage.offer();
+      stage.accept();
+      stage.run({ type: "arrive", transferId: offer.id });
+    }
+    const prop = structuredClone(stage.state.umbrella);
+    for (let i = 0; i < 2001; i++)
+      recordEvent(
+        stage.record,
+        "round.vote",
+        "twitch",
+        "Synthetic migration-history fixture.",
+        stage.now,
+      );
+    delete (stage.state.umbrella as Partial<typeof stage.state.umbrella>)
+      .acceptedTransfers;
+    hydrateRecord(stage.record);
+    expect(stage.state.umbrella.acceptedTransfers).toBeNull();
+    expect(stage.state.umbrella).toMatchObject({
+      id: prop.id,
+      owner: prop.owner,
+      version: prop.version,
+      wetness: prop.wetness,
+    });
+    hydrateRecord(stage.record);
+    expect(stage.state.umbrella.acceptedTransfers).toBeNull();
+    stage.run({ type: "hold" });
+    stage.run({ type: "reset" });
+    expect(stage.state.umbrella.acceptedTransfers).toBe(0);
   });
   it("immediately removes admission and cancels an offer when a performer withdraws broadcast consent", () => {
     const stage = new Stage();
@@ -410,6 +468,17 @@ describe("server-committed, persistent prop ownership", () => {
         PROGRAM,
       ),
     );
+  });
+  it("keeps repeated End director-only after the show has already ended", () => {
+    const stage = new Stage();
+    stage.run({ type: "end" });
+    const before = structuredClone(stage.record);
+    rejects("director_required", () => stage.run({ type: "end" }, GUEST));
+    expect(stage.record).toEqual(before);
+    stage.run({ type: "end" });
+    expect(stage.record.outputGeneration).toBe(before.outputGeneration);
+    expect(stage.record.inviteGeneration).toBe(before.inviteGeneration);
+    expect(stage.state.umbrella).toEqual(before.state.umbrella);
   });
   it("fences takeover and expired leases while preserving already committed ownership", () => {
     const stage = new Stage();
@@ -520,13 +589,16 @@ describe("bounded audience choices and reusable variation", () => {
         "account-3",
         "message-4",
         "gentle",
-        stage.state.round!.closesAt,
+        stage.state.round!.closesAt + 1,
       ),
     );
     stage.run({ type: "close-round" });
+    stage.advance(1);
     rejects("vote_window", () =>
       stage.vote("account-4", "message-5", "gentle"),
     );
+    stage.advance(3000);
+    stage.expire();
     expect(stage.state.round).toMatchObject({
       result: "wild",
       source: "audience",
@@ -543,6 +615,8 @@ describe("bounded audience choices and reusable variation", () => {
         stage.vote("account-2", "message-b", "wild");
       }
       stage.run({ type: "close-round", fallback: "wild" });
+      stage.advance(3000);
+      stage.expire();
       expect(stage.state.round).toMatchObject({
         result: "wild",
         source: "director",

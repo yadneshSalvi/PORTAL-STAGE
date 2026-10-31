@@ -1,23 +1,31 @@
 import { randomBytes, randomUUID } from "node:crypto";
+import { rate, recordEvent, requireDirector, requireLease } from "./core";
+import { assert, HttpError } from "./errors";
 import {
   castVote,
-  rate,
-  recordEvent,
-  requireDirector,
-  requireLease,
-} from "./core";
-import { assert, HttpError } from "./errors";
+  eventOrder,
+  presenceEffect,
+  safeContributor,
+} from "./audience";
+import {
+  parseAudienceCommand,
+  PRESENCE_EFFECTS,
+  type AudienceChoice,
+  type PresenceEffect,
+} from "@/lib/show-grammar";
 import type { SessionRecord, ShowRecord } from "./records";
 import { appOrigin, digest, encryptToken, privateActor } from "./security";
 import {
   actorFor,
   hostAllowed,
+  invitedLogin,
   loadRecord,
   sessionKey,
   sessionRecord,
   showKey,
 } from "./shows";
 import { getStore } from "./store";
+import { publicSoloConfigured, requireSoloAccess } from "./solo-policy";
 import {
   ensureOAuthGrant,
   twitchAppId,
@@ -132,6 +140,11 @@ export async function finishOAuth(
     scopes: info.scopes,
     expiresAt: Date.now() + info.expires_in * 1000,
   };
+  if (!invitedLogin(info.login, info.user_id) && !publicSoloConfigured()) {
+    // The returned grant is deliberately never encrypted or persisted for an ineligible account.
+    await disconnectOAuth(sessionId);
+    return false;
+  }
   const credentialId = "credential:" + randomUUID();
   await getStore().create<Credential>(credentialId, {
     ownerId: sessionId,
@@ -151,7 +164,7 @@ export async function finishOAuth(
       value.displayName = info.login;
     },
   );
-  return hostAllowed(await sessionRecord(sessionId));
+  return hostAllowed(await sessionRecord(sessionId)) || publicSoloConfigured();
 }
 export async function disconnectOAuth(sessionId: string) {
   const auth = await sessionRecord(sessionId);
@@ -193,6 +206,7 @@ export async function connectChat(
   const record = await loadRecord(id),
     actor = await actorFor(record, request);
   requireDirector(actor);
+  requireSoloAccess(record);
   const fence = authority(body);
   requireLease(
     record,
@@ -203,7 +217,7 @@ export async function connectChat(
     fence.incarnationSequence,
   );
   assert(
-    record.state.mode === "live" && record.credentialId,
+    record.state.mode !== "rehearsal" && record.credentialId,
     409,
     "live_show_required",
     "Live chat is available in an authorized Twitch show.",
@@ -333,6 +347,7 @@ export async function chatHealth(
   const record = await loadRecord(id),
     actor = await actorFor(record, request);
   requireDirector(actor);
+  requireSoloAccess(record);
   const fence = authority(body);
   requireLease(
     record,
@@ -373,7 +388,11 @@ export async function chatHealth(
       : status === "revoked"
         ? "Twitch permission was revoked. Connect your channel again."
         : "Chat is disconnected. Messages during the gap cannot be recovered.";
-    if (!healthy && value.state.round?.status === "open") {
+    if (
+      !healthy &&
+      value.state.round &&
+      ["open", "closing"].includes(value.state.round.status)
+    ) {
       value.state.round.status = "cancelled";
       recordEvent(
         value,
@@ -393,6 +412,7 @@ export async function ingestChat(
   const record = await loadRecord(id),
     actor = await actorFor(record, request);
   requireDirector(actor);
+  requireSoloAccess(record);
   const fence = authority(body);
   requireLease(
     record,
@@ -402,7 +422,104 @@ export async function ingestChat(
     fence.incarnationId,
     fence.incarnationSequence,
   );
-  const input = body.envelope as Record<string, unknown> | undefined;
+  const batched = body.envelopes !== undefined;
+  const inputs = batched ? body.envelopes : [body.envelope];
+  assert(
+    Array.isArray(inputs) && inputs.length > 0 && inputs.length <= 20,
+    400,
+    "twitch_batch",
+    "Send one to twenty bounded Twitch notifications per batch.",
+  );
+  const now = Date.now();
+  const parsed = inputs.map((input) => parseChatEvent(record, id, input, now));
+  if (parsed.every((item) => !item))
+    return batched
+      ? { counted: 0, ignored: inputs.length }
+      : { counted: false, reason: "unrelated" };
+  const result = await getStore().update<
+    ShowRecord,
+    { counted: number; ignored: number }
+  >(showKey(id), (value) => {
+    requireSoloAccess(value);
+    requireLease(
+      value,
+      fence.rendererId,
+      fence.epoch,
+      Date.now(),
+      fence.incarnationId,
+      fence.incarnationSequence,
+    );
+    assert(
+      value.state.twitch.subscriptionId ===
+        record.state.twitch.subscriptionId && value.state.twitch.connected,
+      409,
+      "twitch_gap",
+      "The chat connection changed before these messages arrived.",
+    );
+    let counted = 0,
+      ignored = 0;
+    const sorted = parsed
+      .filter((item): item is NonNullable<typeof item> => Boolean(item))
+      .sort((a, b) => a.order.localeCompare(b.order));
+    for (const item of sorted) {
+      rate(value.rates, "chat-events", 3000, 60_000);
+      try {
+        const accepted = PRESENCE_EFFECTS.includes(
+          item.choice as PresenceEffect,
+        )
+          ? presenceEffect(
+              value,
+              item.voter,
+              item.messageId,
+              item.choice as PresenceEffect,
+              item.sentAt,
+              Date.now(),
+              false,
+              item.contributor,
+              item.order,
+            )
+          : castVote(
+              value,
+              item.voter,
+              item.messageId,
+              item.choice as AudienceChoice,
+              item.sentAt,
+              Date.now(),
+              false,
+              item.contributor,
+              item.order,
+            );
+        if (accepted) counted += 1;
+        else ignored += 1;
+      } catch (error) {
+        if (
+          !batched ||
+          !(error instanceof HttpError) ||
+          ![
+            "vote_window",
+            "choice_inactive",
+            "stage_held",
+            "effect_source",
+          ].includes(error.code)
+        )
+          throw error;
+        ignored += 1;
+      }
+    }
+    return {
+      counted,
+      ignored: ignored + parsed.filter((item) => !item).length,
+    };
+  });
+  return batched ? result : { counted: result.counted > 0 };
+}
+function parseChatEvent(
+  record: ShowRecord,
+  id: string,
+  unknownInput: unknown,
+  now: number,
+) {
+  const input = unknownInput as Record<string, unknown> | undefined;
   assert(
     input && typeof input === "object",
     400,
@@ -441,8 +558,8 @@ export async function ingestChat(
     "twitch_channel",
     "This chat event belongs to another channel.",
   );
-  const sentAt = Date.parse(String(metadata.message_timestamp || "")),
-    now = Date.now();
+  const timestamp = String(metadata.message_timestamp || ""),
+    sentAt = Date.parse(timestamp);
   assert(
     Number.isFinite(sentAt) && sentAt <= now + 5000 && sentAt >= now - 60_000,
     400,
@@ -469,36 +586,16 @@ export async function ingestChat(
     "twitch_message",
     "The Twitch message is outside its allowed bounds.",
   );
-  const match = /^!(gentle|wild)\s*$/i.exec(message.text.trim());
-  if (!match) return { counted: false, reason: "unrelated" };
-  const voter = privateActor(`${id}:${event.chatter_user_id}`),
-    messageId = digest(`${record.channelId}:${event.message_id}`);
-  await getStore().update<ShowRecord, void>(showKey(id), (value) => {
-    requireLease(
-      value,
-      fence.rendererId,
-      fence.epoch,
-      Date.now(),
-      fence.incarnationId,
-      fence.incarnationSequence,
-    );
-    assert(
-      value.state.twitch.subscriptionId === subscription.id &&
-        value.state.twitch.connected,
-      409,
-      "twitch_gap",
-      "The chat connection changed before this message arrived.",
-    );
-    rate(value.rates, "chat-events", 600, 60_000);
-    castVote(
-      value,
-      voter,
-      messageId,
-      match[1].toLowerCase() as "gentle" | "wild",
-      sentAt,
-      Date.now(),
-      false,
-    );
-  });
-  return { counted: true };
+  const choice = parseAudienceCommand(message.text);
+  if (!choice) return null;
+  return {
+    choice,
+    sentAt,
+    order: eventOrder(timestamp, event.message_id),
+    voter: privateActor(`${id}:${event.chatter_user_id}`),
+    messageId: digest(`${record.channelId}:${event.message_id}`),
+    contributor: safeContributor(
+      event.chatter_user_name ?? event.chatter_user_login,
+    ),
+  };
 }

@@ -5,6 +5,7 @@ import type {
   ShowAction,
   ShowEnvelope,
   ShowMode,
+  EpisodeId,
 } from "./contracts";
 export class ApiError extends Error {
   constructor(
@@ -53,10 +54,13 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
   return payload as T;
 }
 export const getSession = () => api<SessionInfo>("/api/session");
-export const createShow = (mode: ShowMode) =>
+export const createShow = (
+  mode: ShowMode,
+  episode: EpisodeId = "borrowed-weather",
+) =>
   api<ShowEnvelope>("/api/shows", {
     method: "POST",
-    body: JSON.stringify({ mode }),
+    body: JSON.stringify({ mode, episode }),
   });
 export const getShow = (id: string) =>
   api<ShowEnvelope>(`/api/shows/${encodeURIComponent(id)}`);

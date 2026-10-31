@@ -30,3 +30,6 @@ __pycache__/
 *.tsbuildinfo
 
 .next-*/
+.workflow-data/
+src/app/.well-known/workflow/
+/.swc

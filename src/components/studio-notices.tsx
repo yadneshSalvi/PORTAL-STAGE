@@ -59,22 +59,39 @@ export function StudioAuthorityNotice({
 export function StudioVisibilityNotice({
   hidden,
   phase,
+  wasHidden = false,
+  onAcknowledge,
 }: {
   hidden: boolean;
   phase: ShowPhase;
+  wasHidden?: boolean;
+  onAcknowledge?: () => void;
 }) {
-  if (!hidden || phase === "ended") return null;
+  if ((!hidden && !wasHidden) || phase === "ended") return null;
   return (
     <div className="authority-notice visibility-notice" role="alert">
       <EyeOff size={22} aria-hidden="true" />
       <p>
-        <strong>Keep the director window visible.</strong>
+        <strong>
+          {hidden
+            ? "Keep the director window visible."
+            : "Check the picture after returning."}
+        </strong>
         <span>
-          Hidden or covered browser windows can pause stage frames and freeze
-          Program. Rendering continues at a reduced cadence while the browser
-          allows it. Keep this stage in a dedicated, uncovered Chrome window.
+          {hidden
+            ? "Hidden or covered browser windows can pause stage frames and freeze Program. Rendering continues at a reduced cadence while the browser allows it."
+            : "This director window was hidden. Stage frames may have paused. Check the current Program picture before continuing."}{" "}
+          Keep this stage in a dedicated, uncovered Chrome window.
         </span>
       </p>
+      {!hidden && onAcknowledge ? (
+        <button
+          className="button button-dark button-small"
+          onClick={onAcknowledge}
+        >
+          I checked the picture
+        </button>
+      ) : null}
     </div>
   );
 }

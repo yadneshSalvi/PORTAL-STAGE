@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import { createRecord } from "@/server/core";
 import { CueDeck, nextCue } from "./cue-deck";
 import { canIssueDirectorAction } from "./studio-controls";
+import { GuestEnded } from "./guest-ended";
 import {
   StudioAuthorityNotice,
   StudioVisibilityNotice,
@@ -11,10 +12,69 @@ import {
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
 
 describe("studio reliability states", () => {
+  it("shows manual legacy recovery without automatically moving or resetting the prop", () => {
+    const show = createRecord(
+      "ps_unknown_progress_ui",
+      "director",
+      "rehearsal",
+      1000,
+    ).state;
+    show.phase = "live";
+    show.umbrella.acceptedTransfers = null;
+    show.umbrella.owner = "B";
+    const run = vi.fn();
+    const html = renderToStaticMarkup(
+      <CueDeck show={show} busy={false} run={run} locked />,
+    );
+    expect(html).toContain("Earlier scene history is incomplete");
+    expect(html).toContain("current prop is intact");
+    expect(html).toContain("Hold stage before reset");
+    expect(html).toContain("Start a new episode");
+    expect(html).not.toContain("Offer the umbrella");
+    expect(run).not.toHaveBeenCalled();
+    expect(show.umbrella.owner).toBe("B");
+    show.phase = "hold";
+    expect(
+      renderToStaticMarkup(<CueDeck show={show} busy={false} run={run} />),
+    ).toContain("Reset this held scene");
+    expect(run).not.toHaveBeenCalled();
+  });
+  it("lets an ended solo director retry pending media closure without a render lease", () => {
+    const show = createRecord(
+      "ps_retry_closure",
+      "director",
+      "solo",
+      1000,
+    ).state;
+    show.phase = "ended";
+    show.solo = { endsAt: 1000, status: "closing" };
+    show.renderLease.expiresAt = 0;
+    const html = renderToStaticMarkup(
+      <CueDeck show={show} busy={false} run={vi.fn()} locked />,
+    );
+    expect(html).toContain("Retry media closure");
+    expect(html).toContain("Media-service closure is still pending");
+    expect(html).not.toContain('disabled=""');
+    show.solo.status = "closed";
+    expect(
+      renderToStaticMarkup(
+        <CueDeck show={show} busy={false} run={vi.fn()} locked />,
+      ),
+    ).not.toContain("Retry media closure");
+  });
+  it("replaces ended guest setup with exits and an ending explanation", () => {
+    const html = renderToStaticMarkup(<GuestEnded episode="midnight-parcel" />);
+    expect(html).toContain("Show ended");
+    expect(html).toContain("New rehearsal");
+    expect(html).toContain("Return to the theater");
+    expect(html).not.toContain("Enable camera");
+    expect(html).not.toContain("Join media room");
+    expect(html).not.toContain("Find your place in the frame");
+  });
   it("fences ordinary rehearsal cues after lease loss while keeping safety actions available", () => {
     for (const action of [
       { type: "start" },
-      { type: "open-round" },
+      { type: "open-round", previousRoundId: null },
       { type: "offer", from: "A" },
       { type: "accept", transferId: "transfer-test", slot: "B" },
       { type: "consent", broadcast: true, recording: false },
@@ -94,6 +154,16 @@ describe("studio reliability states", () => {
     expect(html).toContain('role="alert"');
     expect(html).toContain("Keep the director window visible");
     expect(html).toContain("while the browser allows it");
+    const returned = renderToStaticMarkup(
+      <StudioVisibilityNotice
+        hidden={false}
+        wasHidden
+        phase="live"
+        onAcknowledge={vi.fn()}
+      />,
+    );
+    expect(returned).toContain("Check the picture after returning");
+    expect(returned).toContain("I checked the picture");
     expect(
       renderToStaticMarkup(<StudioVisibilityNotice hidden phase="ended" />),
     ).toBe("");

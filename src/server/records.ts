@@ -1,4 +1,10 @@
-import type { ShowState, Slot, Weather, SessionRole } from "@/lib/contracts";
+import type {
+  AudienceChoice,
+  ShowState,
+  Slot,
+  Weather,
+  SessionRole,
+} from "@/lib/contracts";
 export type RateBucket = { at: number; count: number };
 export type SessionRecord = {
   id: string;
@@ -17,7 +23,18 @@ export type ShowRecord = {
   participantSessions: Partial<Record<Slot, string>>;
   credentialId: string | null;
   channelId: string | null;
-  ballots: Record<string, Weather>;
+  ballots: Record<
+    string,
+    | Weather
+    | {
+        choice: AudienceChoice;
+        sentAt: number;
+        order: string;
+        contributor: string | null;
+      }
+  >;
+  presenceRates?: Record<string, number>;
+  presenceOrder?: string;
   messageIds: string[];
   idempotency: Record<string, { hash: string; sequence: number; at: number }>;
   rates: Record<string, RateBucket>;
@@ -28,6 +45,23 @@ export type ShowRecord = {
   outputIdentities?: string[];
   activeInvitations?: Partial<Record<Slot, string>>;
   twitchSessionId: string | null;
+  soloReservation?: SoloReservation;
+};
+export type SoloReservation = {
+  id: string;
+  account: string;
+  createdAt: number;
+  expiresAt: number;
+  generation: number;
+  status: "pending" | "uncertain" | "scheduled" | "closing" | "closed";
+  runId?: string;
+  closedAt?: number;
+  issued: {
+    room: string;
+    identity: string;
+    issuedAt: number;
+    expiresAt: number;
+  }[];
 };
 export type InviteRecord = {
   hash: string;
@@ -44,4 +78,9 @@ export type OutputGrantRecord = {
   redeemed: boolean;
   generation: number;
 };
-export type Actor = { id: string; role: SessionRole; slot: Slot | null };
+export type Actor = {
+  id: string;
+  role: SessionRole | "audience";
+  slot: Slot | null;
+  roundId?: string;
+};

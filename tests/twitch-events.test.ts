@@ -1,5 +1,6 @@
 import { beforeEach, afterEach, describe, expect, it, vi } from "vitest";
 const records = vi.hoisted(() => new Map<string, unknown>());
+const writes = vi.hoisted(() => ({ count: 0 }));
 vi.mock("@/server/store", () => ({
   getStore: () => ({
     get: async (id: string) => structuredClone(records.get(id) ?? null),
@@ -9,6 +10,7 @@ vi.mock("@/server/store", () => ({
       return true;
     },
     update: async (id: string, change: (value: any) => unknown) => {
+      writes.count += 1;
       const value = structuredClone(records.get(id));
       const result = change(value);
       records.set(id, value);
@@ -64,6 +66,7 @@ function event(text = "!gentle", user = "123", messageId = "message-1") {
 }
 beforeEach(() => {
   records.clear();
+  writes.count = 0;
   vi.useFakeTimers();
   vi.setSystemTime(now);
   vi.stubEnv(
@@ -103,6 +106,100 @@ afterEach(() => {
 });
 
 describe("Twitch notification boundary", () => {
+  it("commits a labeled synthetic hundred-event burst in five bounded database mutations", async () => {
+    for (let batch = 0; batch < 5; batch++) {
+      const envelopes = Array.from(
+        { length: 20 },
+        (_, index) =>
+          event(
+            index % 2 ? "!wild" : "!gentle",
+            String(batch * 20 + index + 1000),
+            `burst-${batch}-${index}`,
+          ).envelope,
+      );
+      expect(
+        await ingestChat(showId, request(), {
+          rendererId: "test-renderer",
+          epoch: 1,
+          envelopes,
+        }),
+      ).toEqual({ counted: 20, ignored: 0 });
+    }
+    expect(writes.count).toBe(5);
+    expect(show().state.round).toMatchObject({
+      uniqueVoters: 100,
+      tallies: { gentle: 50, wild: 50 },
+    });
+    expect(
+      show().state.events.filter((item) => item.type === "round.vote"),
+    ).toHaveLength(100);
+  });
+  it("validates the entire batch's channel and envelope bounds before writing any votes", async () => {
+    const wrong = event("!wild", "999");
+    wrong.envelope.payload.event.broadcaster_user_id = "888";
+    await expect(
+      ingestChat(showId, request(), {
+        rendererId: "test-renderer",
+        epoch: 1,
+        envelopes: [event().envelope, wrong.envelope],
+      }),
+    ).rejects.toMatchObject({ code: "twitch_channel" });
+    await expect(
+      ingestChat(showId, request(), {
+        rendererId: "test-renderer",
+        epoch: 1,
+        envelopes: Array(21).fill(event().envelope),
+      }),
+    ).rejects.toMatchObject({ code: "twitch_batch" });
+    expect(writes.count).toBe(0);
+    expect(show().state.round?.uniqueVoters).toBe(0);
+  });
+  it("deduplicates the same committed batch when its HTTP response was lost", async () => {
+    const body = {
+      rendererId: "test-renderer",
+      epoch: 1,
+      envelopes: [
+        event("!gentle", "123", "lost-response-1").envelope,
+        event("!wild", "124", "lost-response-2").envelope,
+      ],
+    };
+    await ingestChat(showId, request(), body); // The simulated caller never receives this successful response.
+    expect(await ingestChat(showId, request(), body)).toEqual({
+      counted: 0,
+      ignored: 2,
+    });
+    expect(show().state.round).toMatchObject({
+      uniqueVoters: 2,
+      tallies: { gentle: 1, wild: 1 },
+    });
+    expect(
+      show().state.events.filter((item) => item.type === "round.vote"),
+    ).toHaveLength(2);
+  });
+  it("accepts only in-window delivery during closing grace and ignores unrelated choices in a mixed batch", async () => {
+    Object.assign(show().state.round!, {
+      openedAt: now - 5000,
+      closesAt: now - 1000,
+      status: "closing",
+      graceEndsAt: now + 2000,
+    });
+    const late = event("!wild", "124", "in-window");
+    late.envelope.metadata.message_timestamp = new Date(
+      now - 1100,
+    ).toISOString();
+    const outside = event("!gentle", "125", "after-close");
+    expect(
+      await ingestChat(showId, request(), {
+        rendererId: "test-renderer",
+        epoch: 1,
+        envelopes: [outside.envelope, late.envelope, event("!share").envelope],
+      }),
+    ).toEqual({ counted: 1, ignored: 2 });
+    expect(show().state.round).toMatchObject({
+      uniqueVoters: 1,
+      tallies: { wild: 1 },
+    });
+  });
   it("replaces one user's ballot and deduplicates message identity across notification IDs", async () => {
     await ingestChat(showId, request(), event());
     const duplicate = event();

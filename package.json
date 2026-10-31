@@ -14,8 +14,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "format": "prettier --write src tests scripts docs *.json *.ts *.md",
-    "format:check": "prettier --check src tests scripts docs *.json *.ts *.md",
+    "format": "prettier --write --ignore-path .gitignore --ignore-path .prettierignore src tests scripts docs *.json *.ts *.md",
+    "format:check": "prettier --check --ignore-path .gitignore --ignore-path .prettierignore src tests scripts docs *.json *.ts *.md",
     "setup": "node scripts/setup-local.mjs"
   },
   "dependencies": {
@@ -31,6 +31,7 @@
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "three": "0.187.0",
+    "workflow": "5.2.3",
     "zod": "4.6.7"
   },
   "devDependencies": {
@@ -41,5 +42,10 @@
     "tsx": "4.23.15",
     "typescript": "7.0.2",
     "vitest": "5.0.5"
+  },
+  "overrides": {
+    "zod": "$zod",
+    "undici": "7.30.1",
+    "minimatch@>=9 <11.0.1": "11.0.1"
   }
 }

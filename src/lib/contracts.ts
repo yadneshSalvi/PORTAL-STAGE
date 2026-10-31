@@ -1,13 +1,34 @@
 /** Shared, JSON-only protocol. Secret/auth fields live exclusively in server records. */
+import type {
+  AudienceChoice,
+  EpisodeId,
+  PresenceEffect,
+  RoundKind,
+} from "./show-grammar";
+export type {
+  AudienceChoice,
+  EpisodeId,
+  PresenceEffect,
+  RoundKind,
+} from "./show-grammar";
 export type Slot = "A" | "B";
 export type Weather = "gentle" | "wild";
-export type ShowMode = "rehearsal" | "live";
+export type ShowMode = "rehearsal" | "live" | "solo";
 export type ShowPhase = "backstage" | "live" | "hold" | "ended";
 export type SessionRole = "director" | "performer" | "program";
 export type SceneBeat =
-  "overture" | "weather" | "crossing" | "hatching" | "shelter" | "curtain";
+  | "overture"
+  | "weather"
+  | "crossing"
+  | "hatching"
+  | "shelter"
+  | "curtain"
+  | "sorting"
+  | "unpacking"
+  | "delivery";
 export type Point = { x: number; y: number };
 export type ShowPreset = {
+  episode?: EpisodeId;
   id: string;
   name: string;
   episodeTitle: string;
@@ -19,6 +40,8 @@ export type ShowPreset = {
   roundSeconds: number;
   reducedMotion: boolean;
   ending: "shared-shelter" | "playful-chase";
+  defaultContents?: "stars" | "garden";
+  parcelEnding?: "deliver" | "keep";
 };
 export type ParticipantState = {
   slot: Slot;
@@ -52,6 +75,8 @@ export type UmbrellaState = {
   id: string;
   owner: Slot;
   version: number;
+  /** Durable count; null only when a legacy snapshot cannot prove its earlier progress. */
+  acceptedTransfers: number | null;
   repairPatch: "coral";
   wetness: number;
   armed: boolean;
@@ -59,22 +84,48 @@ export type UmbrellaState = {
 };
 export type RoundState = {
   id: string;
-  status: "open" | "closed" | "applied" | "cancelled";
+  kind?: RoundKind;
+  status: "open" | "closing" | "closed" | "applied" | "cancelled";
   openedAt: number;
   closesAt: number;
   closedAt: number | null;
-  tallies: Record<Weather, number>;
+  tallies: Partial<Record<AudienceChoice, number>>;
   uniqueVoters: number;
-  result: Weather | null;
+  result: AudienceChoice | null;
   source: "audience" | "director" | "rehearsal" | null;
   lastMessageAt: number | null;
+  contributors?: string[];
+  needsDirectorChoice?: boolean;
+  graceEndsAt?: number;
+  epoch?: number;
+  boundPropVersion?: number;
+  boundTransferId?: string | null;
+  fallbackChoice?: AudienceChoice;
+};
+export type AppliedDecision = {
+  choice: AudienceChoice;
+  source: "audience" | "director" | "rehearsal";
+  voters: number;
+  contributors: string[];
+  at: number;
+  roundId: string;
+};
+export type ParcelState = {
+  tag: string;
+  damage: number;
+  contents: "stars" | "garden" | null;
+  stamped: boolean;
+  opened: boolean;
+  openedAt: number | null;
+  transformedRoom: Slot | null;
+  ending: "deliver" | "keep" | null;
 };
 export type StageEvent = {
   id: string;
   sequence: number;
   at: number;
   type: string;
-  actor: "director" | Slot | "twitch" | "system";
+  actor: "director" | Slot | "twitch" | "system" | "audience";
   summary: string;
   propId: string;
   propVersion: number;
@@ -84,6 +135,7 @@ export type StageEvent = {
 export type ShowState = {
   id: string;
   mode: ShowMode;
+  episode: EpisodeId;
   transport: "fixture" | "livekit";
   title: string;
   phase: ShowPhase;
@@ -97,6 +149,18 @@ export type ShowState = {
   channel: string | null;
   participants: Record<Slot, ParticipantState>;
   umbrella: UmbrellaState;
+  parcel: ParcelState | null;
+  decisions: Partial<Record<RoundKind, AppliedDecision>>;
+  presenceEffects: {
+    id: string;
+    effect: PresenceEffect;
+    at: number;
+    contributor: string | null;
+  }[];
+  solo: {
+    endsAt: number;
+    status: "reserved" | "scheduled" | "closing" | "closed";
+  } | null;
   weather: Weather | null;
   rainStartedAt: number | null;
   creature: {
@@ -131,6 +195,14 @@ export type ShowState = {
 export type SessionInfo = {
   authenticated: boolean;
   hostAllowed: boolean;
+  soloAllowed?: boolean;
+  soloUsage?: {
+    remaining: number;
+    limit: number;
+    minutes: number;
+    available: boolean;
+    reason: string | null;
+  };
   displayName: string | null;
   login: string | null;
   twitchConnected: boolean;
@@ -199,10 +271,19 @@ export type ShowAction =
     }
   | { type: "arrive"; transferId: string }
   | { type: "recall"; to: Slot }
-  | { type: "open-round" }
-  | { type: "close-round"; fallback?: Weather }
-  | { type: "apply-weather"; weather?: Weather }
-  | { type: "rehearsal-vote"; choice: Weather; voter: string }
+  | { type: "open-round"; kind?: RoundKind; previousRoundId: string | null }
+  | { type: "close-round"; fallback?: AudienceChoice; roundId: string }
+  | { type: "resolve-round"; choice: AudienceChoice; roundId: string }
+  | { type: "apply-choice"; roundId: string }
+  | { type: "apply-weather"; weather?: Weather; roundId: string | null }
+  | {
+      type: "rehearsal-vote";
+      choice: AudienceChoice;
+      voter: string;
+      roundId: string;
+    }
+  | { type: "rehearsal-effect"; effect: PresenceEffect }
+  | { type: "stamp-parcel" | "open-parcel" | "finish-parcel" }
   | { type: "hatch" | "shelter" }
   | { type: "save-preset"; preset: ShowPreset }
   | { type: "load-preset"; presetId: string }

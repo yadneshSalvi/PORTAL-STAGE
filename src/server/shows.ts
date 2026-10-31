@@ -5,12 +5,14 @@ import type {
   SessionInfo,
   ShowEnvelope,
   ShowMode,
+  EpisodeId,
   Slot,
 } from "@/lib/contracts";
 import {
   acquireLease,
   applyAction,
   createRecord,
+  hydrateRecord,
   expireState,
   LEASE_MS,
   needsExpiry,
@@ -37,6 +39,14 @@ import {
 } from "./security";
 import { getStore } from "./store";
 import { ensureOAuthGrant } from "./twitch-grants";
+import {
+  publicSoloConfigured,
+  reserveSolo,
+  requireSoloAccess,
+  soloEligible,
+  soloUsage,
+} from "./solo-policy";
+import { scheduleSolo } from "./solo-schedule";
 
 export const showKey = (id: string) => "show:" + id;
 export const sessionKey = (id: string) => "session:" + id;
@@ -59,15 +69,21 @@ export async function sessionRecord(id: string): Promise<SessionRecord> {
   await store.create(sessionKey(id), initial);
   return (await store.get<SessionRecord>(sessionKey(id)))!;
 }
-export function hostAllowed(record: SessionRecord | null) {
-  if (!record?.login || !record.credentialId) return false;
+export function invitedLogin(login: string, userId?: string) {
   const allowed = (process.env.TWITCH_ALLOWED_HOSTS || "")
     .split(",")
     .map((value) => value.trim().toLowerCase())
     .filter(Boolean);
   return (
-    allowed.includes(record.login.toLowerCase()) ||
-    Boolean(record.userId && allowed.includes(record.userId))
+    allowed.includes(login.toLowerCase()) ||
+    Boolean(userId && allowed.includes(userId))
+  );
+}
+export function hostAllowed(record: SessionRecord | null) {
+  return Boolean(
+    record?.login &&
+    record.credentialId &&
+    invitedLogin(record.login, record.userId),
   );
 }
 export async function sessionInfo(id: string): Promise<SessionInfo> {
@@ -75,6 +91,8 @@ export async function sessionInfo(id: string): Promise<SessionInfo> {
   return {
     authenticated: Boolean(auth?.credentialId),
     hostAllowed: hostAllowed(auth),
+    soloAllowed: soloEligible(auth),
+    soloUsage: await soloUsage(auth),
     displayName: auth?.displayName || null,
     login: auth?.login || null,
     twitchConnected: Boolean(auth?.credentialId),
@@ -166,6 +184,13 @@ export async function actorFor(
   );
 }
 export function envelope(record: ShowRecord, actor: Actor): ShowEnvelope {
+  assert(
+    actor.role !== "audience",
+    403,
+    "internal_actor",
+    "Audience authority is server-only.",
+  );
+  hydrateRecord(record);
   const show = structuredClone(record.state);
   show.events = show.events.slice(-50);
   show.revision ??= show.sequence;
@@ -195,6 +220,7 @@ export async function createShow(
   ownerId: string,
   mode: ShowMode,
   request: Request,
+  episode: EpisodeId = "borrowed-weather",
 ): Promise<ShowEnvelope> {
   await addressRate(request, "create-show", 60, 3600_000);
   const auth = await sessionRecord(ownerId);
@@ -207,6 +233,15 @@ export async function createShow(
     );
     await ensureOAuthGrant(auth.credentialId!, ownerId, true);
   }
+  if (mode === "solo") {
+    assert(
+      soloEligible(auth),
+      403,
+      "solo_unavailable",
+      "Connect Twitch to start a capped solo stage. Local rehearsal is always available.",
+    );
+    await ensureOAuthGrant(auth.credentialId!, ownerId, true);
+  }
   await getStore().update<SessionRecord, void>(sessionKey(ownerId), (value) =>
     rate(value.rates, "create-show", mode === "live" ? 8 : 30, 3600_000),
   );
@@ -216,17 +251,33 @@ export async function createShow(
     ownerId,
     mode,
     Date.now(),
-    mode === "live" ? auth.login! : null,
+    mode !== "rehearsal" ? auth.login! : null,
+    episode,
   );
-  if (mode === "live") {
+  if (mode !== "rehearsal") {
     record.credentialId = auth.credentialId!;
     record.channelId = auth.userId!;
     record.state.participants.A.name = auth.displayName || auth.login!;
+  }
+  if (mode === "solo") {
+    record.soloReservation = await reserveSolo(auth, id, Date.now());
+    record.state.solo = {
+      endsAt: record.soloReservation.expiresAt,
+      status: "reserved",
+    };
   }
   await getStore().create(showKey(id), record);
   await getStore().update<SessionRecord, void>(sessionKey(ownerId), (value) => {
     value.currentShowId = id;
   });
+  if (record.soloReservation) {
+    await scheduleSolo(id, record.soloReservation);
+    return envelope((await getStore().get<ShowRecord>(showKey(id)))!, {
+      id: ownerId,
+      role: "director",
+      slot: "A",
+    });
+  }
   return envelope(record, { id: ownerId, role: "director", slot: "A" });
 }
 export async function command(
@@ -447,6 +498,12 @@ export async function invite(
     actor = await actorFor(record, request);
   requireDirector(actor);
   assert(
+    record.state.mode !== "solo",
+    403,
+    "audience_room_only",
+    "Solo uses a software Audience Room. Create a duet to invite another performer.",
+  );
+  assert(
     slot === "B",
     400,
     "guest_slot",
@@ -658,6 +715,7 @@ export async function createOutputGrant(id: string, request: Request) {
   const record = await loadRecord(id),
     actor = await actorFor(record, request);
   requireDirector(actor);
+  requireSoloAccess(record);
   assert(
     record.state.phase !== "ended",
     409,

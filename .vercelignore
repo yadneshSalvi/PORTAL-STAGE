@@ -16,3 +16,5 @@ recordings
 
 .next-*
 *.tsbuildinfo
+.workflow-data/
+src/app/.well-known/workflow/

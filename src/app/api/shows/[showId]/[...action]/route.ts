@@ -28,6 +28,7 @@ import {
   removeMediaOutputs,
 } from "@/server/media";
 import { chatHealth, connectChat, ingestChat } from "@/server/twitch";
+import { closeSoloReservation } from "@/server/solo-closure";
 type Context = { params: Promise<{ showId: string; action: string[] }> };
 export async function POST(request: Request, context: Context) {
   try {
@@ -41,8 +42,21 @@ export async function POST(request: Request, context: Context) {
       if (
         parsed.action.type === "end" ||
         parsed.action.type === "restore-rehearsal"
-      )
-        await closeMedia(showId).catch(() => undefined);
+      ) {
+        if (result.show.mode === "solo") {
+          const record = await loadRecord(showId),
+            reservation = record.soloReservation;
+          if (reservation)
+            await closeSoloReservation(
+              showId,
+              reservation.id,
+              reservation.generation,
+              undefined,
+              Date.now(),
+              true,
+            ).catch(() => undefined);
+        } else await closeMedia(showId).catch(() => undefined);
+      }
       if (
         parsed.action.type === "leave" ||
         (parsed.action.type === "consent" && !parsed.action.broadcast)
