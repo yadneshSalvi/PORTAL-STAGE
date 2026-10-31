@@ -1,0 +1,550 @@
+{
+  "exportedAt": "2026-10-31T13:14:47.807Z",
+  "mode": "rehearsal",
+  "showId": "ps_be6f6a5394a26133",
+  "sequence": 37,
+  "umbrella": {
+    "id": "ps_be6f6a5394a26133-umbrella-1",
+    "armed": true,
+    "owner": "A",
+    "version": 6,
+    "wetness": 0.52,
+    "transfer": {
+      "id": "ps_be6f6a5394a26133-transfer-25",
+      "to": "A",
+      "from": "B",
+      "status": "arrived",
+      "arrivedAt": 1793452389988,
+      "expiresAt": 1793452394970,
+      "offeredAt": 1793452374970,
+      "committedAt": 1793452387858,
+      "commitSequence": 26
+    },
+    "repairPatch": "coral"
+  },
+  "creature": {
+    "id": "ps_be6f6a5394a26133-pip-1",
+    "mood": "wild",
+    "hatched": true,
+    "hatchedAt": 1793452360682,
+    "shelterOwner": "A"
+  },
+  "round": {
+    "id": "ps_be6f6a5394a26133-round-17",
+    "result": "wild",
+    "source": "rehearsal",
+    "status": "applied",
+    "tallies": {
+      "wild": 1,
+      "gentle": 0
+    },
+    "closedAt": 1793452309596,
+    "closesAt": 1793452317215,
+    "openedAt": 1793452287215,
+    "uniqueVoters": 1,
+    "lastMessageAt": 1793452296673
+  },
+  "events": [
+    {
+      "at": 1793452140880,
+      "id": "ps_be6f6a5394a26133:1",
+      "type": "show.created",
+      "actor": "director",
+      "owner": "A",
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "Labeled solo rehearsal created with synthetic test plates.",
+      "sequence": 1,
+      "propVersion": 1
+    },
+    {
+      "at": 1793452142717,
+      "id": "ps_be6f6a5394a26133:2",
+      "type": "renderer.acquired",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "epoch": 1
+      },
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "One director tab acquired the canonical stage.",
+      "sequence": 2,
+      "propVersion": 1
+    },
+    {
+      "at": 1793452163984,
+      "id": "ps_be6f6a5394a26133:3",
+      "type": "action.presence",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "slot": "A",
+        "camera": false,
+        "connected": false,
+        "microphone": false
+      },
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "Test plate A's media is disconnected; camera off, microphone muted.",
+      "sequence": 3,
+      "propVersion": 1
+    },
+    {
+      "at": 1793452164623,
+      "id": "ps_be6f6a5394a26133:4",
+      "type": "media.grant",
+      "actor": "A",
+      "owner": "A",
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "A short-lived private media grant was issued. Reconnection requires readiness and admission again.",
+      "sequence": 4,
+      "propVersion": 1
+    },
+    {
+      "at": 1793452166118,
+      "id": "ps_be6f6a5394a26133:5",
+      "type": "action.presence",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "slot": "A",
+        "camera": true,
+        "connected": true,
+        "microphone": false
+      },
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "Test plate A's media is connected; camera enabled, microphone muted.",
+      "sequence": 5,
+      "propVersion": 1
+    },
+    {
+      "at": 1793452186864,
+      "id": "ps_be6f6a5394a26133:6",
+      "type": "participant.interrupted",
+      "actor": "B",
+      "owner": "A",
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "Test plate B's connection expired; their aperture is closed and re-admission is required.",
+      "sequence": 6,
+      "propVersion": 1
+    },
+    {
+      "at": 1793452186864,
+      "id": "ps_be6f6a5394a26133:7",
+      "type": "action.ready",
+      "actor": "director",
+      "owner": "A",
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "Test plate A is ready backstage; director admission is still separate.",
+      "sequence": 7,
+      "propVersion": 1
+    },
+    {
+      "at": 1793452207388,
+      "id": "ps_be6f6a5394a26133:8",
+      "type": "participant.joined",
+      "actor": "B",
+      "owner": "A",
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "Synthetic guest B joined private backstage. Camera, consent, readiness, and admission remain separate.",
+      "sequence": 8,
+      "propVersion": 1
+    },
+    {
+      "at": 1793452207826,
+      "id": "ps_be6f6a5394a26133:9",
+      "type": "action.admit",
+      "actor": "director",
+      "owner": "A",
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "Test plate A was admitted by the director.",
+      "sequence": 9,
+      "propVersion": 1
+    },
+    {
+      "at": 1793452220150,
+      "id": "ps_be6f6a5394a26133:10",
+      "type": "action.consent",
+      "actor": "B",
+      "owner": "A",
+      "detail": {
+        "slot": "B",
+        "broadcast": true,
+        "recording": false
+      },
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "Synthetic guest B consented to broadcast; recording permission remains a separate choice.",
+      "sequence": 10,
+      "propVersion": 1
+    },
+    {
+      "at": 1793452220771,
+      "id": "ps_be6f6a5394a26133:11",
+      "type": "action.calibrate",
+      "actor": "B",
+      "owner": "A",
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "Synthetic guest B calibrated the virtual shelter region. No physical object recognition is used.",
+      "sequence": 11,
+      "propVersion": 1
+    },
+    {
+      "at": 1793452229421,
+      "id": "ps_be6f6a5394a26133:12",
+      "type": "media.grant",
+      "actor": "B",
+      "owner": "A",
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "A short-lived private media grant was issued. Reconnection requires readiness and admission again.",
+      "sequence": 12,
+      "propVersion": 1
+    },
+    {
+      "at": 1793452230164,
+      "id": "ps_be6f6a5394a26133:13",
+      "type": "action.presence",
+      "actor": "B",
+      "owner": "A",
+      "detail": {
+        "slot": "B",
+        "camera": true,
+        "connected": true,
+        "microphone": false
+      },
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "Synthetic guest B's media is connected; camera enabled, microphone muted.",
+      "sequence": 13,
+      "propVersion": 1
+    },
+    {
+      "at": 1793452238757,
+      "id": "ps_be6f6a5394a26133:14",
+      "type": "action.ready",
+      "actor": "B",
+      "owner": "A",
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "Synthetic guest B is ready backstage; director admission is still separate.",
+      "sequence": 14,
+      "propVersion": 1
+    },
+    {
+      "at": 1793452245934,
+      "id": "ps_be6f6a5394a26133:15",
+      "type": "action.admit",
+      "actor": "director",
+      "owner": "A",
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "Synthetic guest B was admitted by the director.",
+      "sequence": 15,
+      "propVersion": 1
+    },
+    {
+      "at": 1793452249529,
+      "id": "ps_be6f6a5394a26133:16",
+      "type": "action.start",
+      "actor": "director",
+      "owner": "A",
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "The curtain rose on two admitted performers.",
+      "sequence": 16,
+      "propVersion": 1
+    },
+    {
+      "at": 1793452287215,
+      "id": "ps_be6f6a5394a26133:17",
+      "type": "action.open-round",
+      "actor": "director",
+      "owner": "A",
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "The weather window opened: !gentle or !wild. Each account has one replaceable choice.",
+      "sequence": 17,
+      "propVersion": 1
+    },
+    {
+      "at": 1793452296673,
+      "id": "ps_be6f6a5394a26133:18",
+      "type": "round.vote",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "choice": "wild",
+        "roundId": "ps_be6f6a5394a26133-round-17",
+        "replaced": false,
+        "synthetic": true,
+        "messageRef": "fixture:deba8893"
+      },
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "A labeled test ballot chose wild.",
+      "sequence": 18,
+      "propVersion": 1
+    },
+    {
+      "at": 1793452309596,
+      "id": "ps_be6f6a5394a26133:19",
+      "type": "round.closed",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "wild": 1,
+        "gentle": 0,
+        "source": "rehearsal",
+        "voters": 1,
+        "roundId": "ps_be6f6a5394a26133-round-17"
+      },
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "Rehearsal ballots chose: wild.",
+      "sequence": 19,
+      "propVersion": 1
+    },
+    {
+      "at": 1793452323731,
+      "id": "ps_be6f6a5394a26133:20",
+      "type": "action.apply-weather",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "source": "rehearsal",
+        "roundId": "ps_be6f6a5394a26133-round-17",
+        "weather": "wild"
+      },
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "Labeled rehearsal ballot: wild weather is now on stage.",
+      "sequence": 20,
+      "propVersion": 2
+    },
+    {
+      "at": 1793452334486,
+      "id": "ps_be6f6a5394a26133:21",
+      "type": "action.offer",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "to": "B",
+        "from": "A",
+        "transferId": "ps_be6f6a5394a26133-transfer-21"
+      },
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "Test plate A offered the same umbrella to Synthetic guest B. Ownership remains with A.",
+      "sequence": 21,
+      "propVersion": 3
+    },
+    {
+      "at": 1793452343114,
+      "id": "ps_be6f6a5394a26133:22",
+      "type": "action.accept",
+      "actor": "B",
+      "owner": "B",
+      "detail": {
+        "to": "B",
+        "from": "A",
+        "patch": "coral",
+        "wetness": 0.52,
+        "transferId": "ps_be6f6a5394a26133-transfer-21"
+      },
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "Acceptance committed owner B before the crossing animation. Patch and wetness are retained.",
+      "sequence": 22,
+      "propVersion": 4
+    },
+    {
+      "at": 1793452349846,
+      "id": "ps_be6f6a5394a26133:23",
+      "type": "action.arrive",
+      "actor": "director",
+      "owner": "B",
+      "detail": {
+        "transferId": "ps_be6f6a5394a26133-transfer-21",
+        "commitSequence": 22
+      },
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "The renderer acknowledged arrival. Owner B was already committed; ownership was not written again.",
+      "sequence": 23,
+      "propVersion": 4
+    },
+    {
+      "at": 1793452360682,
+      "id": "ps_be6f6a5394a26133:24",
+      "type": "action.hatch",
+      "actor": "director",
+      "owner": "B",
+      "detail": {
+        "weather": "wild",
+        "creatureId": "ps_be6f6a5394a26133-pip-1"
+      },
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "Pip hatched from the same umbrella's runoff with wild behavior.",
+      "sequence": 24,
+      "propVersion": 4
+    },
+    {
+      "at": 1793452374970,
+      "id": "ps_be6f6a5394a26133:25",
+      "type": "action.offer",
+      "actor": "B",
+      "owner": "B",
+      "detail": {
+        "to": "A",
+        "from": "B",
+        "transferId": "ps_be6f6a5394a26133-transfer-25"
+      },
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "Synthetic guest B offered the same umbrella to Test plate A. Ownership remains with B.",
+      "sequence": 25,
+      "propVersion": 5
+    },
+    {
+      "at": 1793452387858,
+      "id": "ps_be6f6a5394a26133:26",
+      "type": "action.accept",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "to": "A",
+        "from": "B",
+        "patch": "coral",
+        "wetness": 0.52,
+        "transferId": "ps_be6f6a5394a26133-transfer-25"
+      },
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "Acceptance committed owner A before the crossing animation. Patch and wetness are retained.",
+      "sequence": 26,
+      "propVersion": 6
+    },
+    {
+      "at": 1793452389988,
+      "id": "ps_be6f6a5394a26133:27",
+      "type": "action.arrive",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "transferId": "ps_be6f6a5394a26133-transfer-25",
+        "commitSequence": 26
+      },
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "The renderer acknowledged arrival. Owner A was already committed; ownership was not written again.",
+      "sequence": 27,
+      "propVersion": 6
+    },
+    {
+      "at": 1793452400456,
+      "id": "ps_be6f6a5394a26133:28",
+      "type": "action.shelter",
+      "actor": "director",
+      "owner": "A",
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "Pip found the same umbrella. The performers can share the shelter.",
+      "sequence": 28,
+      "propVersion": 6
+    },
+    {
+      "at": 1793452412973,
+      "id": "ps_be6f6a5394a26133:29",
+      "type": "action.panic",
+      "actor": "director",
+      "owner": "A",
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "Emergency curtain closed immediately; performers need readiness and re-admission.",
+      "sequence": 29,
+      "propVersion": 6
+    },
+    {
+      "at": 1793452420824,
+      "id": "ps_be6f6a5394a26133:30",
+      "type": "action.presence",
+      "actor": "B",
+      "owner": "A",
+      "detail": {
+        "slot": "B",
+        "camera": false,
+        "connected": false,
+        "microphone": false
+      },
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "Synthetic guest B's media is disconnected; camera off, microphone muted.",
+      "sequence": 30,
+      "propVersion": 6
+    },
+    {
+      "at": 1793452430387,
+      "id": "ps_be6f6a5394a26133:31",
+      "type": "media.grant",
+      "actor": "B",
+      "owner": "A",
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "A short-lived private media grant was issued. Reconnection requires readiness and admission again.",
+      "sequence": 31,
+      "propVersion": 6
+    },
+    {
+      "at": 1793452432768,
+      "id": "ps_be6f6a5394a26133:32",
+      "type": "action.presence",
+      "actor": "B",
+      "owner": "A",
+      "detail": {
+        "slot": "B",
+        "camera": true,
+        "connected": true,
+        "microphone": false
+      },
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "Synthetic guest B's media is connected; camera enabled, microphone muted.",
+      "sequence": 32,
+      "propVersion": 6
+    },
+    {
+      "at": 1793452438268,
+      "id": "ps_be6f6a5394a26133:33",
+      "type": "action.ready",
+      "actor": "director",
+      "owner": "A",
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "Test plate A is ready backstage; director admission is still separate.",
+      "sequence": 33,
+      "propVersion": 6
+    },
+    {
+      "at": 1793452446584,
+      "id": "ps_be6f6a5394a26133:34",
+      "type": "action.admit",
+      "actor": "director",
+      "owner": "A",
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "Test plate A was admitted by the director.",
+      "sequence": 34,
+      "propVersion": 6
+    },
+    {
+      "at": 1793452447252,
+      "id": "ps_be6f6a5394a26133:35",
+      "type": "action.ready",
+      "actor": "B",
+      "owner": "A",
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "Synthetic guest B is ready backstage; director admission is still separate.",
+      "sequence": 35,
+      "propVersion": 6
+    },
+    {
+      "at": 1793452462133,
+      "id": "ps_be6f6a5394a26133:36",
+      "type": "action.admit",
+      "actor": "director",
+      "owner": "A",
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "Synthetic guest B was admitted by the director.",
+      "sequence": 36,
+      "propVersion": 6
+    },
+    {
+      "at": 1793452466542,
+      "id": "ps_be6f6a5394a26133:37",
+      "type": "action.resume",
+      "actor": "director",
+      "owner": "A",
+      "propId": "ps_be6f6a5394a26133-umbrella-1",
+      "summary": "The director resumed the committed scene.",
+      "sequence": 37,
+      "propVersion": 6
+    }
+  ],
+  "scope": "Current state and recent server events; rehearsal is synthetic, not remote-media or audience evidence."
+}

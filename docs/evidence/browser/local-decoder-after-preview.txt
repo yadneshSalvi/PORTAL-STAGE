@@ -1,0 +1,36 @@
+LOCAL TRANSPORT DIAGNOSTIC · CANONICAL DECODER
+
+{
+  "present": true,
+  "browser": "Chromium",
+  "visibility": "visible",
+  "connectedToDOM": false,
+  "paused": false,
+  "readyState": 4,
+  "currentTime": 116.985931,
+  "width": 1280,
+  "height": 720,
+  "muted": true,
+  "stream": true,
+  "streamActive": true,
+  "tracks": [
+    {
+      "readyState": "live",
+      "enabled": true,
+      "muted": false
+    }
+  ],
+  "playCount": 2,
+  "playReason": "source-ready",
+  "playResult": "resolved",
+  "playError": "none",
+  "playAt": 1793453531730,
+  "lastPlayRejection": "AbortError",
+  "playRejectedAt": 1793453531715,
+  "playRejectionCount": 1,
+  "eventCount": 7,
+  "lastEvent": "playing",
+  "eventAt": 1793453531730,
+  "recentEvents": "emptied,loadstart,loadedmetadata,loadeddata,canplay,play,playing"
+}
+Resume test decoder

@@ -25,3 +25,8 @@ __pycache__/
 /.local/
 /artifacts/private/
 /recordings/
+.vercel
+
+*.tsbuildinfo
+
+.next-*/

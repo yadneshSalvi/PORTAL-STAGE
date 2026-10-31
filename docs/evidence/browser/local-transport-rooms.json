@@ -1,0 +1,74 @@
+{
+  "observedAt": "2026-10-31T13:10:52.497Z",
+  "provenance": "Local LiveKit server with synthetic test video; not remote-human evidence.",
+  "results": [
+    {
+      "room": "portal-ps_be6f6a5394a26133-backstage",
+      "participants": [
+        {
+          "identity": "director-ps_be6f6a5394a26133-1",
+          "role": "director",
+          "tracks": [
+            {
+              "name": "portal-camera",
+              "source": 1,
+              "muted": false,
+              "width": 1280,
+              "height": 720
+            },
+            {
+              "name": "portal-return",
+              "source": 3,
+              "muted": false,
+              "width": 1920,
+              "height": 1080
+            }
+          ]
+        },
+        {
+          "identity": "performer-ps_be6f6a5394a26133-B",
+          "role": "performer",
+          "tracks": [
+            {
+              "name": "portal-camera",
+              "source": 1,
+              "muted": false,
+              "width": 1280,
+              "height": 720
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "room": "portal-ps_be6f6a5394a26133-program",
+      "participants": [
+        {
+          "identity": "renderer-ps_be6f6a5394a26133-1",
+          "role": "output-publisher",
+          "tracks": [
+            {
+              "name": "portal-program",
+              "source": 3,
+              "muted": false,
+              "width": 1920,
+              "height": 1080
+            },
+            {
+              "name": "portal-program-audio",
+              "source": 4,
+              "muted": false,
+              "width": 0,
+              "height": 0
+            }
+          ]
+        },
+        {
+          "identity": "program-2db83c66679b499489c9",
+          "role": "program",
+          "tracks": []
+        }
+      ]
+    }
+  ]
+}

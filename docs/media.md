@@ -1,0 +1,74 @@
+# Live media and Program
+
+PORTAL STAGE uses `livekit-client` 2.23.0 and a server token endpoint. The SDK loads on the first explicit media action. Mounting the UI enumerates available device labels and checks browser capabilities; it does not request camera or microphone access.
+
+`useMediaRoom` is in `src/media/use-media-room.ts`. `enableCamera()` creates a private, muted video preview. `enableMicrophone()` requests the microphone separately and can meter it privately. `connect()` obtains a short-lived grant through a same-origin POST with the signed HttpOnly session. Grants stay out of application navigation, invitation and Program URLs, browser storage, and public snapshots; SDK signaling manages transport authentication separately. The first join holds the microphone muted. Explicit enable after joining publishes it backstage.
+
+The media controller owns the canonical SDK video decoder used by the compositor and local vision and explicitly requests muted inline playback independently of any preview panel. Each `VideoSurface` owns a separate presentation element bound to the same MediaStream. Opening, closing or restyling a preview never reparents or pauses the canonical decoder; presentation cleanup clears only its own element and never stops a shared media track.
+
+LiveKit 2.23.0 asynchronously initializes local tracks: a newly constructed track can clear and replace an attached element's stream after `attach()` has called `play()`. Its Chromium reattach path does not explicitly replay. The canonical decoder therefore coalesces source-ready/pause events and retries playback at most three times per stream, with one request in flight. A policy rejection waits for the user's playback unlock; disable, replacement and cleanup fence pending retries. The initializer respects the SDK's Safari choice to omit the autoplay attribute and still requests muted inline playback explicitly. An installed-SDK regression verifies the stream-reset sequence with a simulated off-DOM media element; actual browser recovery remains a separately observed check.
+
+The explicitly enabled local transport test includes a read-only canonical-decoder snapshot: coarse browser family, document visibility, DOM connectivity, paused/readiness/time/size, stream and track state, bounded event names, and timestamped play outcomes/error names. It excludes media URLs, track/device identities, full user agents and arbitrary error messages. Its Resume test decoder button calls `play()` on the current element without moving it or requesting capture. This diagnostic is restricted by the UI to the loopback test surface.
+
+The capture targets are two 1280 × 720 / 30 fps performer feeds and a 1920 × 1080 / 30 fps canvas. They are requested settings and compositor targets, not measured performance claims. Actual devices and bandwidth may produce different results. The controller exposes connection quality, playback blocks, permissions, selected devices, publication state, input meters, and capability checks. VP8 is requested for video; the selected browser and OBS runtime still need compatibility verification.
+
+Configuration guidance uses the server's structured error code: `media_unconfigured` and `media_url` identify missing/invalid media configuration. Other HTTP 503 responses, including a database timeout, are reported as a temporary service interruption rather than a request to reconfigure LiveKit.
+
+## Private and public paths
+
+| Room      | Publisher                             | Track name / source                                                          | Receivers                                                           |
+| --------- | ------------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Backstage | Performer A or B                      | `portal-camera` / camera; `portal-microphone` / microphone                   | Director receives peer camera/mic; a guest receives direct host mic |
+| Backstage | Active director                       | `portal-return` / screen share, video only                                   | Guest's low-latency monitor                                         |
+| Program   | Active director's separate connection | `portal-program` / screen share; `portal-program-audio` / screen share audio | Authenticated read-only Program source                              |
+
+Raw cameras never join the Program room. Program viewers subscribe only to the two named composed tracks and never render an independent simulation. Backstage subscriptions require the server-signed role/slot metadata; a display name is insufficient. All rooms use explicit subscription selection, with adaptive stream disabled for off-screen video textures.
+
+The director samples live video elements in one canvas. `publishProgram(canvas)` sends its video to both rooms; the backstage return has no audio. A Web Audio graph mixes only participants who are connected, admitted, consented, and microphone-enabled while the show is live and the director lease is valid. Every input defaults to zero gain. Hold, withdrawn consent, lost admission, mute, or a lost lease closes its gate. The graph has no connection to the director's speakers. Direct-call audio plays separately, so a guest does not hear a delayed copy of their own voice in the return. Effects are currently visual; this module does not claim a tested stage-sound route.
+
+The Program viewer independently gates the incoming mixed audio. It attaches an audible element only while the show is live, the render lease is current and unexpired, and the publisher's signed metadata and SDK identity match that show and epoch. Hold, lease expiry, or a stale publisher detaches and pauses that audio element. Selecting Start audio while held does not reopen it. This guard does not mute private direct-call audio in the backstage room.
+
+The playback unlock calls the SDK's audio/video unlock, resumes the mix context, and explicitly retries the currently enabled local decoder. It never enables a disabled camera. If browser policy holds the context suspended, video publication can continue and the UI exposes the block; output audio is not silently advertised as working. Use headphones and inspect the captured Program audio before going live. Turning a device off stops its underlying track immediately. Output-device selection uses `setSinkId` where the browser supports it.
+
+## Recovery and cleanup
+
+The controller requests a presence heartbeat every eight seconds and suppresses identical action notifications inside that interval. There is at most one callback in flight and one latest pending sample. A disconnect discards stale queued connected samples; a one-bit disconnect barrier preserves the off signal during a rapid reconnect. Device changes enter that bounded path immediately instead of waiting for the next heartbeat. A slow or unavailable control API can still delay server acknowledgement; this is not an instantaneous remote-hide guarantee.
+
+An SDK reconnect or disconnect stops camera and microphone capture immediately, removes stale remote media and transient anchors, and stops Program publication. A recovered call is backstage with both devices off; enabling devices, readiness, and admission are fresh decisions. An initial private preview may publish only after the user selects Join. Token refresh during an already active SDK connection is handled by LiveKit; a failed reconnect requires a new explicit connection.
+
+Remote video paused by the server is removed from the available feed immediately. A local watchdog hides an element after four seconds without video-time progress and restores it only when decoded frames advance again. This provides an interrupted/empty aperture instead of suggesting that a frozen frame is continuing live presence; it is a recovery policy, not a measured network timeout guarantee.
+
+Program publication requires the matching client ID, show epoch, lease epoch, and unexpired lease, using the latest server clock sample. State changes check this immediately; a 250 ms local watchdog checks expiry between responses. A takeover or expired lease stops both canvas tracks and the mixed output. The server separately fences old publishers and scopes grants. A browser watchdog cannot guarantee real-time removal during an unresponsive tab; do not interpret it as a timing measurement.
+
+Leave, page hide, unmount, and end-show cleanup stop capture, unpublish tracks, remove attached media elements and room listeners, disconnect both rooms, close the mix context, and remove device/permission/timer listeners. Pending device requests are generation-fenced: if a user turns a device off before permission resolves, the late track is stopped without publication.
+
+## Disposable position samples
+
+`sendAnchor(point)` updates the local presentation immediately and sends a normalized point over the private room's unreliable `portal-anchor/v1` data topic. The canonical renderer consumes `media.anchors`; `media.transientAnchors` distinguishes a received sample from the durable calibration fallback. These position samples do not invoke the HTTP action API, grow its idempotency memo, or modify prop ownership. Framing/calibration and all Offer/Accept/Recall commands remain durable server actions.
+
+The sender keeps one data publish in flight and only the latest pending point, with a minimum 100 ms send interval. A point that becomes too old behind backpressure is dropped with its original capture timestamp. The receiver requires the current SDK peer object, server-signed show/role/slot metadata, the corresponding SDK identity, current show epoch, eligible admitted owner, and a live render lease. It accepts only finite 0–1 coordinates in a strict packet no larger than 256 bytes, with monotonic sequence/time, at most 1000 ms age, at most 250 ms future clock tolerance, and a 20 packets/second receive ceiling per slot. Data messages cannot accept an offer, issue a cue, or change an authoritative show field.
+
+Transient positions expire after 1500 ms, checked by the 250 ms watchdog, and fall back to the durable calibrated anchor. Disconnect, peer departure, epoch change, lost admission, and Hold clear their use. Sequence numbers remain monotonic through camera toggles in one room. The protocol is designed for lossy presentation: these bounds and automated checks do not establish a measured update rate or physical hand alignment.
+
+## Local synthetic transport check
+
+`allowSyntheticMedia` plus rehearsal mode exposes `enableTestCamera()`. The server must independently allow local-development rehearsal grants. This original moving test plate burns **SYNTHETIC MEDIA / TRANSPORT TEST**, its slot, and an elapsed timer into the transmitted pixels. It requests no camera or microphone. It can exercise the actual WebRTC, return, and output routes, but does not prove two human performers, remote-network performance, camera permissions, or audience participation. Ordinary public rehearsal does not connect media rooms.
+
+## Verification register
+
+| Check                                                                              | Observed evidence in this implementation                         | Remaining evidence                                                               |
+| ---------------------------------------------------------------------------------- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Explicit device access, late permission cancellation, muted join, device selection | SDK-mocked lifecycle tests                                       | Real permission grant/denial, busy/unplugged devices                             |
+| Reconnect cleanup, fresh devices, presence heartbeat                               | SDK-mocked lifecycle tests                                       | Real transport loss, tab sleep, network changes                                  |
+| Raw media excluded from Program; video-only guest return                           | Subscription and dual-room publication tests                     | Two-browser transport capture and OBS route                                      |
+| Admission/consent/hold audio gates; no graph self-monitor                          | Safety tests and Web Audio graph tests                           | Headphone echo, clipping and recorded clap alignment                             |
+| Viewer independently closes Program audio on Hold/expiry/stale publisher           | SDK-mocked lifecycle tests, including playback unlock while held | Actual browser and OBS audio-route rehearsal                                     |
+| Coalesced presence and disconnect barrier                                          | Slow-callback, heartbeat and reconnect tests                     | Post-change two-session runtime recovery                                         |
+| Disposable anchor authorization, age/order/rate/size limits and fallback           | Protocol tests and SDK-mocked data-channel lifecycle tests       | Post-change browser data delivery and camera alignment                           |
+| Canvas lease fencing                                                               | Client and backend lease tests                                   | Actual takeover with two director tabs                                           |
+| SDK/codec, browser autoplay and output selection                                   | API integration and capability reporting                         | Current desktop browsers and selected OBS runtime                                |
+| Two real remote performers; latency, frame delivery and CPU/GPU                    | Pending                                                          | Consenting performers on separate networks, recorded conditions and measurements |
+
+This file records automated evidence, not a substitute for a real performance rehearsal. The root release verification notes should record actual browser checks separately with their date and conditions.
+
+Primary API references checked 31 October 2026: [LiveKit camera/microphone](https://docs.livekit.io/transport/media/publish/), [subscriptions and playback](https://docs.livekit.io/transport/media/subscribe/), [JavaScript RoomOptions](https://docs.livekit.io/reference/client-sdk-js/interfaces/RoomOptions.html). LiveKit client/server SDKs use Apache-2.0; the installed client includes its upstream license. The synthetic test pattern is original PORTAL STAGE code.

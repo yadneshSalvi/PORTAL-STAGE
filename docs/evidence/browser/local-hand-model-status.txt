@@ -1,0 +1,38 @@
+Tracking active — no selected hand detected. Offer / Accept buttons remain available.
+Synthetic transport test is enabled. This moving test plate is not a human camera or remote-performance evidence.
+LOCAL TRANSPORT DIAGNOSTIC · CANONICAL DECODER
+
+{
+  "present": true,
+  "browser": "Chromium",
+  "visibility": "visible",
+  "connectedToDOM": false,
+  "paused": false,
+  "readyState": 4,
+  "currentTime": 7.996837,
+  "width": 1280,
+  "height": 720,
+  "muted": true,
+  "stream": true,
+  "streamActive": true,
+  "tracks": [
+    {
+      "readyState": "live",
+      "enabled": true,
+      "muted": false
+    }
+  ],
+  "playCount": 2,
+  "playReason": "source-ready",
+  "playResult": "resolved",
+  "playError": "none",
+  "playAt": 1793453816255,
+  "lastPlayRejection": "AbortError",
+  "playRejectedAt": 1793453816250,
+  "playRejectionCount": 1,
+  "eventCount": 8,
+  "lastEvent": "playing",
+  "eventAt": 1793453816255,
+  "recentEvents": "emptied,loadstart,play,waiting,loadedmetadata,loadeddata,canplay,playing"
+}
+Resume test decoder

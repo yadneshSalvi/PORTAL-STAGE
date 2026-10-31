@@ -1,0 +1,15 @@
+# Consent, privacy, and retention
+
+A guest invitation opens private backstage. Enabling a device previews it locally; connecting publishes it to the private creator room. Broadcast consent, optional recording permission, readiness, and director admission are separate. On-air indicators reflect admission and stage phase. Reconnecting requires readiness/admission again and returns microphone-muted.
+
+Camera off, microphone off, and Leave remain explicit controls. Withdrawing broadcast consent clears readiness/admission and requests removal from the media room. The director can immediately hide a slot or close the emergency curtain. Remote hiding cannot be instantaneous during a network partition; the local participant can always stop its own tracks. Lost camera frames are hidden and liveness expires rather than silently implying continued live presence.
+
+The application has no recording feature and does not store camera frames, microphone audio, or raw hand landmarks. It does not prevent an external OBS operator from recording. Recording permission is a separate receipt, not a technical recording lock or permission to use someone's image for every purpose. Obtain explicit agreement covering the submitted video and any later reuse before recording/exporting people. Declining recording permission does not silently become acceptance through joining.
+
+Hand inference occurs on the device in a bundled worker. No identity/biometric template is created. Raw inference inputs and results do not leave the device; bounded normalized anchors travel through the private media room, while deliberate cue requests reach the show API. The worker blocks non-origin network requests, including upstream aggregate telemetry. See [gesture implementation and rights](gestures.md).
+
+The database stores show state, selected stage names, consent flags, readiness, event summaries, role bindings, preset variations, hashed Twitch voter/message identifiers, and encrypted OAuth grants. It retains no raw Twitch chat feed. Show access expires after 24 hours in rehearsal or 7 days live; invitation redemption expires after 15 minutes; output code redemption after 5 minutes. **Access expiry is not automatic data deletion.** This release has no scheduled database purge. The deployment owner must delete retained show/credential documents when no longer needed or on a participant deletion request.
+
+Disconnecting Twitch marks the app's stored credential revoked and clears its encrypted grant; the user can separately revoke authorization in Twitch settings. Closing a show ends media, revokes invitations/output access, and closes the audience window. LiveKit and hosting providers have their own operational logs/settings; do not promise end-to-end encryption or a retention interval that has not been verified for the actual account.
+
+Keep consent receipts, unedited people/media recordings, raw provider logs, invitation links, and browser credentials in ignored private storage. Public evidence should contain only sanitized facts needed to establish a claim. Never publish `.env`, `.env.local`, `.vercel` backups, or provider credentials.

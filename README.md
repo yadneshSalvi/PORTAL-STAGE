@@ -1,19 +1,61 @@
 # PORTAL STAGE
 
-A shared live theater for remote creators and their Twitch communities: performers exchange persistent virtual props while viewers help direct the show.
+**Different rooms. One live stage. Your community directs the impossible.**
 
-**Status:** planning and repository setup. No runnable application or deployed service is included yet.
+PORTAL STAGE is a small, authored theater for two consenting remote performers. In _Borrowed Weather_, Twitch viewers choose `!gentle` or `!wild`. A coral-patched virtual umbrella passes between the performers through an offer/accept handshake. Its runoff hatches Pip, an original creature whose behavior follows the chosen weather—and the same moving shelter.
 
-## Local planning
+The software provides the stagecraft. The people provide the performance. There is no runtime LLM on the handoff path.
 
-The detailed implementation, design, judging, and demonstration plans are in `plans/00-index.md` on the original development machine. The entire `plans/` directory is intentionally Git-ignored and is not available in a fresh clone.
+## Try it
 
-## Local configuration
+The landing page and **Start a rehearsal** require no Twitch account, camera, microphone, or paid account. Rehearsal uses clearly labeled synthetic plates and test ballots. It demonstrates the real saved show protocol and authored effects; it is not evidence of two remote humans or genuine Twitch participation.
 
-An ignored `.env` has been initialized on the original development machine from the existing hackathon configuration. `.env.example` contains names and empty placeholders only. Provider keys, room-signing secrets, and Twitch tokens must remain server-side.
+Deployment: **deploying; production verification pending** at [portal-stage-eight.vercel.app](https://portal-stage-eight.vercel.app). Dedicated cloud media credentials are configured; the deployed connection has not yet been verified. See [verification status](docs/evidence/README.md) for the release record.
 
-The copied Twitch credentials are a shared bootstrap configuration, not independent production authorization. Token freshness, project-specific callbacks, and separate production token storage must be verified during implementation. Live media infrastructure is planned but has not been provisioned. A fresh clone needs its own local environment configuration.
+For a live show, an invited host connects Twitch, creates a show, invites a second performer backstage, and acquires the canonical renderer. Device preview, broadcast consent, recording consent, readiness, and director admission are separate steps. Viewers remain on Twitch. They do not join the private media room.
 
-## Submission preparation
+## Run locally
 
-The repository starts private. Before submission, provide judges the source and free runnable access required by the official rules. Add installation instructions, validation results, asset credits, participant consent requirements, and the actual main development Codex session ID as the implementation is completed. Do not commit credentials, private recordings, or private chat logs.
+Use **Node.js 22.x**. The app bundles its fonts, original art, and local hand-landmark runtime; no model key is needed.
+
+```sh
+npm ci
+npm run setup
+# For live media/Twitch, add the values described in docs/setup.md.
+npm run dev
+```
+
+Open [localhost:3200](http://localhost:3200). A real `DATABASE_URL` uses PostgreSQL. Without one, development uses an atomic file store in ignored `.local/store/`; production refuses to fall back to process memory or local files. Session signing is required in both environments.
+
+```sh
+npm run typecheck
+npm test
+npm run build
+```
+
+Stop the dev server before a production build, or build an isolated copy with its own `.next` directory. [Setup and role walkthrough](docs/setup.md) explains Neon, Twitch callbacks, LiveKit, local synthetic transport tests, and output pairing.
+
+## What is implemented
+
+- One director-owned Three.js/WebGL stage, two camera apertures, an original umbrella/iris/creature scene, and a receive-only Program view.
+- Persistent umbrella identity, repair patch, wetness, owner/version, explicit offer/accept/decline/expiry, idempotent commands, and explicit recall.
+- Creator-only LiveKit transport, a video-only backstage return, direct call audio, and a separate composed-output room with an on-air audio mix.
+- Twitch OAuth and EventSub chat intake, one current ballot per account per round, duplicate/late rejection, and visible Director's choice fallback. The app does not send chat messages.
+- Saved authored variations, cue deck, button/keyboard parity, calibrated local hand landmarks, emergency curtain, and reconnect/admission controls.
+
+See [architecture](docs/architecture.md), [media](docs/media.md), [gestures](docs/gestures.md), [privacy and consent](docs/privacy.md), and [asset rights](docs/rights.md). Automated checks and labeled transport rehearsal do not establish real remote-human performance, measured latency, gesture accuracy, or OBS compatibility; the [evidence ledger](docs/evidence/README.md) distinguishes those claims.
+
+## Verified so far
+
+- The last full suite passed 176 automated tests; the subsequent no-hand status change passed 35 targeted vision tests. Three opt-in Neon integration tests passed separately. Typecheck, formatting, and the optimized production build pass.
+- An actual two-session local LiveKit walkthrough completed both accepted transfers, hatching, shelter, emergency hold, disconnect/reconnect, fresh admission, resume, and end. Its moving video plates are explicitly synthetic.
+- A fresh optimized browser regression showed both cameras on the first curtain without opening a preview. Decoder playback survived preview open/close and guest reconnect; the source-reset failure is covered by an installed-SDK regression.
+- Real Twitch read-chat OAuth and EventSub setup passed. PORTAL's public command-to-ballot check, physical camera/microphone checks, remote-human performance, and OBS capture remain pending.
+
+The [check record](docs/evidence/checks.md) and [browser record](docs/evidence/browser/2026-10-31-local.md) give the conditions and evidence behind these results.
+
+## Codex and source
+
+The main development conversation is **01a190da-3cee-7a10-b7c1-e0cdbb379510**. The [Codex evidence record](docs/evidence/codex.md) identifies the implementation lead and worker contributions, concrete failure/fix stories, and real check output. This product's media theater and authored performance protocol are distinct from LIVEFORGE; shared infrastructure is disclosed there.
+
+Private planning documents, credentials, device recordings, and personal consent receipts are intentionally excluded from Git. A fresh clone has the tracked operating documentation and permitted assets; it does not need the ignored planning folder.

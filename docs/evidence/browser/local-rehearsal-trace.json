@@ -1,0 +1,326 @@
+{
+  "exportedAt": "2026-10-31T12:21:28.750Z",
+  "mode": "rehearsal",
+  "showId": "ps_e5c6169cba0bdb87",
+  "sequence": 19,
+  "umbrella": {
+    "id": "ps_e5c6169cba0bdb87-umbrella-1",
+    "armed": true,
+    "owner": "A",
+    "version": 6,
+    "wetness": 0.52,
+    "transfer": {
+      "id": "ps_e5c6169cba0bdb87-transfer-12",
+      "to": "A",
+      "from": "B",
+      "status": "arrived",
+      "arrivedAt": 1793449183464,
+      "expiresAt": 1793449196713,
+      "offeredAt": 1793449176713,
+      "committedAt": 1793449181719,
+      "commitSequence": 13
+    },
+    "repairPatch": "coral"
+  },
+  "creature": {
+    "id": "ps_e5c6169cba0bdb87-pip-1",
+    "mood": "wild",
+    "hatched": true,
+    "hatchedAt": 1793449171802,
+    "shelterOwner": "A"
+  },
+  "round": {
+    "id": "ps_e5c6169cba0bdb87-round-4",
+    "result": "wild",
+    "source": "rehearsal",
+    "status": "applied",
+    "tallies": {
+      "wild": 1,
+      "gentle": 0
+    },
+    "closedAt": 1793449149118,
+    "closesAt": 1793449170754,
+    "openedAt": 1793449140754,
+    "uniqueVoters": 1,
+    "lastMessageAt": 1793449145814
+  },
+  "events": [
+    {
+      "at": 1793449126727,
+      "id": "ps_e5c6169cba0bdb87:1",
+      "type": "show.created",
+      "actor": "director",
+      "owner": "A",
+      "propId": "ps_e5c6169cba0bdb87-umbrella-1",
+      "summary": "Labeled solo rehearsal created with synthetic test plates.",
+      "sequence": 1,
+      "propVersion": 1
+    },
+    {
+      "at": 1793449128405,
+      "id": "ps_e5c6169cba0bdb87:2",
+      "type": "renderer.acquired",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "epoch": 1
+      },
+      "propId": "ps_e5c6169cba0bdb87-umbrella-1",
+      "summary": "One director tab acquired the canonical stage.",
+      "sequence": 2,
+      "propVersion": 1
+    },
+    {
+      "at": 1793449131033,
+      "id": "ps_e5c6169cba0bdb87:3",
+      "type": "action.start",
+      "actor": "director",
+      "owner": "A",
+      "propId": "ps_e5c6169cba0bdb87-umbrella-1",
+      "summary": "The curtain rose on two admitted performers.",
+      "sequence": 3,
+      "propVersion": 1
+    },
+    {
+      "at": 1793449140754,
+      "id": "ps_e5c6169cba0bdb87:4",
+      "type": "action.open-round",
+      "actor": "director",
+      "owner": "A",
+      "propId": "ps_e5c6169cba0bdb87-umbrella-1",
+      "summary": "The weather window opened: !gentle or !wild. Each account has one replaceable choice.",
+      "sequence": 4,
+      "propVersion": 1
+    },
+    {
+      "at": 1793449145814,
+      "id": "ps_e5c6169cba0bdb87:5",
+      "type": "round.vote",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "choice": "wild",
+        "roundId": "ps_e5c6169cba0bdb87-round-4",
+        "replaced": false,
+        "synthetic": true,
+        "messageRef": "fixture:204a5151"
+      },
+      "propId": "ps_e5c6169cba0bdb87-umbrella-1",
+      "summary": "A labeled test ballot chose wild.",
+      "sequence": 5,
+      "propVersion": 1
+    },
+    {
+      "at": 1793449149118,
+      "id": "ps_e5c6169cba0bdb87:6",
+      "type": "round.closed",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "wild": 1,
+        "gentle": 0,
+        "source": "rehearsal",
+        "voters": 1,
+        "roundId": "ps_e5c6169cba0bdb87-round-4"
+      },
+      "propId": "ps_e5c6169cba0bdb87-umbrella-1",
+      "summary": "Rehearsal ballots chose: wild.",
+      "sequence": 6,
+      "propVersion": 1
+    },
+    {
+      "at": 1793449152158,
+      "id": "ps_e5c6169cba0bdb87:7",
+      "type": "action.apply-weather",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "source": "rehearsal",
+        "roundId": "ps_e5c6169cba0bdb87-round-4",
+        "weather": "wild"
+      },
+      "propId": "ps_e5c6169cba0bdb87-umbrella-1",
+      "summary": "Labeled rehearsal ballot: wild weather is now on stage.",
+      "sequence": 7,
+      "propVersion": 2
+    },
+    {
+      "at": 1793449155118,
+      "id": "ps_e5c6169cba0bdb87:8",
+      "type": "action.offer",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "to": "B",
+        "from": "A",
+        "transferId": "ps_e5c6169cba0bdb87-transfer-8"
+      },
+      "propId": "ps_e5c6169cba0bdb87-umbrella-1",
+      "summary": "Test plate A offered the same umbrella to Test plate B. Ownership remains with A.",
+      "sequence": 8,
+      "propVersion": 3
+    },
+    {
+      "at": 1793449157812,
+      "id": "ps_e5c6169cba0bdb87:9",
+      "type": "action.accept",
+      "actor": "director",
+      "owner": "B",
+      "detail": {
+        "to": "B",
+        "from": "A",
+        "patch": "coral",
+        "wetness": 0.52,
+        "transferId": "ps_e5c6169cba0bdb87-transfer-8"
+      },
+      "propId": "ps_e5c6169cba0bdb87-umbrella-1",
+      "summary": "Acceptance committed owner B before the crossing animation. Patch and wetness are retained.",
+      "sequence": 9,
+      "propVersion": 4
+    },
+    {
+      "at": 1793449161867,
+      "id": "ps_e5c6169cba0bdb87:10",
+      "type": "action.arrive",
+      "actor": "director",
+      "owner": "B",
+      "detail": {
+        "transferId": "ps_e5c6169cba0bdb87-transfer-8",
+        "commitSequence": 9
+      },
+      "propId": "ps_e5c6169cba0bdb87-umbrella-1",
+      "summary": "The renderer acknowledged arrival. Owner B was already committed; ownership was not written again.",
+      "sequence": 10,
+      "propVersion": 4
+    },
+    {
+      "at": 1793449171802,
+      "id": "ps_e5c6169cba0bdb87:11",
+      "type": "action.hatch",
+      "actor": "director",
+      "owner": "B",
+      "detail": {
+        "weather": "wild",
+        "creatureId": "ps_e5c6169cba0bdb87-pip-1"
+      },
+      "propId": "ps_e5c6169cba0bdb87-umbrella-1",
+      "summary": "Pip hatched from the same umbrella's runoff with wild behavior.",
+      "sequence": 11,
+      "propVersion": 4
+    },
+    {
+      "at": 1793449176713,
+      "id": "ps_e5c6169cba0bdb87:12",
+      "type": "action.offer",
+      "actor": "director",
+      "owner": "B",
+      "detail": {
+        "to": "A",
+        "from": "B",
+        "transferId": "ps_e5c6169cba0bdb87-transfer-12"
+      },
+      "propId": "ps_e5c6169cba0bdb87-umbrella-1",
+      "summary": "Test plate B offered the same umbrella to Test plate A. Ownership remains with B.",
+      "sequence": 12,
+      "propVersion": 5
+    },
+    {
+      "at": 1793449181719,
+      "id": "ps_e5c6169cba0bdb87:13",
+      "type": "action.accept",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "to": "A",
+        "from": "B",
+        "patch": "coral",
+        "wetness": 0.52,
+        "transferId": "ps_e5c6169cba0bdb87-transfer-12"
+      },
+      "propId": "ps_e5c6169cba0bdb87-umbrella-1",
+      "summary": "Acceptance committed owner A before the crossing animation. Patch and wetness are retained.",
+      "sequence": 13,
+      "propVersion": 6
+    },
+    {
+      "at": 1793449183464,
+      "id": "ps_e5c6169cba0bdb87:14",
+      "type": "action.arrive",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "transferId": "ps_e5c6169cba0bdb87-transfer-12",
+        "commitSequence": 13
+      },
+      "propId": "ps_e5c6169cba0bdb87-umbrella-1",
+      "summary": "The renderer acknowledged arrival. Owner A was already committed; ownership was not written again.",
+      "sequence": 14,
+      "propVersion": 6
+    },
+    {
+      "at": 1793449185091,
+      "id": "ps_e5c6169cba0bdb87:15",
+      "type": "renderer.acquired",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "epoch": 2
+      },
+      "propId": "ps_e5c6169cba0bdb87-umbrella-1",
+      "summary": "A new director epoch recovered the committed scene under a holding curtain.",
+      "sequence": 15,
+      "propVersion": 6
+    },
+    {
+      "at": 1793449213462,
+      "id": "ps_e5c6169cba0bdb87:16",
+      "type": "renderer.acquired",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "epoch": 3
+      },
+      "propId": "ps_e5c6169cba0bdb87-umbrella-1",
+      "summary": "A new director epoch recovered the committed scene under a holding curtain.",
+      "sequence": 16,
+      "propVersion": 6
+    },
+    {
+      "at": 1793449222321,
+      "id": "ps_e5c6169cba0bdb87:17",
+      "type": "action.save-preset",
+      "actor": "director",
+      "owner": "A",
+      "propId": "ps_e5c6169cba0bdb87-umbrella-1",
+      "summary": "Saved the authored variation “Moonlit Mischief”. Saving a preset does not record media.",
+      "sequence": 17,
+      "propVersion": 6
+    },
+    {
+      "at": 1793449283108,
+      "id": "ps_e5c6169cba0bdb87:18",
+      "type": "fixture.ready",
+      "actor": "system",
+      "owner": "A",
+      "propId": "ps_e5c6169cba0bdb87-umbrella-1",
+      "summary": "Synthetic rehearsal plates were restored. The committed scene remains intact; the director can resume.",
+      "sequence": 18,
+      "propVersion": 6
+    },
+    {
+      "at": 1793449283108,
+      "id": "ps_e5c6169cba0bdb87:19",
+      "type": "renderer.acquired",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "epoch": 4
+      },
+      "propId": "ps_e5c6169cba0bdb87-umbrella-1",
+      "summary": "A new director epoch recovered the committed scene under a holding curtain.",
+      "sequence": 19,
+      "propVersion": 6
+    }
+  ],
+  "scope": "Current state and recent server events; rehearsal is synthetic, not remote-media or audience evidence."
+}

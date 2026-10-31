@@ -1,0 +1,23 @@
+{
+  "scope": "All instrumented Neon queries in the optimized local run, including cold schema and setup; not end-to-end control or media latency.",
+  "statistics": {
+    "host": {
+      "query_count": 617,
+      "p50_query_ms": 541,
+      "p95_query_ms": 2108,
+      "max_query_ms": 2981,
+      "timeouts": 0,
+      "failed": 0,
+      "max_event_loop_lag_ms": 399
+    },
+    "guest": {
+      "query_count": 287,
+      "p50_query_ms": 560,
+      "p95_query_ms": 2378,
+      "max_query_ms": 3010,
+      "timeouts": 0,
+      "failed": 0,
+      "max_event_loop_lag_ms": 412
+    }
+  }
+}
