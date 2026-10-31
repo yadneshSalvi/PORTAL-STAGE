@@ -1,0 +1,233 @@
+{
+  "provenance": "Synthetic HTTP/Neon fixture, not actual Twitch, browser throughput, media latency or real viewers.",
+  "buildId": "W6_oT5b8feu2ZKjBJE2Sb",
+  "startedAt": "2026-10-31T21:20:56.639Z",
+  "requests": [
+    {
+      "name": "burst-1",
+      "envelopes": 20,
+      "status": 200,
+      "elapsedMs": 1084,
+      "body": {
+        "counted": 20,
+        "ignored": 0
+      }
+    },
+    {
+      "name": "burst-2",
+      "envelopes": 20,
+      "status": 200,
+      "elapsedMs": 1324,
+      "body": {
+        "counted": 20,
+        "ignored": 0
+      }
+    },
+    {
+      "name": "burst-3",
+      "envelopes": 20,
+      "status": 200,
+      "elapsedMs": 1558,
+      "body": {
+        "counted": 20,
+        "ignored": 0
+      }
+    },
+    {
+      "name": "burst-4",
+      "envelopes": 20,
+      "status": 200,
+      "elapsedMs": 1804,
+      "body": {
+        "counted": 20,
+        "ignored": 0
+      }
+    },
+    {
+      "name": "burst-5",
+      "envelopes": 20,
+      "status": 200,
+      "elapsedMs": 2067,
+      "body": {
+        "counted": 20,
+        "ignored": 0
+      }
+    },
+    {
+      "name": "redelivery-new-envelope-ids",
+      "envelopes": 20,
+      "status": 200,
+      "elapsedMs": 2070,
+      "body": {
+        "counted": 0,
+        "ignored": 20
+      }
+    },
+    {
+      "name": "newer-replacements",
+      "envelopes": 20,
+      "status": 200,
+      "elapsedMs": 2086,
+      "body": {
+        "counted": 20,
+        "ignored": 0
+      }
+    },
+    {
+      "name": "older-out-of-order-replacements",
+      "envelopes": 20,
+      "status": 200,
+      "elapsedMs": 1828,
+      "body": {
+        "counted": 0,
+        "ignored": 20
+      }
+    },
+    {
+      "name": "whole-batch-wrong-channel",
+      "envelopes": 2,
+      "status": 403,
+      "elapsedMs": 803,
+      "body": {
+        "error": "This chat event belongs to another channel.",
+        "code": "twitch_channel"
+      }
+    },
+    {
+      "name": "oversized-21",
+      "envelopes": 21,
+      "status": 400,
+      "elapsedMs": 275,
+      "body": {
+        "error": "Send one to twenty bounded Twitch notifications per batch.",
+        "code": "twitch_batch"
+      }
+    },
+    {
+      "name": "future-timestamp",
+      "envelopes": 1,
+      "status": 400,
+      "elapsedMs": 275,
+      "body": {
+        "error": "This event timestamp is stale or invalid.",
+        "code": "twitch_timestamp"
+      }
+    },
+    {
+      "name": "stale-timestamp",
+      "envelopes": 1,
+      "status": 400,
+      "elapsedMs": 272,
+      "body": {
+        "error": "This event timestamp is stale or invalid.",
+        "code": "twitch_timestamp"
+      }
+    },
+    {
+      "name": "stale-round-open-round",
+      "status": 409,
+      "elapsedMs": 2038,
+      "body": {
+        "error": "The audience choice changed before this request arrived. Read the current choice before trying again.",
+        "code": "round_stale"
+      }
+    },
+    {
+      "name": "stale-round-close-round",
+      "status": 409,
+      "elapsedMs": 272,
+      "body": {
+        "error": "This request belongs to an earlier audience choice. Read the current choice before trying again.",
+        "code": "round_stale"
+      }
+    },
+    {
+      "name": "stale-round-resolve-round",
+      "status": 409,
+      "elapsedMs": 269,
+      "body": {
+        "error": "This request belongs to an earlier audience choice. Read the current choice before trying again.",
+        "code": "round_stale"
+      }
+    },
+    {
+      "name": "stale-round-apply-choice",
+      "status": 409,
+      "elapsedMs": 267,
+      "body": {
+        "error": "This request belongs to an earlier audience choice. Read the current choice before trying again.",
+        "code": "round_stale"
+      }
+    },
+    {
+      "name": "stale-round-apply-weather",
+      "status": 409,
+      "elapsedMs": 273,
+      "body": {
+        "error": "This request belongs to an earlier audience choice. Read the current choice before trying again.",
+        "code": "round_stale"
+      }
+    },
+    {
+      "name": "closing-window-mixed",
+      "envelopes": 3,
+      "status": 200,
+      "elapsedMs": 777,
+      "body": {
+        "counted": 1,
+        "ignored": 2
+      }
+    },
+    {
+      "name": "after-grace",
+      "envelopes": 1,
+      "status": 200,
+      "elapsedMs": 788,
+      "body": {
+        "counted": 0,
+        "ignored": 1
+      }
+    },
+    {
+      "name": "expired-renderer",
+      "envelopes": 1,
+      "status": 409,
+      "elapsedMs": 270,
+      "body": {
+        "error": "This director tab no longer owns the stage. Recover the current stage before sending a cue.",
+        "code": "renderer_fenced"
+      }
+    }
+  ],
+  "burstElapsedMs": 7837,
+  "afterBurst": {
+    "uniqueVoters": 100,
+    "gentle": 50,
+    "wild": 50,
+    "ballotEvents": 100
+  },
+  "afterReplacement": {
+    "uniqueVoters": 100,
+    "gentle": 40,
+    "wild": 60,
+    "ballotEvents": 120
+  },
+  "afterRejected": {
+    "uniqueVoters": 100,
+    "gentle": 40,
+    "wild": 60,
+    "ballotEvents": 120
+  },
+  "staleRoundCommandsRejected": 5,
+  "graceObservedAtMs": 2037,
+  "graceMatched": true,
+  "expiredRendererCode": "renderer_fenced",
+  "status": "completed",
+  "finishedAt": "2026-10-31T21:21:31.466Z",
+  "fixtureIds": [
+    "ps_6c0d3020704effeb",
+    "ps_8781c242f16fab49",
+    "ps_1858b8d480319168"
+  ],
+  "fixtureCleanup": "Deleted only the exact random fixture show IDs created by this run."
+}

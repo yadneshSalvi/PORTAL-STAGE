@@ -1,0 +1,10 @@
+{
+  "showId": "ps_f9f3b99ef72c02ab",
+  "sourceCommit": "b8e06733bd5ffc5230c0005543e20f9b9dc2737b",
+  "nativeHideStartedAt": "2026-10-31T21:27:51.613Z",
+  "nativeReturnedAt": "2026-10-31T21:28:11.225Z",
+  "nativeChromeNewTabSelected": true,
+  "directorTabDeselected": true,
+  "returnWarningObserved": false,
+  "scope": "Native Chrome switched away and back, but controlled page produced no visibility warning. Earlier read-only browser inspection reported visibilityState visible while deselected. This is an unverified browser visibility boundary, not proof of hidden renderer cadence or warning correctness."
+}

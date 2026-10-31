@@ -1,0 +1,446 @@
+{
+  "sourceCommit": "b8e06733bd5ffc5230c0005543e20f9b9dc2737b",
+  "scope": "UI-driven illustrated rehearsals with explicitly labeled synthetic ballots/effects; not actual viewers.",
+  "borrowedWeather": {
+    "observedAt": "2026-10-31T21:29:49.738Z",
+    "showId": "ps_d06a0879fa2874df",
+    "mode": "rehearsal",
+    "transport": "fixture",
+    "phase": "ended",
+    "beat": "curtain",
+    "sequence": 31,
+    "epoch": 1,
+    "episode": "borrowed-weather",
+    "weather": "wild",
+    "decisions": {
+      "mood": {
+        "at": 1793481761375,
+        "choice": "shy",
+        "source": "rehearsal",
+        "voters": 1,
+        "roundId": "ps_d06a0879fa2874df-round-15",
+        "contributors": []
+      },
+      "name": {
+        "at": 1793481738386,
+        "choice": "pip2",
+        "source": "rehearsal",
+        "voters": 1,
+        "roundId": "ps_d06a0879fa2874df-round-11",
+        "contributors": []
+      },
+      "ending": {
+        "at": 1793481833607,
+        "choice": "share",
+        "source": "rehearsal",
+        "voters": 1,
+        "roundId": "ps_d06a0879fa2874df-round-26",
+        "contributors": []
+      },
+      "weather": {
+        "at": 1793481704774,
+        "choice": "wild",
+        "source": "rehearsal",
+        "voters": 1,
+        "roundId": "ps_d06a0879fa2874df-round-4",
+        "contributors": []
+      }
+    },
+    "creature": {
+      "id": "ps_d06a0879fa2874df-pip-1",
+      "mood": "gentle",
+      "hatched": true,
+      "hatchedAt": 1793481772102,
+      "shelterOwner": "A"
+    },
+    "parcel": null,
+    "round": {
+      "id": "ps_d06a0879fa2874df-round-26",
+      "kind": "ending",
+      "epoch": 1,
+      "result": "share",
+      "source": "rehearsal",
+      "status": "applied",
+      "tallies": {
+        "chase": 0,
+        "share": 1
+      },
+      "closedAt": 1793481825622,
+      "closesAt": 1793481825622,
+      "openedAt": 1793481820267,
+      "contributors": [],
+      "uniqueVoters": 1,
+      "lastMessageAt": 1793481824560,
+      "boundTransferId": "ps_d06a0879fa2874df-transfer-23",
+      "boundPropVersion": 6,
+      "needsDirectorChoice": false
+    },
+    "umbrella": {
+      "id": "ps_d06a0879fa2874df-umbrella-1",
+      "armed": true,
+      "owner": "A",
+      "version": 6,
+      "wetness": 0.52,
+      "transfer": {
+        "id": "ps_d06a0879fa2874df-transfer-23",
+        "to": "A",
+        "from": "B",
+        "status": "arrived",
+        "arrivedAt": 1793481816342,
+        "expiresAt": 1793481823336,
+        "offeredAt": 1793481803336,
+        "committedAt": 1793481814296,
+        "commitSequence": 24
+      },
+      "repairPatch": "coral",
+      "acceptedTransfers": 2
+    },
+    "events": [
+      {
+        "sequence": 1,
+        "type": "show.created",
+        "at": 1793481665313
+      },
+      {
+        "sequence": 2,
+        "type": "renderer.acquired",
+        "at": 1793481666653
+      },
+      {
+        "sequence": 3,
+        "type": "action.start",
+        "at": 1793481677542
+      },
+      {
+        "sequence": 4,
+        "type": "round.opened",
+        "at": 1793481688483
+      },
+      {
+        "sequence": 5,
+        "type": "round.vote",
+        "at": 1793481691076
+      },
+      {
+        "sequence": 6,
+        "type": "round.closed",
+        "at": 1793481697557
+      },
+      {
+        "sequence": 7,
+        "type": "action.apply-weather",
+        "at": 1793481704774
+      },
+      {
+        "sequence": 8,
+        "type": "action.offer",
+        "at": 1793481709004
+      },
+      {
+        "sequence": 9,
+        "type": "action.accept",
+        "at": 1793481711516
+      },
+      {
+        "sequence": 10,
+        "type": "action.arrive",
+        "at": 1793481713295
+      },
+      {
+        "sequence": 11,
+        "type": "round.opened",
+        "at": 1793481722290
+      },
+      {
+        "sequence": 12,
+        "type": "round.vote",
+        "at": 1793481728279
+      },
+      {
+        "sequence": 13,
+        "type": "round.closed",
+        "at": 1793481730791
+      },
+      {
+        "sequence": 14,
+        "type": "action.apply-choice",
+        "at": 1793481738386
+      },
+      {
+        "sequence": 15,
+        "type": "round.opened",
+        "at": 1793481741097
+      },
+      {
+        "sequence": 16,
+        "type": "round.vote",
+        "at": 1793481743550
+      },
+      {
+        "sequence": 17,
+        "type": "round.closed",
+        "at": 1793481746414
+      },
+      {
+        "sequence": 18,
+        "type": "action.apply-choice",
+        "at": 1793481761375
+      },
+      {
+        "sequence": 19,
+        "type": "action.hatch",
+        "at": 1793481772102
+      },
+      {
+        "sequence": 20,
+        "type": "audience.presence",
+        "at": 1793481776575
+      },
+      {
+        "sequence": 21,
+        "type": "audience.presence",
+        "at": 1793481781823
+      },
+      {
+        "sequence": 22,
+        "type": "audience.presence",
+        "at": 1793481789865
+      },
+      {
+        "sequence": 23,
+        "type": "action.offer",
+        "at": 1793481803336
+      },
+      {
+        "sequence": 24,
+        "type": "action.accept",
+        "at": 1793481814296
+      },
+      {
+        "sequence": 25,
+        "type": "action.arrive",
+        "at": 1793481816342
+      },
+      {
+        "sequence": 26,
+        "type": "round.opened",
+        "at": 1793481820267
+      },
+      {
+        "sequence": 27,
+        "type": "round.vote",
+        "at": 1793481824560
+      },
+      {
+        "sequence": 28,
+        "type": "round.closed",
+        "at": 1793481825622
+      },
+      {
+        "sequence": 29,
+        "type": "action.apply-choice",
+        "at": 1793481833607
+      },
+      {
+        "sequence": 30,
+        "type": "action.shelter",
+        "at": 1793481843439
+      },
+      {
+        "sequence": 31,
+        "type": "action.end",
+        "at": 1793481881120
+      }
+    ]
+  },
+  "midnightParcel": {
+    "observedAt": "2026-10-31T21:27:10.537Z",
+    "showId": "ps_9f33f03ae1f78998",
+    "mode": "rehearsal",
+    "transport": "fixture",
+    "phase": "live",
+    "beat": "delivery",
+    "sequence": 20,
+    "epoch": 1,
+    "episode": "midnight-parcel",
+    "weather": null,
+    "decisions": {
+      "contents": {
+        "at": 1793481935054,
+        "choice": "garden",
+        "source": "rehearsal",
+        "voters": 1,
+        "roundId": "ps_9f33f03ae1f78998-round-4",
+        "contributors": []
+      },
+      "parcel-ending": {
+        "at": 1793482019000,
+        "choice": "keep",
+        "source": "rehearsal",
+        "voters": 1,
+        "roundId": "ps_9f33f03ae1f78998-round-16",
+        "contributors": []
+      }
+    },
+    "creature": {
+      "id": "ps_9f33f03ae1f78998-pip-1",
+      "mood": "gentle",
+      "hatched": false,
+      "hatchedAt": null,
+      "shelterOwner": "A"
+    },
+    "parcel": {
+      "tag": "MP-E1F78998",
+      "damage": 0.48,
+      "ending": "keep",
+      "opened": true,
+      "stamped": true,
+      "contents": "garden",
+      "openedAt": 1793481953583,
+      "transformedRoom": "A"
+    },
+    "round": {
+      "id": "ps_9f33f03ae1f78998-round-16",
+      "kind": "parcel-ending",
+      "epoch": 1,
+      "result": "keep",
+      "source": "rehearsal",
+      "status": "applied",
+      "tallies": {
+        "keep": 1,
+        "deliver": 0
+      },
+      "closedAt": 1793481989293,
+      "closesAt": 1793481989293,
+      "openedAt": 1793481983641,
+      "contributors": [],
+      "uniqueVoters": 1,
+      "lastMessageAt": 1793481988211,
+      "boundTransferId": "ps_9f33f03ae1f78998-transfer-13",
+      "boundPropVersion": 7,
+      "needsDirectorChoice": false
+    },
+    "umbrella": {
+      "id": "ps_9f33f03ae1f78998-parcel-1",
+      "armed": true,
+      "owner": "A",
+      "version": 7,
+      "wetness": 0,
+      "transfer": {
+        "id": "ps_9f33f03ae1f78998-transfer-13",
+        "to": "A",
+        "from": "B",
+        "status": "arrived",
+        "arrivedAt": 1793481975649,
+        "expiresAt": 1793481987597,
+        "offeredAt": 1793481967597,
+        "committedAt": 1793481973870,
+        "commitSequence": 14
+      },
+      "repairPatch": "coral",
+      "acceptedTransfers": 2
+    },
+    "events": [
+      {
+        "sequence": 1,
+        "type": "show.created",
+        "at": 1793481893730
+      },
+      {
+        "sequence": 2,
+        "type": "renderer.acquired",
+        "at": 1793481895122
+      },
+      {
+        "sequence": 3,
+        "type": "action.start",
+        "at": 1793481912813
+      },
+      {
+        "sequence": 4,
+        "type": "round.opened",
+        "at": 1793481915829
+      },
+      {
+        "sequence": 5,
+        "type": "round.vote",
+        "at": 1793481919549
+      },
+      {
+        "sequence": 6,
+        "type": "round.closed",
+        "at": 1793481920265
+      },
+      {
+        "sequence": 7,
+        "type": "action.apply-choice",
+        "at": 1793481935054
+      },
+      {
+        "sequence": 8,
+        "type": "action.stamp-parcel",
+        "at": 1793481937820
+      },
+      {
+        "sequence": 9,
+        "type": "action.offer",
+        "at": 1793481940569
+      },
+      {
+        "sequence": 10,
+        "type": "action.accept",
+        "at": 1793481942888
+      },
+      {
+        "sequence": 11,
+        "type": "action.arrive",
+        "at": 1793481944658
+      },
+      {
+        "sequence": 12,
+        "type": "action.open-parcel",
+        "at": 1793481953583
+      },
+      {
+        "sequence": 13,
+        "type": "action.offer",
+        "at": 1793481967597
+      },
+      {
+        "sequence": 14,
+        "type": "action.accept",
+        "at": 1793481973870
+      },
+      {
+        "sequence": 15,
+        "type": "action.arrive",
+        "at": 1793481975649
+      },
+      {
+        "sequence": 16,
+        "type": "round.opened",
+        "at": 1793481983641
+      },
+      {
+        "sequence": 17,
+        "type": "round.vote",
+        "at": 1793481988211
+      },
+      {
+        "sequence": 18,
+        "type": "round.closed",
+        "at": 1793481989293
+      },
+      {
+        "sequence": 19,
+        "type": "action.apply-choice",
+        "at": 1793482019000
+      },
+      {
+        "sequence": 20,
+        "type": "action.finish-parcel",
+        "at": 1793482025483
+      }
+    ]
+  }
+}

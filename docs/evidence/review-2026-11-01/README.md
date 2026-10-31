@@ -6,4 +6,10 @@ No second human, remote network, microphone, recording, broadcast or real hand r
 
 [Baseline production browser observations](baseline-browser.md) retain the actual delayed reload hold, the offer-timeout confound, and the end/reset behavior that did not reproduce the reported permanent spinner in this in-app session.
 
-[Reliability acceptance](p0-browser.md) records the fixed-source reload, ended-show exits, landing overlap, four real Postgres integration tests, and synthetic guest replacement with an independently paired Program browser. Each observation identifies its source/build and actual conditions. [Structured results](p0-reliability-results.json) preserve the measurements. Hidden/duplicated-director checks and the newly discovered guest-ended UI correction remain pending there.
+[Reliability acceptance](p0-browser.md) records the fixed-source reload, ended-show exits, landing overlap, four real Postgres integration tests, and synthetic guest replacement with an independently paired Program browser. Each observation identifies its source/build and actual conditions. [Structured results](p0-reliability-results.json) preserve the measurements.
+
+[Native Chrome tab lifecycle](p0-tab-lifecycle.md) records actual Duplicate Tab fencing and a successful cue after the stale tab closes. It also explains why the background-tab observation does not establish hidden-page throttling or Program frame continuity. The newly discovered guest-ended UI correction still needs browser acceptance on the next source checkpoint.
+
+[Actual LiveKit Cloud revocation](cloud-revocation.md) records control-API and cached-token replay checks with a synthetic receive-only client. No camera or microphone was used. These independent provider checks do not replace deployed application Workflow-expiry acceptance.
+
+[Authored stories and local camera](feature-browser.md) records two complete UI-driven rehearsal episodes, actual local camera/worker lifecycle, mobile layout, the native-visibility limitation, seven real Neon tests and a labeled 100-ballot HTTP burst. It preserves exact source/build boundaries and the two wording fixes found during the walkthrough.

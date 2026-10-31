@@ -1,0 +1,58 @@
+{
+  "sourceCommit": "840604568ae50da47e1f383508e51e21ba83d32b",
+  "showId": "ps_fd333609f3ab9cf1",
+  "conditions": "Chrome native Tab > Duplicate Tab on an illustrated rehearsal. No camera, microphone, LiveKit or Twitch.",
+  "observations": [
+    {
+      "observation": "p0-background-tab-start",
+      "observedAt": "2026-10-31T20:50:50.421Z",
+      "showId": "ps_fd333609f3ab9cf1",
+      "phase": "live",
+      "beat": "overture",
+      "epoch": 1,
+      "sequence": 3,
+      "incarnationSequence": 1,
+      "leaseExpiresAt": 1793479893660,
+      "leaseReleased": false
+    },
+    {
+      "observation": "p0-background-tab-end",
+      "observedAt": "2026-10-31T20:51:01.257Z",
+      "showId": "ps_fd333609f3ab9cf1",
+      "phase": "live",
+      "beat": "overture",
+      "epoch": 1,
+      "sequence": 3,
+      "incarnationSequence": 1,
+      "leaseExpiresAt": 1793479902201,
+      "leaseReleased": false
+    },
+    {
+      "observation": "p0-after-native-duplicate",
+      "observedAt": "2026-10-31T20:51:35.366Z",
+      "showId": "ps_fd333609f3ab9cf1",
+      "phase": "live",
+      "beat": "overture",
+      "epoch": 1,
+      "sequence": 3,
+      "incarnationSequence": 2,
+      "leaseExpiresAt": 1793479936064,
+      "leaseReleased": false
+    },
+    {
+      "observation": "p0-duplicate-after-original-close-and-cue",
+      "observedAt": "2026-10-31T20:52:08.901Z",
+      "showId": "ps_fd333609f3ab9cf1",
+      "phase": "live",
+      "beat": "weather",
+      "epoch": 1,
+      "sequence": 4,
+      "incarnationSequence": 2,
+      "leaseExpiresAt": 1793479972007,
+      "leaseReleased": false
+    }
+  ],
+  "sameRendererIdAfterNativeDuplicate": true,
+  "differentMountIdAfterNativeDuplicate": true,
+  "backgroundLimit": "Native Chrome showed New tab selected and director unselected; the browser inspection API still returned document.visibilityState=visible. Do not claim confirmed hidden throttling or Program frame continuity."
+}

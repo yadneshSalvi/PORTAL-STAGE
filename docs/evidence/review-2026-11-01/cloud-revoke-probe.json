@@ -1,0 +1,26 @@
+{
+  "provenance": "Actual LiveKit Cloud control API; disposable empty test room, no connected participant, camera, microphone, recording or stream.",
+  "room": "portal-review-qa-4caaa58c5e1b5d034d7f",
+  "startedAt": "2026-10-31T20:55:33.992Z",
+  "checks": [
+    {
+      "name": "explicit cutoff for absent participant in existing empty room",
+      "success": true,
+      "elapsedMs": 1797
+    },
+    {
+      "name": "explicit cutoff for absent participant after room is deleted",
+      "success": true,
+      "elapsedMs": 1027
+    },
+    {
+      "name": "repeat DeleteRoom on absent disposable room",
+      "success": false,
+      "elapsedMs": 300,
+      "code": "not_found",
+      "status": 404
+    }
+  ],
+  "roomsRemaining": 0,
+  "finishedAt": "2026-10-31T20:55:41.989Z"
+}

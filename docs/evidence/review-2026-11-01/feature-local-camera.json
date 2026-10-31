@@ -1,0 +1,67 @@
+{
+  "sourceCommit": "b8e06733bd5ffc5230c0005543e20f9b9dc2737b",
+  "showId": "ps_d06a0879fa2874df",
+  "origin": "http://127.0.0.1:3201",
+  "physicalCameraFrames": {
+    "width": 1280,
+    "height": 720,
+    "readyState": 4,
+    "muted": true
+  },
+  "workerStatus": "Tracking active — no selected hand detected. Offer / Accept buttons remain available.",
+  "networkObservation": {
+    "cursor": 389,
+    "truncated": false,
+    "hasMore": false,
+    "requests": [
+      {
+        "method": "Network.requestWillBeSent",
+        "type": "Fetch",
+        "url": "http://127.0.0.1:3201/api/shows/ps_d06a0879fa2874df"
+      },
+      {
+        "method": "Network.requestWillBeSent",
+        "type": "Fetch",
+        "url": "http://127.0.0.1:3201/api/shows/ps_d06a0879fa2874df"
+      },
+      {
+        "method": "Network.requestWillBeSent",
+        "type": "Fetch",
+        "url": "http://127.0.0.1:3201/api/shows/ps_d06a0879fa2874df/lease"
+      },
+      {
+        "method": "Network.requestWillBeSent",
+        "type": "Script",
+        "url": "http://127.0.0.1:3201/vision/hand-worker.js"
+      },
+      {
+        "method": "Network.requestWillBeSent",
+        "type": "Fetch",
+        "url": "http://127.0.0.1:3201/api/shows/ps_d06a0879fa2874df"
+      },
+      {
+        "method": "Network.requestWillBeSent",
+        "type": "Fetch",
+        "url": "http://127.0.0.1:3201/api/shows/ps_d06a0879fa2874df"
+      },
+      {
+        "method": "Network.requestWillBeSent",
+        "type": "Fetch",
+        "url": "http://127.0.0.1:3201/api/shows/ps_d06a0879fa2874df/lease"
+      },
+      {
+        "method": "Network.requestWillBeSent",
+        "type": "Fetch",
+        "url": "http://127.0.0.1:3201/api/shows/ps_d06a0879fa2874df"
+      }
+    ]
+  },
+  "limits": "One local browser and physical camera; no hand gesture accuracy or production Chrome acceptance inferred. CDP observation is tab-scoped; worker-internal requests were not captured. No camera images retained.",
+  "cleanup": {
+    "videoElementsAfterOff": 0,
+    "restarted": true,
+    "localCameraLabelRemovedImmediatelyOnEnd": true,
+    "videoElementsAfterEnd": 0,
+    "endedExitVisible": true
+  }
+}

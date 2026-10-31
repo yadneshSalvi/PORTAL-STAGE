@@ -1,0 +1,61 @@
+{
+  "source": {
+    "sourceCommit": "b8e06733bd5ffc5230c0005543e20f9b9dc2737b",
+    "buildId": "W6_oT5b8feu2ZKjBJE2Sb",
+    "packageLockSha256": "6f046645ea0614f7ec104641f23711a6624892c72df13f74409fb78727f8e427"
+  },
+  "ordinaryTests": {
+    "passed": 359,
+    "skippedOptIn": 7,
+    "reportedBy": "integration lead; root separately ran actual opt-in database tests"
+  },
+  "actualPostgres": {
+    "passed": 7,
+    "failed": 0,
+    "skipped": 0,
+    "success": true,
+    "sourceUnchangedDuringRun": true,
+    "sourceHashes": {
+      "src/server/store.ts": "4b23d917e2577628905c035609052f00463667107e61ae7ea84b843f1b3dfd52",
+      "src/server/solo-policy.ts": "8a467ff16492c531f48dbbdac879d9fe65b3d794004fa00dec27827e0f382125",
+      "src/server/audience.ts": "41559ca3b8d9455b395923d88858c581ac5b10ff69cd7a1c2bf403e38659ac81",
+      "src/server/core.ts": "9f04dd47caa2956da7aa51ced29c0ed071765e5d1297f1e1f51a27b58c633bc9",
+      "tests/postgres-lease.test.ts": "59bf30ed5e5bb6750b53a3ed7c7535ae81f95246db1052317a17a01e75a57782",
+      "tests/postgres-audience-solo.test.ts": "1f17b7e4eb12c48f9bed2cd8d05a2b3f41620c63c3eebb160fb6e0f2336494d9"
+    },
+    "testNames": [
+      "Postgres solo caps and synthetic audience batching atomically bounds simultaneous reservations from different accounts at the global concurrency cap",
+      "Postgres solo caps and synthetic audience batching shares one account's reservation cap across simultaneous browser sessions",
+      "Postgres solo caps and synthetic audience batching persists a synthetic100-choice burst with five batched mutations and deduplicates redelivery",
+      "Postgres renderer lease integration renews while a concurrent state mutation preserves both results",
+      "Postgres renderer lease integration refuses wrong owner, renderer, stale epoch, expired lease, and ended show",
+      "Postgres renderer lease integration enforces the rate limit and does not write an unchanged snapshot",
+      "Postgres renderer lease integration fences old mount renewals and released mounts without changing the new epoch"
+    ],
+    "coreSourceIdenticalToFinal": true
+  },
+  "knownSecretExposure": {
+    "checkedAt": "2026-10-31T21:20:57.853Z",
+    "trackedFiles": 234,
+    "clientStaticFiles": 103,
+    "hits": [],
+    "trackedPrivate": [],
+    "passed": true
+  },
+  "scope": "Ordinary tests are synthetic/mocked where noted. Actual PostgreSQL tests use random cleanup fixtures. Known-secret scan is not a comprehensive security audit.",
+  "finalPolishSource": {
+    "sourceCommit": "de2ef19913d75c39bf64ef8b80b64357859cfbb5",
+    "buildId": "vuSxqpwVRsV4ruwwbePHd",
+    "packageLockSha256": "6f046645ea0614f7ec104641f23711a6624892c72df13f74409fb78727f8e427"
+  },
+  "finalPolishGates": {
+    "focusedPassed": 20,
+    "fullPassed": 361,
+    "optInSkipped": 7,
+    "typecheck": "passed",
+    "format": "passed",
+    "build": "passed",
+    "reportedBy": "integration lead",
+    "scope": "Only choice CTA and episode-specific rehearsal labels changed after the browser/core protocol checks."
+  }
+}

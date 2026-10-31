@@ -1,0 +1,33 @@
+{
+  "provenance": "Actual LiveKit Cloud with official @livekit/rtc-node1.2.1, receive-only synthetic participant. No camera, microphone, published media, recording or Twitch stream.",
+  "room": "portal-review-replay-7316e340377f1ead2e56",
+  "startedAt": "2026-10-31T20:56:26.134Z",
+  "checks": [
+    {
+      "name": "join with signed RoomConfiguration",
+      "success": true,
+      "emptyTimeout": 60,
+      "departureTimeout": 30,
+      "recording": false
+    },
+    {
+      "name": "connected participant disconnected by cleanup",
+      "success": true
+    },
+    {
+      "name": "previously-connected token replay after revocation and DeleteRoom",
+      "success": true,
+      "authenticationRejection": true,
+      "elapsedMs": 328
+    },
+    {
+      "name": "never-connected token replay after revocation and DeleteRoom",
+      "success": true,
+      "authenticationRejection": true,
+      "elapsedMs": 315
+    }
+  ],
+  "roomsRemaining": 0,
+  "status": "passed",
+  "finishedAt": "2026-10-31T20:56:30.355Z"
+}

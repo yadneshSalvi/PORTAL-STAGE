@@ -1,0 +1,24 @@
+{
+  "provenance": "Actual LiveKit Cloud receive-only synthetic client, no published media or recording. Observe server-refreshed token before revocation.",
+  "startedAt": "2026-10-31T20:58:11.863Z",
+  "room": "portal-review-refresh-b792626be3058278c34c",
+  "checks": [
+    {
+      "name": "replay the actual SDK-refreshed JWT after revocation and room closure",
+      "success": true,
+      "authenticationRejection": true
+    }
+  ],
+  "initialToken": {
+    "exp": 1793480411
+  },
+  "refreshedToken": {
+    "iat": 1793480292,
+    "exp": 1793480892
+  },
+  "refreshedAt": "2026-10-31T20:58:12.478Z",
+  "tokenChanged": true,
+  "status": "passed",
+  "roomsRemaining": 0,
+  "finishedAt": "2026-10-31T20:58:15.859Z"
+}
