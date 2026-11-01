@@ -1,4 +1,17 @@
-# Round-three release — 1 November 2026
+# Round-four release — 2 November 2026
+
+The round-4 fixes are live at [portal-stage-eight.vercel.app](https://portal-stage-eight.vercel.app): visible media and Twitch failure chips, no idle caption text, steady cue steps, an invite-only Duet card and accessibility polish.
+
+| Identity                | Value                                                            |
+| ----------------------- | ---------------------------------------------------------------- |
+| Deployed runtime/source | `5f93e82a61081fc47b6abe48e0b83efd21c56d97`                       |
+| Vercel deployment       | `dpl_CAwjf3ExGDdwryRJBjPLZa54ED3K` — Ready (production)          |
+| Deployment URL          | https://portal-stage-qf86h7o62-yadneshsalvis-projects.vercel.app |
+| Tests                   | 486 passed; seven opt-in Neon checks skipped                     |
+
+The round-3 record below remains for reference; its structured manifest and artifact hashes describe the round-3 deployment.
+
+## Round-three release — 1 November 2026
 
 The review’s functional fixes and UI pass are live at [portal-stage-eight.vercel.app](https://portal-stage-eight.vercel.app). Anonymous session loads no longer invoke solo cleanup; authenticated solo starts retain recovery. Rate-limited chat has its own count and a compact Commands dropped warning. Narrow-panel controls wrap safely. The Studio, scenes, picker and public pages use simpler copy and consistent typography while preserving consent and rehearsal/test labels.
 

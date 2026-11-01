@@ -2,7 +2,9 @@
 
 This ledger separates implemented behavior, observed checks, and evidence still to collect. A labeled rehearsal reproduces the protocol; it does not establish remote-human performance.
 
-**Current round-three release:** runtime `fece423`, **455 ordinary tests plus seven separately passing actual-Neon checks**. Both stories completed locally and on the signed-out final production build. All 80 production layout observations across 20 states and four widths returned no overflow; visible DOM text uses at most three sizes per state. Deployed before/after screenshots were visually inspected and hashed.
+**Current round-four release:** runtime `5f93e82`, deployment `dpl_CAwjf3ExGDdwryRJBjPLZa54ED3K`, **486 ordinary tests** (seven opt-in Neon checks skipped this round). Signed-out production was checked through the first rehearsal vote.
+
+**Previous round-three release:** runtime `fece423`, **455 ordinary tests plus seven separately passing actual-Neon checks**. Both stories completed locally and on the signed-out final production build. All 80 production layout observations across 20 states and four widths returned no overflow; visible DOM text uses at most three sizes per state. Deployed before/after screenshots were visually inspected and hashed.
 
 [Current release identity](release.md) · [Structured manifest](release-manifest.json) · [Round-three implementation](round-3-implementation.md) · [Local browser checks](review-round3-2026-11-01/local-browser.md) · [Production checks](review-round3-2026-11-01/production-browser.md) · [UI comparison](ui-pass-2026-11-01/README.md).
 
