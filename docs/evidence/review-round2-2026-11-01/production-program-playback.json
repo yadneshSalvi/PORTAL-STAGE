@@ -1,0 +1,53 @@
+[
+  {
+    "observedAt": "2026-11-01T06:36:39.989Z",
+    "videos": [
+      {
+        "currentTime": 11.258456,
+        "decodedFrames": null,
+        "height": 1080,
+        "paused": false,
+        "readyState": 4,
+        "width": 1920
+      }
+    ]
+  },
+  {
+    "observedAt": "2026-11-01T06:37:23.966Z",
+    "videos": [
+      {
+        "currentTime": 55.234298,
+        "height": 1080,
+        "paused": false,
+        "readyState": 4,
+        "width": 1920
+      }
+    ]
+  },
+  {
+    "observedAt": "2026-11-01T06:41:01.719Z",
+    "videos": [
+      {
+        "currentTime": 272.984738,
+        "height": 1080,
+        "paused": false,
+        "readyState": 4,
+        "width": 1920
+      }
+    ],
+    "visibility": "visible"
+  },
+  {
+    "observedAt": "2026-11-01T06:41:45.529Z",
+    "videos": [
+      {
+        "currentTime": 316.787884,
+        "height": 1080,
+        "paused": false,
+        "readyState": 4,
+        "width": 1920
+      }
+    ],
+    "visibility": "visible"
+  }
+]

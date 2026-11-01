@@ -1,0 +1,394 @@
+{
+  "exportedAt": "2026-11-01T06:45:34.760Z",
+  "mode": "rehearsal",
+  "showId": "ps_7fb2b599196311b7",
+  "sequence": 20,
+  "episode": "midnight-parcel",
+  "umbrella": {
+    "id": "ps_7fb2b599196311b7-parcel-1",
+    "armed": true,
+    "owner": "A",
+    "version": 7,
+    "wetness": 0,
+    "transfer": {
+      "id": "ps_7fb2b599196311b7-transfer-13",
+      "to": "A",
+      "from": "B",
+      "status": "arrived",
+      "arrivedAt": 1793515515588,
+      "expiresAt": 1793515533652,
+      "offeredAt": 1793515513652,
+      "committedAt": 1793515514076,
+      "commitSequence": 14
+    },
+    "repairPatch": "coral",
+    "acceptedTransfers": 2
+  },
+  "parcel": {
+    "tag": "MP-196311B7",
+    "damage": 0.48,
+    "ending": "keep",
+    "opened": true,
+    "stamped": true,
+    "contents": "garden",
+    "openedAt": 1793515513241,
+    "transformedRoom": "A"
+  },
+  "decisions": {
+    "contents": {
+      "at": 1793515489429,
+      "choice": "garden",
+      "source": "rehearsal",
+      "voters": 1,
+      "roundId": "ps_7fb2b599196311b7-round-4",
+      "contributors": []
+    },
+    "parcel-ending": {
+      "at": 1793515518172,
+      "choice": "keep",
+      "source": "rehearsal",
+      "voters": 1,
+      "roundId": "ps_7fb2b599196311b7-round-16",
+      "contributors": []
+    }
+  },
+  "presenceEffects": [],
+  "creature": {
+    "id": "ps_7fb2b599196311b7-pip-1",
+    "mood": "gentle",
+    "hatched": false,
+    "hatchedAt": null,
+    "shelterOwner": "A"
+  },
+  "round": {
+    "id": "ps_7fb2b599196311b7-round-16",
+    "kind": "parcel-ending",
+    "epoch": 1,
+    "result": "keep",
+    "source": "rehearsal",
+    "status": "applied",
+    "tallies": {
+      "keep": 1,
+      "deliver": 0
+    },
+    "closedAt": 1793515517749,
+    "closesAt": 1793515517749,
+    "openedAt": 1793515517051,
+    "contributors": [],
+    "uniqueVoters": 1,
+    "lastMessageAt": 1793515517394,
+    "boundTransferId": "ps_7fb2b599196311b7-transfer-13",
+    "boundPropVersion": 7,
+    "needsDirectorChoice": false
+  },
+  "events": [
+    {
+      "at": 1793515479188,
+      "id": "ps_7fb2b599196311b7:1",
+      "type": "show.created",
+      "actor": "director",
+      "owner": "A",
+      "propId": "ps_7fb2b599196311b7-parcel-1",
+      "summary": "Labeled solo rehearsal created with synthetic test plates.",
+      "sequence": 1,
+      "propVersion": 1
+    },
+    {
+      "at": 1793515480016,
+      "id": "ps_7fb2b599196311b7:2",
+      "type": "renderer.acquired",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "epoch": 1
+      },
+      "propId": "ps_7fb2b599196311b7-parcel-1",
+      "summary": "One director tab acquired the canonical stage.",
+      "sequence": 2,
+      "propVersion": 1
+    },
+    {
+      "at": 1793515486207,
+      "id": "ps_7fb2b599196311b7:3",
+      "type": "action.start",
+      "actor": "director",
+      "owner": "A",
+      "propId": "ps_7fb2b599196311b7-parcel-1",
+      "summary": "The curtain rose on two admitted performers.",
+      "sequence": 3,
+      "propVersion": 1
+    },
+    {
+      "at": 1793515486587,
+      "id": "ps_7fb2b599196311b7:4",
+      "type": "round.opened",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "kind": "contents",
+        "roundId": "ps_7fb2b599196311b7-round-4"
+      },
+      "propId": "ps_7fb2b599196311b7-parcel-1",
+      "summary": "What is sleeping inside the parcel? One replaceable choice per Twitch account.",
+      "sequence": 4,
+      "propVersion": 1
+    },
+    {
+      "at": 1793515486917,
+      "id": "ps_7fb2b599196311b7:5",
+      "type": "round.vote",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "choice": "garden",
+        "sentAt": 1793515486917,
+        "roundId": "ps_7fb2b599196311b7-round-4",
+        "replaced": false,
+        "synthetic": true,
+        "messageRef": "fixture:7bd2219a"
+      },
+      "propId": "ps_7fb2b599196311b7-parcel-1",
+      "summary": "A labeled test ballot chose garden.",
+      "sequence": 5,
+      "propVersion": 1
+    },
+    {
+      "at": 1793515487358,
+      "id": "ps_7fb2b599196311b7:6",
+      "type": "round.closed",
+      "actor": "system",
+      "owner": "A",
+      "detail": {
+        "kind": "contents",
+        "result": "garden",
+        "source": "rehearsal",
+        "voters": 1,
+        "roundId": "ps_7fb2b599196311b7-round-4",
+        "needsDirectorChoice": false
+      },
+      "propId": "ps_7fb2b599196311b7-parcel-1",
+      "summary": "Labeled rehearsal ballots chose: garden.",
+      "sequence": 6,
+      "propVersion": 1
+    },
+    {
+      "at": 1793515489429,
+      "id": "ps_7fb2b599196311b7:7",
+      "type": "action.apply-choice",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "kind": "contents",
+        "choice": "garden",
+        "source": "rehearsal",
+        "roundId": "ps_7fb2b599196311b7-round-4"
+      },
+      "propId": "ps_7fb2b599196311b7-parcel-1",
+      "summary": "Labeled rehearsal choice applied contents: garden.",
+      "sequence": 7,
+      "propVersion": 1
+    },
+    {
+      "at": 1793515503399,
+      "id": "ps_7fb2b599196311b7:8",
+      "type": "action.stamp-parcel",
+      "actor": "director",
+      "owner": "A",
+      "propId": "ps_7fb2b599196311b7-parcel-1",
+      "summary": "Parcel MP-196311B7 received its persistent stamp and first handling mark.",
+      "sequence": 8,
+      "propVersion": 2
+    },
+    {
+      "at": 1793515503831,
+      "id": "ps_7fb2b599196311b7:9",
+      "type": "action.offer",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "to": "B",
+        "from": "A",
+        "transferId": "ps_7fb2b599196311b7-transfer-9"
+      },
+      "propId": "ps_7fb2b599196311b7-parcel-1",
+      "summary": "Test plate A offered the same parcel to Test plate B. Ownership remains with A.",
+      "sequence": 9,
+      "propVersion": 3
+    },
+    {
+      "at": 1793515504253,
+      "id": "ps_7fb2b599196311b7:10",
+      "type": "action.accept",
+      "actor": "director",
+      "owner": "B",
+      "detail": {
+        "to": "B",
+        "from": "A",
+        "patch": "coral",
+        "wetness": 0,
+        "transferId": "ps_7fb2b599196311b7-transfer-9"
+      },
+      "propId": "ps_7fb2b599196311b7-parcel-1",
+      "summary": "Acceptance committed owner B before the crossing animation. The same parcel tag and accumulated handling marks are retained.",
+      "sequence": 10,
+      "propVersion": 4
+    },
+    {
+      "at": 1793515505752,
+      "id": "ps_7fb2b599196311b7:11",
+      "type": "action.arrive",
+      "actor": "director",
+      "owner": "B",
+      "detail": {
+        "transferId": "ps_7fb2b599196311b7-transfer-9",
+        "commitSequence": 10
+      },
+      "propId": "ps_7fb2b599196311b7-parcel-1",
+      "summary": "The renderer acknowledged arrival. Owner B was already committed; ownership was not written again.",
+      "sequence": 11,
+      "propVersion": 4
+    },
+    {
+      "at": 1793515513241,
+      "id": "ps_7fb2b599196311b7:12",
+      "type": "action.open-parcel",
+      "actor": "director",
+      "owner": "B",
+      "propId": "ps_7fb2b599196311b7-parcel-1",
+      "summary": "The same parcel MP-196311B7 opened into a midnight garden in room B.",
+      "sequence": 12,
+      "propVersion": 5
+    },
+    {
+      "at": 1793515513652,
+      "id": "ps_7fb2b599196311b7:13",
+      "type": "action.offer",
+      "actor": "director",
+      "owner": "B",
+      "detail": {
+        "to": "A",
+        "from": "B",
+        "transferId": "ps_7fb2b599196311b7-transfer-13"
+      },
+      "propId": "ps_7fb2b599196311b7-parcel-1",
+      "summary": "Test plate B offered the same parcel to Test plate A. Ownership remains with B.",
+      "sequence": 13,
+      "propVersion": 6
+    },
+    {
+      "at": 1793515514076,
+      "id": "ps_7fb2b599196311b7:14",
+      "type": "action.accept",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "to": "A",
+        "from": "B",
+        "patch": "coral",
+        "wetness": 0,
+        "transferId": "ps_7fb2b599196311b7-transfer-13"
+      },
+      "propId": "ps_7fb2b599196311b7-parcel-1",
+      "summary": "Acceptance committed owner A before the crossing animation. The same parcel tag and accumulated handling marks are retained.",
+      "sequence": 14,
+      "propVersion": 7
+    },
+    {
+      "at": 1793515515588,
+      "id": "ps_7fb2b599196311b7:15",
+      "type": "action.arrive",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "transferId": "ps_7fb2b599196311b7-transfer-13",
+        "commitSequence": 14
+      },
+      "propId": "ps_7fb2b599196311b7-parcel-1",
+      "summary": "The renderer acknowledged arrival. Owner A was already committed; ownership was not written again.",
+      "sequence": 15,
+      "propVersion": 7
+    },
+    {
+      "at": 1793515517051,
+      "id": "ps_7fb2b599196311b7:16",
+      "type": "round.opened",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "kind": "parcel-ending",
+        "roundId": "ps_7fb2b599196311b7-round-16"
+      },
+      "propId": "ps_7fb2b599196311b7-parcel-1",
+      "summary": "Where should its impossible gift stay? One replaceable choice per Twitch account.",
+      "sequence": 16,
+      "propVersion": 7
+    },
+    {
+      "at": 1793515517394,
+      "id": "ps_7fb2b599196311b7:17",
+      "type": "round.vote",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "choice": "keep",
+        "sentAt": 1793515517394,
+        "roundId": "ps_7fb2b599196311b7-round-16",
+        "replaced": false,
+        "synthetic": true,
+        "messageRef": "fixture:731b643e"
+      },
+      "propId": "ps_7fb2b599196311b7-parcel-1",
+      "summary": "A labeled test ballot chose keep.",
+      "sequence": 17,
+      "propVersion": 7
+    },
+    {
+      "at": 1793515517749,
+      "id": "ps_7fb2b599196311b7:18",
+      "type": "round.closed",
+      "actor": "system",
+      "owner": "A",
+      "detail": {
+        "kind": "parcel-ending",
+        "result": "keep",
+        "source": "rehearsal",
+        "voters": 1,
+        "roundId": "ps_7fb2b599196311b7-round-16",
+        "needsDirectorChoice": false
+      },
+      "propId": "ps_7fb2b599196311b7-parcel-1",
+      "summary": "Labeled rehearsal ballots chose: keep.",
+      "sequence": 18,
+      "propVersion": 7
+    },
+    {
+      "at": 1793515518172,
+      "id": "ps_7fb2b599196311b7:19",
+      "type": "action.apply-choice",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "kind": "parcel-ending",
+        "choice": "keep",
+        "source": "rehearsal",
+        "roundId": "ps_7fb2b599196311b7-round-16"
+      },
+      "propId": "ps_7fb2b599196311b7-parcel-1",
+      "summary": "Labeled rehearsal choice applied parcel-ending: keep.",
+      "sequence": 19,
+      "propVersion": 7
+    },
+    {
+      "at": 1793515521771,
+      "id": "ps_7fb2b599196311b7:20",
+      "type": "action.finish-parcel",
+      "actor": "director",
+      "owner": "A",
+      "propId": "ps_7fb2b599196311b7-parcel-1",
+      "summary": "Parcel MP-196311B7 returned with its handling marks. Its garden now belongs to room A.",
+      "sequence": 20,
+      "propVersion": 7
+    }
+  ],
+  "scope": "Current state and recent server events; rehearsal is synthetic, not remote-media or audience evidence."
+}

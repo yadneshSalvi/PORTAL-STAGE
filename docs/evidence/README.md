@@ -2,7 +2,15 @@
 
 This ledger separates implemented behavior, observed checks, and evidence still to collect. A labeled rehearsal reproduces the protocol; it does not establish remote-human performance.
 
-**Current deployed review release:** source `96fea878`, with 370 tests and seven separately passing actual-Neon cases. [Production verification](review-2026-11-01/production-verification.md) records real Twitch solo handoffs, both authored episodes, physical Chrome camera initialization, and the limits of each observation. [Release identity](release.md) and [review browser/provider evidence](review-2026-11-01/) preserve exact checkpoints.
+**Current round-two release:** deployed source `3c2b310`, runtime source `36d3182`, **435 ordinary tests plus seven separately passing actual-Neon checks**. Both stories completed locally and in signed-out production Chrome. A private solo show used a physical camera, LiveKit Cloud, and two owned Twitch accounts: all six choices counted, both accepted crossings completed, and early End closed both media rooms and released capacity without a manual retry.
+
+[Current release identity](release.md) · [Structured manifest](release-manifest.json) · [Round-two implementation](round-2-implementation.md) · [Local browser checks](review-round2-2026-11-01/local-browser.md) · [Production checks](review-round2-2026-11-01/production-browser.md).
+
+The source is public under MIT. All ten How-built links opened in the in-app browser; anonymous requests confirmed the README and source targets are publicly accessible. Production solo global limits are 100 daily and 10 concurrent. One operator using two accounts is not evidence of two independent performers or audience engagement. Actual OBS broadcast, separate-network humans/audio, physical gesture accuracy, and genuine minimized-window behavior remain unverified.
+
+## Historical round-one release
+
+Source `96fea878` passed 370 ordinary tests and seven separately configured Neon checks. Its [release](round-1-release.md), [manifest](round-1-release-manifest.json), and [production observations](review-2026-11-01/production-verification.md) remain historical evidence. The early-End retry observed then is superseded by the first-attempt round-two production result.
 
 ## Earlier deployed release
 
@@ -10,7 +18,7 @@ This ledger separates implemented behavior, observed checks, and evidence still 
 
 That earlier full automated run passed **184 tests** across 20 files, with three opt-in database tests skipped. That run includes the final no-hand status, camera request pending/cancellation, and late-grant-after-end regressions; whole-tree typecheck also passed. The **three actual Neon integration tests passed in a separate configured run**. Formatting passed; the optimized build generated 16 pages. See the [check record](checks.md) for exact conditions.
 
-| Claim                                       | Current evidence                                                                                                                                                                                            | Limit                                                                                |
+| Claim                                       | Historical evidence                                                                                                                                                                                         | Limit                                                                                |
 | ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
 | Persistent umbrella and committed ownership | Tests exercise 100 transfers and failure cases; the physical-camera Cloud story completed both actual receiver acceptances, shelter, and recovery with the same coral patch, 52% wetness, owner A/version 6 | One computer/network, not two remote humans                                          |
 | Saved authored variation                    | Browser saved, reloaded, and reset Moonlit Mischief with changed creature/weather/ending settings                                                                                                           | A second complete performed variation remains to record                              |
@@ -34,7 +42,7 @@ npm run build
 
 Run the build with development servers stopped or in an isolated copy/cache. `tests/postgres-lease.test.ts` is skipped unless `PORTAL_TEST_DATABASE_URL` is supplied. It creates random fixture rows and deletes only those rows afterward; prefer a dedicated test database. Ordinary tests require no provider credentials.
 
-The signed-out production walkthrough on initial source `bf5cf4d` completed the test ballot, rain, both crossings, hatch, and shared shelter in show `ps_626f0fa0ece57a9b`. Its umbrella returned to A at version 6 and 52% wetness. The preceding camera-feedback deployment (`12df783`) completed live show `ps_fb3398cc6bde0434` with actual Twitch votes, physical-camera Cloud transport, receiver-owned handoffs, shelter, emergency camera recovery, and end at sequence 42; no cloud rooms remained afterward. Final source `a9fd924` then passed a landing reload and ended-Program check with zero video elements; its added pending-grant cancellation is covered by the full suite. The [release manifest](release-manifest.json) records both verification scopes and the checks still pending.
+The signed-out production walkthrough on initial source `bf5cf4d` completed the test ballot, rain, both crossings, hatch, and shared shelter in show `ps_626f0fa0ece57a9b`. Its umbrella returned to A at version 6 and 52% wetness. The preceding camera-feedback deployment (`12df783`) completed live show `ps_fb3398cc6bde0434` with actual Twitch votes, physical-camera Cloud transport, receiver-owned handoffs, shelter, emergency camera recovery, and end at sequence 42; no cloud rooms remained afterward. Final source `a9fd924` then passed a landing reload and ended-Program check with zero video elements; its added pending-grant cancellation is covered by the full suite. The [historical release manifest](pre-review-release-manifest.json) records those original verification scopes. The [current manifest](release-manifest.json) describes the round-two deployment.
 
 ## Remaining performance evidence
 

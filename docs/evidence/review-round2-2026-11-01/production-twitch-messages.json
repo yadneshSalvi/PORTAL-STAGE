@@ -1,0 +1,95 @@
+{
+  "condition": "Authorized low-volume test messages, one operator, two owned Twitch accounts. No independent audience claim.",
+  "messages": [
+    {
+      "at": "2026-11-01T06:36:49.209Z",
+      "channel": "yadneshsalvi96",
+      "sender": "yadneshujwal",
+      "command": "!wild",
+      "status": "sent",
+      "httpStatus": 200,
+      "messageId": "8f7f1ba9-06e0-4281-b2bf-70bbe94581ad",
+      "dropCode": null
+    },
+    {
+      "at": "2026-11-01T06:37:11.211Z",
+      "channel": "yadneshsalvi96",
+      "sender": "yadneshujwal",
+      "command": "!rain",
+      "status": "sent",
+      "httpStatus": 200,
+      "messageId": "caebbc64-a325-4c34-bf6d-5f34e75014d6",
+      "dropCode": null
+    },
+    {
+      "at": "2026-11-01T06:37:42.352Z",
+      "channel": "yadneshsalvi96",
+      "sender": "yadneshujwal",
+      "command": "!accept",
+      "status": "sent",
+      "httpStatus": 200,
+      "messageId": "921f2dc9-33e4-4bcd-8525-f97f0e6af7a2",
+      "dropCode": null
+    },
+    {
+      "at": "2026-11-01T06:39:56.819Z",
+      "channel": "yadneshsalvi96",
+      "sender": "yadneshujwal",
+      "command": "!pip2",
+      "status": "sent",
+      "httpStatus": 200,
+      "messageId": "1495fe8a-6352-49fe-b94f-356ebaebb5d2",
+      "dropCode": null
+    },
+    {
+      "at": "2026-11-01T06:40:14.748Z",
+      "channel": "yadneshsalvi96",
+      "sender": "yadneshujwal",
+      "command": "!curious",
+      "status": "sent",
+      "httpStatus": 200,
+      "messageId": "51f34d28-075f-4317-a8f3-6c7993be0cd3",
+      "dropCode": null
+    },
+    {
+      "at": "2026-11-01T06:40:40.251Z",
+      "channel": "yadneshsalvi96",
+      "sender": "yadneshujwal",
+      "command": "!giveback",
+      "status": "sent",
+      "httpStatus": 200,
+      "messageId": "a1e607af-b27a-48f5-a503-6d34c221d932",
+      "dropCode": null
+    },
+    {
+      "at": "2026-11-01T06:41:06.682Z",
+      "channel": "yadneshsalvi96",
+      "sender": "yadneshujwal",
+      "command": "!share",
+      "status": "sent",
+      "httpStatus": 200,
+      "messageId": "c21d5d03-2628-423e-b7d0-f5f6778b462b",
+      "dropCode": null
+    },
+    {
+      "at": "2026-11-01T06:41:14.969Z",
+      "channel": "yadneshsalvi96",
+      "sender": "yadneshujwal",
+      "command": "!thunder",
+      "status": "sent",
+      "httpStatus": 200,
+      "messageId": "5c0d0705-7a8d-4f62-b8fe-30ca5c74cbd5",
+      "dropCode": null
+    },
+    {
+      "at": "2026-11-01T06:41:25.204Z",
+      "channel": "yadneshsalvi96",
+      "sender": "yadneshujwal",
+      "command": "!cheer",
+      "status": "sent",
+      "httpStatus": 200,
+      "messageId": "daeffbad-8403-4611-934f-744bc67d66a8",
+      "dropCode": null
+    }
+  ]
+}

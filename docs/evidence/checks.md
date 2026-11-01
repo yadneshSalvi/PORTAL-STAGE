@@ -1,4 +1,18 @@
-# Implementation checks — review release
+# Implementation checks
+
+## Round 2 — current release
+
+Deployed source `3c2b310198b4b3cf405d333f3c356837aeb39041` contains runtime `36d31829b5f3b2e368ec96b6c54ab548884b776f`, with documentation and licensing changes afterward. Production deployment `dpl_8oGMFeUjC8J4rtAtpRopgUUGasv2` is Ready. [Deployment identity](review-round2-2026-11-01/deployment.json).
+
+The final runtime passed **435 ordinary tests**, with **seven opt-in database tests skipped** (36 files passed, two skipped; 1.58 seconds reported by Vitest), whole-tree typecheck, formatting, diff check, and the optimized 18-page build. Build ID: `-iU6lkbQ7bzzuyamjWIuN`. There was no `next-env.d.ts` drift. [Recorded gates](review-round2-2026-11-01/gates.json).
+
+The release coordinator separately ran all **seven actual-Neon integration tests: seven passed, zero failed, zero skipped**. The run created labeled random fixture rows and removed them during cleanup. All twelve captured source/test hashes stayed unchanged during the run and match the released runtime. These cases exercise concurrent solo admission, durable synthetic audience batching, and renderer lease fencing; they do not establish real Twitch traffic or media behavior. [Results and exact hashes](review-round2-2026-11-01/neon-checks.json). The seven skips in the ordinary suite are not counted as passes there.
+
+The [implementation record](round-2-implementation.md) describes the busy-chat, per-envelope batch, expired-reservation, failed-start refund, and closure race regressions. [Optimized local browser checks](review-round2-2026-11-01/local-browser.md) separately record both illustrated stories and responsive controls at 1280, 1440, 1920 and 390 pixels, including the final story-progress layout correction.
+
+The production early-End check completed on its first attempt: both LiveKit Cloud rooms were absent afterward, the active quota reservation was removed, and every logged closure step succeeded on attempt one. The [release record](release.md) records the production observations and their conditions. Automated checks and this closure result do not establish physical gesture accuracy, separate-network performers, microphone/echo quality, or OBS broadcast reliability.
+
+## Round 1 — historical review release
 
 Source `96fea8781dd86bf23a95126247b1e703b8babde9` passed **370 tests**, with seven opt-in tests skipped (35 files passed, two skipped), whole-tree typecheck, formatting, diff check, and the optimized 18-page build. Build ID: `jKHgKbotO8fc4sJHSBn3c`. The integration lead ran these gates before freezing source. Vercel separately passed the optimized build and deployed `dpl_mUKo1r1j3ojraoWWmKWgToPeGCp5`.
 
@@ -6,7 +20,7 @@ Root separately ran all **seven actual-Neon integration tests** successfully. Th
 
 Actual production Twitch commands found and verified the fix for opaque notification IDs. Camera and media observations, including a real ping-timeout recovery, are in [production verification](review-2026-11-01/production-verification.md). These checks do not establish remote-human microphones, gesture accuracy, or OBS broadcast reliability.
 
-## Earlier release — 31 October 2026
+## Original release — 31 October 2026 (historical)
 
 These are observed tool results, not a performance recording.
 

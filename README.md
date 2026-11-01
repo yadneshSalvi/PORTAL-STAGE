@@ -10,7 +10,7 @@ _Current illustrated rehearsal with one labeled test ballot. Cropped to the stag
 
 **[Open the live site](https://portal-stage-eight.vercel.app)** · [How it works](docs/architecture.md) · [Verification record](docs/evidence/README.md)
 
-The round-2 release strengthens busy-chat voting, refunds failed starts before media access, and makes interrupted solo cleanup recoverable. It passed **435 ordinary tests and seven actual Neon checks**, plus optimized local walkthroughs of both stories. [Implementation and regressions](docs/evidence/round-2-implementation.md) · [Local browser evidence](docs/evidence/review-round2-2026-11-01/local-browser.md) · [Current release](docs/evidence/release.md).
+The round-2 release strengthens busy-chat voting, refunds failed starts before media access, and makes interrupted solo cleanup recoverable. It passed **435 ordinary tests and seven actual Neon checks**, plus optimized local and signed-out production walkthroughs of both stories. A real two-account solo run exercised all six choice windows and automatic media shutdown. [Implementation and regressions](docs/evidence/round-2-implementation.md) · [Local browser evidence](docs/evidence/review-round2-2026-11-01/local-browser.md) · [Production evidence](docs/evidence/review-round2-2026-11-01/production-browser.md) · [Current release](docs/evidence/release.md).
 
 ## Try it in 60 seconds
 
@@ -31,11 +31,15 @@ _The illustrated parcel came home with the same tag and handling marks; a labele
 
 Sign in with Twitch and create a **solo Twitch show**, subject to the displayed shared allowance. You prepare, consent, and admit your own camera. The illustrated Audience Room needs no guest invitation: chat's `!accept`/`!wait` choice receives the prop, and `!giveback`/`!keep` decides its return. You explicitly accept it back.
 
+![The production solo studio before enabling the private camera](docs/evidence/review-round2-2026-11-01/production-solo-backstage.jpg)
+
+_Actual solo setup for an owned Twitch account, before camera activation. The subsequent private test used two real accounts operated by one person; it is not independent audience or two-person performance evidence._
+
 Both modes offer weather (`!gentle`/`!wild`), a fixed visitor name (`!pip1`/`!pip2`/`!pip3`), mood (`!curious`/`!shy`), and ending (`!share`/`!chase`) choices. Parcel uses `!stars`/`!garden` and `!deliver`/`!keep`. Bounded `!rain`, `!thunder`, and `!cheer` effects let chat stay present. Each account has one replaceable ballot per window. Empty or tied results wait for an explicit, labeled Director's choice.
 
 The host browser relays Twitch EventSub messages in bounded batches; Twitch credentials stay on the server. This is an authenticated browser relay, not a signed webhook provenance claim. Public viewers stay on Twitch and receive no LiveKit token. The app does not post chat messages or start a broadcast.
 
-Invited hosts can also create a two-performer show. Camera preview, broadcast consent, recording consent, readiness, and admission are separate. A receive-only Program view is intended for a separately verified OBS capture setup. Two humans on separate networks, microphones/echo, physical gesture alignment, and actual OBS capture remain distinct checks; local or synthetic runs do not establish them.
+Invited hosts can also create a two-performer show. Camera preview, broadcast consent, recording consent, readiness, and admission are separate. A receive-only Program view is intended for a separately verified OBS capture setup. Two humans on separate networks, microphones/echo, physical gesture alignment, and actual OBS capture remain distinct checks; local or synthetic runs do not establish them. A genuinely minimized/covered director window, physical offer/accept gesture accuracy, and guest replacement while OBS keeps playing also remain unverified. Real Twitch presence commands were ingested; the brief thunder/rain animations still need a dedicated visual check separate from the story’s weather.
 
 ## Run locally
 
@@ -47,7 +51,7 @@ npm run setup
 npm run dev
 ```
 
-Open [localhost:3200](http://localhost:3200). Rehearsal works with the local atomic file store. Real solo requires PostgreSQL, Twitch, LiveKit, and a confirmed durable expiry workflow. Default solo limits are three starts per account per UTC day, thirty globally, five concurrent reservations, and twenty minutes per session. A failed start returns its daily allowance when no media access has been claimed. Once media access has been claimed, the reservation closes through the media service; an ordinary early End still counts as a used session. Local camera rehearsal does not consume a solo media allowance.
+Open [localhost:3200](http://localhost:3200). Rehearsal works with the local atomic file store. Real solo requires PostgreSQL, Twitch, LiveKit, and a confirmed durable expiry workflow. Default solo limits are three starts per account per UTC day, thirty globally, five concurrent reservations, and twenty minutes per session. A failed start returns its daily allowance when no media access has been claimed. Once media access has been claimed, the reservation closes through the media service; an ordinary early End still counts as a used session. Local camera rehearsal does not consume a solo media allowance. The current judging deployment raises the global limits to **100 daily and 10 concurrent**, while retaining three per account and the twenty-minute deadline.
 
 ```sh
 npm run typecheck

@@ -1,0 +1,830 @@
+{
+  "exportedAt": "2026-11-01T06:41:40.843Z",
+  "mode": "solo",
+  "showId": "ps_0a8c9535725b10ad",
+  "sequence": 51,
+  "episode": "borrowed-weather",
+  "umbrella": {
+    "id": "ps_0a8c9535725b10ad-umbrella-1",
+    "armed": true,
+    "owner": "A",
+    "version": 6,
+    "wetness": 0.52,
+    "transfer": {
+      "id": "ps_0a8c9535725b10ad-transfer-40",
+      "to": "A",
+      "from": "B",
+      "status": "arrived",
+      "arrivedAt": 1793515253905,
+      "expiresAt": 1793515270199,
+      "offeredAt": 1793515250199,
+      "committedAt": 1793515252441,
+      "commitSequence": 42
+    },
+    "repairPatch": "coral",
+    "acceptedTransfers": 2
+  },
+  "parcel": null,
+  "decisions": {
+    "mood": {
+      "at": 1793515225333,
+      "choice": "curious",
+      "source": "audience",
+      "voters": 1,
+      "roundId": "ps_0a8c9535725b10ad-round-30",
+      "contributors": ["yadneshujwal"]
+    },
+    "name": {
+      "at": 1793515206742,
+      "choice": "pip2",
+      "source": "audience",
+      "voters": 1,
+      "roundId": "ps_0a8c9535725b10ad-round-25",
+      "contributors": ["yadneshujwal"]
+    },
+    "accept": {
+      "at": 1793515081454,
+      "choice": "accept",
+      "source": "audience",
+      "voters": 1,
+      "roundId": "ps_0a8c9535725b10ad-round-17",
+      "contributors": ["yadneshujwal"]
+    },
+    "ending": {
+      "at": 1793515277352,
+      "choice": "share",
+      "source": "audience",
+      "voters": 1,
+      "roundId": "ps_0a8c9535725b10ad-round-44",
+      "contributors": ["yadneshujwal"]
+    },
+    "weather": {
+      "at": 1793515043645,
+      "choice": "wild",
+      "source": "audience",
+      "voters": 1,
+      "roundId": "ps_0a8c9535725b10ad-round-11",
+      "contributors": ["yadneshujwal"]
+    },
+    "giveback": {
+      "at": 1793515250199,
+      "choice": "giveback",
+      "source": "audience",
+      "voters": 1,
+      "roundId": "ps_0a8c9535725b10ad-round-36",
+      "contributors": ["yadneshujwal"]
+    }
+  },
+  "presenceEffects": [
+    {
+      "at": 1793515286085,
+      "id": "a38d3c59dee4bf896a9c690d",
+      "effect": "cheer",
+      "contributor": "yadneshujwal"
+    }
+  ],
+  "creature": {
+    "id": "ps_0a8c9535725b10ad-pip-1",
+    "mood": "wild",
+    "hatched": true,
+    "hatchedAt": 1793515231525,
+    "shelterOwner": "A"
+  },
+  "round": {
+    "id": "ps_0a8c9535725b10ad-round-44",
+    "kind": "ending",
+    "epoch": 1,
+    "result": "share",
+    "source": "audience",
+    "status": "applied",
+    "tallies": {
+      "chase": 0,
+      "share": 1
+    },
+    "closedAt": 1793515274714,
+    "closesAt": 1793515271194,
+    "openedAt": 1793515263507,
+    "graceEndsAt": 1793515274194,
+    "contributors": ["yadneshujwal"],
+    "uniqueVoters": 1,
+    "lastMessageAt": 1793515267938,
+    "boundTransferId": "ps_0a8c9535725b10ad-transfer-40",
+    "boundPropVersion": 6,
+    "needsDirectorChoice": false
+  },
+  "events": [
+    {
+      "at": 1793514916958,
+      "id": "ps_0a8c9535725b10ad:2",
+      "type": "renderer.acquired",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "epoch": 1
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "One director tab acquired the canonical stage.",
+      "sequence": 2,
+      "propVersion": 1
+    },
+    {
+      "at": 1793514926580,
+      "id": "ps_0a8c9535725b10ad:3",
+      "type": "twitch.connected",
+      "actor": "director",
+      "owner": "A",
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "Real Twitch EventSub chat connected. No chat messages are sent by this application.",
+      "sequence": 3,
+      "propVersion": 1
+    },
+    {
+      "at": 1793515000497,
+      "id": "ps_0a8c9535725b10ad:10",
+      "type": "action.start",
+      "actor": "director",
+      "owner": "A",
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "The curtain rose on one admitted streamer and the illustrated Audience Room.",
+      "sequence": 10,
+      "propVersion": 1
+    },
+    {
+      "at": 1793515005381,
+      "id": "ps_0a8c9535725b10ad:11",
+      "type": "round.opened",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "kind": "weather",
+        "roundId": "ps_0a8c9535725b10ad-round-11"
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "What kind of weather should arrive? One replaceable choice per Twitch account.",
+      "sequence": 11,
+      "propVersion": 1
+    },
+    {
+      "at": 1793515010211,
+      "id": "ps_0a8c9535725b10ad:12",
+      "type": "round.vote",
+      "actor": "twitch",
+      "owner": "A",
+      "detail": {
+        "choice": "wild",
+        "sentAt": 1793515009546,
+        "roundId": "ps_0a8c9535725b10ad-round-11",
+        "replaced": false,
+        "synthetic": false,
+        "messageRef": "a9bf2ec118b1f433"
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "A Twitch account chose wild.",
+      "sequence": 12,
+      "propVersion": 1
+    },
+    {
+      "at": 1793515021468,
+      "id": "ps_0a8c9535725b10ad:13",
+      "type": "round.closing",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "roundId": "ps_0a8c9535725b10ad-round-11"
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "Voting has closed. Messages sent inside the window have a three-second delivery grace period.",
+      "sequence": 13,
+      "propVersion": 1
+    },
+    {
+      "at": 1793515024897,
+      "id": "ps_0a8c9535725b10ad:14",
+      "type": "round.closed",
+      "actor": "system",
+      "owner": "A",
+      "detail": {
+        "kind": "weather",
+        "result": "wild",
+        "source": "audience",
+        "voters": 1,
+        "roundId": "ps_0a8c9535725b10ad-round-11",
+        "needsDirectorChoice": false
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "Twitch audience chose: wild.",
+      "sequence": 14,
+      "propVersion": 1
+    },
+    {
+      "at": 1793515032078,
+      "id": "ps_0a8c9535725b10ad:15",
+      "type": "audience.presence",
+      "actor": "twitch",
+      "owner": "A",
+      "detail": {
+        "effect": "rain",
+        "sentAt": 1793515031420,
+        "synthetic": false
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "Audience presence: rain.",
+      "sequence": 15,
+      "propVersion": 1
+    },
+    {
+      "at": 1793515043645,
+      "id": "ps_0a8c9535725b10ad:16",
+      "type": "action.apply-weather",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "source": "audience",
+        "roundId": "ps_0a8c9535725b10ad-round-11",
+        "weather": "wild"
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "Twitch audience: wild weather is now on stage.",
+      "sequence": 16,
+      "propVersion": 2
+    },
+    {
+      "at": 1793515049524,
+      "id": "ps_0a8c9535725b10ad:17",
+      "type": "round.opened",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "kind": "accept",
+        "roundId": "ps_0a8c9535725b10ad-round-17"
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "Audience Room, will you take this offer? One replaceable choice per Twitch account.",
+      "sequence": 17,
+      "propVersion": 3
+    },
+    {
+      "at": 1793515049524,
+      "id": "ps_0a8c9535725b10ad:18",
+      "type": "action.offer",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "to": "B",
+        "from": "A",
+        "transferId": "ps_0a8c9535725b10ad-transfer-17"
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "yadneshsalvi96 offered the same umbrella to Audience Room. Ownership remains with A.",
+      "sequence": 18,
+      "propVersion": 3
+    },
+    {
+      "at": 1793515063699,
+      "id": "ps_0a8c9535725b10ad:19",
+      "type": "round.vote",
+      "actor": "twitch",
+      "owner": "A",
+      "detail": {
+        "choice": "accept",
+        "sentAt": 1793515063034,
+        "roundId": "ps_0a8c9535725b10ad-round-17",
+        "replaced": false,
+        "synthetic": false,
+        "messageRef": "775ccb80c49bdc11"
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "A Twitch account chose accept.",
+      "sequence": 19,
+      "propVersion": 3
+    },
+    {
+      "at": 1793515070725,
+      "id": "ps_0a8c9535725b10ad:20",
+      "type": "round.closing",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "roundId": "ps_0a8c9535725b10ad-round-17"
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "Voting has closed. Messages sent inside the window have a three-second delivery grace period.",
+      "sequence": 20,
+      "propVersion": 3
+    },
+    {
+      "at": 1793515073974,
+      "id": "ps_0a8c9535725b10ad:21",
+      "type": "round.closed",
+      "actor": "system",
+      "owner": "A",
+      "detail": {
+        "kind": "accept",
+        "result": "accept",
+        "source": "audience",
+        "voters": 1,
+        "roundId": "ps_0a8c9535725b10ad-round-17",
+        "needsDirectorChoice": false
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "Twitch audience chose: accept.",
+      "sequence": 21,
+      "propVersion": 3
+    },
+    {
+      "at": 1793515081454,
+      "id": "ps_0a8c9535725b10ad:22",
+      "type": "action.accept",
+      "actor": "audience",
+      "owner": "B",
+      "detail": {
+        "to": "B",
+        "from": "A",
+        "patch": "coral",
+        "wetness": 0.52,
+        "transferId": "ps_0a8c9535725b10ad-transfer-17"
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "Acceptance committed owner B before the crossing animation. Patch and wetness are retained.",
+      "sequence": 22,
+      "propVersion": 4
+    },
+    {
+      "at": 1793515081454,
+      "id": "ps_0a8c9535725b10ad:23",
+      "type": "action.apply-choice",
+      "actor": "director",
+      "owner": "B",
+      "detail": {
+        "kind": "accept",
+        "choice": "accept",
+        "source": "audience",
+        "roundId": "ps_0a8c9535725b10ad-round-17"
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "Twitch audience applied accept: accept.",
+      "sequence": 23,
+      "propVersion": 4
+    },
+    {
+      "at": 1793515082944,
+      "id": "ps_0a8c9535725b10ad:24",
+      "type": "action.arrive",
+      "actor": "director",
+      "owner": "B",
+      "detail": {
+        "transferId": "ps_0a8c9535725b10ad-transfer-17",
+        "commitSequence": 22
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "The renderer acknowledged arrival. Owner B was already committed; ownership was not written again.",
+      "sequence": 24,
+      "propVersion": 4
+    },
+    {
+      "at": 1793515193262,
+      "id": "ps_0a8c9535725b10ad:25",
+      "type": "round.opened",
+      "actor": "director",
+      "owner": "B",
+      "detail": {
+        "kind": "name",
+        "roundId": "ps_0a8c9535725b10ad-round-25"
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "What shall we call our little visitor? One replaceable choice per Twitch account.",
+      "sequence": 25,
+      "propVersion": 4
+    },
+    {
+      "at": 1793515197694,
+      "id": "ps_0a8c9535725b10ad:26",
+      "type": "round.vote",
+      "actor": "twitch",
+      "owner": "B",
+      "detail": {
+        "choice": "pip2",
+        "sentAt": 1793515197031,
+        "roundId": "ps_0a8c9535725b10ad-round-25",
+        "replaced": false,
+        "synthetic": false,
+        "messageRef": "83ff8f08e9e7390d"
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "A Twitch account chose pip2.",
+      "sequence": 26,
+      "propVersion": 4
+    },
+    {
+      "at": 1793515202199,
+      "id": "ps_0a8c9535725b10ad:27",
+      "type": "round.closing",
+      "actor": "director",
+      "owner": "B",
+      "detail": {
+        "roundId": "ps_0a8c9535725b10ad-round-25"
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "Voting has closed. Messages sent inside the window have a three-second delivery grace period.",
+      "sequence": 27,
+      "propVersion": 4
+    },
+    {
+      "at": 1793515205881,
+      "id": "ps_0a8c9535725b10ad:28",
+      "type": "round.closed",
+      "actor": "system",
+      "owner": "B",
+      "detail": {
+        "kind": "name",
+        "result": "pip2",
+        "source": "audience",
+        "voters": 1,
+        "roundId": "ps_0a8c9535725b10ad-round-25",
+        "needsDirectorChoice": false
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "Twitch audience chose: pip2.",
+      "sequence": 28,
+      "propVersion": 4
+    },
+    {
+      "at": 1793515206742,
+      "id": "ps_0a8c9535725b10ad:29",
+      "type": "action.apply-choice",
+      "actor": "director",
+      "owner": "B",
+      "detail": {
+        "kind": "name",
+        "choice": "pip2",
+        "source": "audience",
+        "roundId": "ps_0a8c9535725b10ad-round-25"
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "Twitch audience applied name: pip2.",
+      "sequence": 29,
+      "propVersion": 4
+    },
+    {
+      "at": 1793515210739,
+      "id": "ps_0a8c9535725b10ad:30",
+      "type": "round.opened",
+      "actor": "director",
+      "owner": "B",
+      "detail": {
+        "kind": "mood",
+        "roundId": "ps_0a8c9535725b10ad-round-30"
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "How does the visitor greet this room? One replaceable choice per Twitch account.",
+      "sequence": 30,
+      "propVersion": 4
+    },
+    {
+      "at": 1793515216194,
+      "id": "ps_0a8c9535725b10ad:31",
+      "type": "round.vote",
+      "actor": "twitch",
+      "owner": "B",
+      "detail": {
+        "choice": "curious",
+        "sentAt": 1793515215507,
+        "roundId": "ps_0a8c9535725b10ad-round-30",
+        "replaced": false,
+        "synthetic": false,
+        "messageRef": "75e5b0974a8cb059"
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "A Twitch account chose curious.",
+      "sequence": 31,
+      "propVersion": 4
+    },
+    {
+      "at": 1793515220029,
+      "id": "ps_0a8c9535725b10ad:32",
+      "type": "round.closing",
+      "actor": "director",
+      "owner": "B",
+      "detail": {
+        "roundId": "ps_0a8c9535725b10ad-round-30"
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "Voting has closed. Messages sent inside the window have a three-second delivery grace period.",
+      "sequence": 32,
+      "propVersion": 4
+    },
+    {
+      "at": 1793515223880,
+      "id": "ps_0a8c9535725b10ad:33",
+      "type": "round.closed",
+      "actor": "system",
+      "owner": "B",
+      "detail": {
+        "kind": "mood",
+        "result": "curious",
+        "source": "audience",
+        "voters": 1,
+        "roundId": "ps_0a8c9535725b10ad-round-30",
+        "needsDirectorChoice": false
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "Twitch audience chose: curious.",
+      "sequence": 33,
+      "propVersion": 4
+    },
+    {
+      "at": 1793515225333,
+      "id": "ps_0a8c9535725b10ad:34",
+      "type": "action.apply-choice",
+      "actor": "director",
+      "owner": "B",
+      "detail": {
+        "kind": "mood",
+        "choice": "curious",
+        "source": "audience",
+        "roundId": "ps_0a8c9535725b10ad-round-30"
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "Twitch audience applied mood: curious.",
+      "sequence": 34,
+      "propVersion": 4
+    },
+    {
+      "at": 1793515231525,
+      "id": "ps_0a8c9535725b10ad:35",
+      "type": "action.hatch",
+      "actor": "director",
+      "owner": "B",
+      "detail": {
+        "weather": "wild",
+        "creatureId": "ps_0a8c9535725b10ad-pip-1"
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "Sprig hatched from the same umbrella's runoff with wild behavior.",
+      "sequence": 35,
+      "propVersion": 4
+    },
+    {
+      "at": 1793515236526,
+      "id": "ps_0a8c9535725b10ad:36",
+      "type": "round.opened",
+      "actor": "director",
+      "owner": "B",
+      "detail": {
+        "kind": "giveback",
+        "roundId": "ps_0a8c9535725b10ad-round-36"
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "Audience Room, what happens next? One replaceable choice per Twitch account.",
+      "sequence": 36,
+      "propVersion": 4
+    },
+    {
+      "at": 1793515241736,
+      "id": "ps_0a8c9535725b10ad:37",
+      "type": "round.vote",
+      "actor": "twitch",
+      "owner": "B",
+      "detail": {
+        "choice": "giveback",
+        "sentAt": 1793515241060,
+        "roundId": "ps_0a8c9535725b10ad-round-36",
+        "replaced": false,
+        "synthetic": false,
+        "messageRef": "9535f328ba507f1f"
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "A Twitch account chose giveback.",
+      "sequence": 37,
+      "propVersion": 4
+    },
+    {
+      "at": 1793515244533,
+      "id": "ps_0a8c9535725b10ad:38",
+      "type": "round.closing",
+      "actor": "director",
+      "owner": "B",
+      "detail": {
+        "roundId": "ps_0a8c9535725b10ad-round-36"
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "Voting has closed. Messages sent inside the window have a three-second delivery grace period.",
+      "sequence": 38,
+      "propVersion": 4
+    },
+    {
+      "at": 1793515247625,
+      "id": "ps_0a8c9535725b10ad:39",
+      "type": "round.closed",
+      "actor": "system",
+      "owner": "B",
+      "detail": {
+        "kind": "giveback",
+        "result": "giveback",
+        "source": "audience",
+        "voters": 1,
+        "roundId": "ps_0a8c9535725b10ad-round-36",
+        "needsDirectorChoice": false
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "Twitch audience chose: giveback.",
+      "sequence": 39,
+      "propVersion": 4
+    },
+    {
+      "at": 1793515250199,
+      "id": "ps_0a8c9535725b10ad:40",
+      "type": "action.offer",
+      "actor": "audience",
+      "owner": "B",
+      "detail": {
+        "to": "A",
+        "from": "B",
+        "transferId": "ps_0a8c9535725b10ad-transfer-40"
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "Audience Room offered the same umbrella to yadneshsalvi96. Ownership remains with B.",
+      "sequence": 40,
+      "propVersion": 5
+    },
+    {
+      "at": 1793515250199,
+      "id": "ps_0a8c9535725b10ad:41",
+      "type": "action.apply-choice",
+      "actor": "director",
+      "owner": "B",
+      "detail": {
+        "kind": "giveback",
+        "choice": "giveback",
+        "source": "audience",
+        "roundId": "ps_0a8c9535725b10ad-round-36"
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "Twitch audience applied giveback: giveback.",
+      "sequence": 41,
+      "propVersion": 5
+    },
+    {
+      "at": 1793515252441,
+      "id": "ps_0a8c9535725b10ad:42",
+      "type": "action.accept",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "to": "A",
+        "from": "B",
+        "patch": "coral",
+        "wetness": 0.52,
+        "transferId": "ps_0a8c9535725b10ad-transfer-40"
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "Acceptance committed owner A before the crossing animation. Patch and wetness are retained.",
+      "sequence": 42,
+      "propVersion": 6
+    },
+    {
+      "at": 1793515253905,
+      "id": "ps_0a8c9535725b10ad:43",
+      "type": "action.arrive",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "transferId": "ps_0a8c9535725b10ad-transfer-40",
+        "commitSequence": 42
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "The renderer acknowledged arrival. Owner A was already committed; ownership was not written again.",
+      "sequence": 43,
+      "propVersion": 6
+    },
+    {
+      "at": 1793515263507,
+      "id": "ps_0a8c9535725b10ad:44",
+      "type": "round.opened",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "kind": "ending",
+        "roundId": "ps_0a8c9535725b10ad-round-44"
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "How should this weather story end? One replaceable choice per Twitch account.",
+      "sequence": 44,
+      "propVersion": 6
+    },
+    {
+      "at": 1793515267938,
+      "id": "ps_0a8c9535725b10ad:45",
+      "type": "round.vote",
+      "actor": "twitch",
+      "owner": "A",
+      "detail": {
+        "choice": "share",
+        "sentAt": 1793515267268,
+        "roundId": "ps_0a8c9535725b10ad-round-44",
+        "replaced": false,
+        "synthetic": false,
+        "messageRef": "afc539c7b508705b"
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "A Twitch account chose share.",
+      "sequence": 45,
+      "propVersion": 6
+    },
+    {
+      "at": 1793515271194,
+      "id": "ps_0a8c9535725b10ad:46",
+      "type": "round.closing",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "roundId": "ps_0a8c9535725b10ad-round-44"
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "Voting has closed. Messages sent inside the window have a three-second delivery grace period.",
+      "sequence": 46,
+      "propVersion": 6
+    },
+    {
+      "at": 1793515274714,
+      "id": "ps_0a8c9535725b10ad:47",
+      "type": "round.closed",
+      "actor": "system",
+      "owner": "A",
+      "detail": {
+        "kind": "ending",
+        "result": "share",
+        "source": "audience",
+        "voters": 1,
+        "roundId": "ps_0a8c9535725b10ad-round-44",
+        "needsDirectorChoice": false
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "Twitch audience chose: share.",
+      "sequence": 47,
+      "propVersion": 6
+    },
+    {
+      "at": 1793515276084,
+      "id": "ps_0a8c9535725b10ad:48",
+      "type": "audience.presence",
+      "actor": "twitch",
+      "owner": "A",
+      "detail": {
+        "effect": "thunder",
+        "sentAt": 1793515275308,
+        "synthetic": false
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "Audience presence: thunder.",
+      "sequence": 48,
+      "propVersion": 6
+    },
+    {
+      "at": 1793515277352,
+      "id": "ps_0a8c9535725b10ad:49",
+      "type": "action.apply-choice",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "kind": "ending",
+        "choice": "share",
+        "source": "audience",
+        "roundId": "ps_0a8c9535725b10ad-round-44"
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "Twitch audience applied ending: share.",
+      "sequence": 49,
+      "propVersion": 6
+    },
+    {
+      "at": 1793515281558,
+      "id": "ps_0a8c9535725b10ad:50",
+      "type": "action.shelter",
+      "actor": "director",
+      "owner": "A",
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "Sprig found the same umbrella. The performers can share the shelter.",
+      "sequence": 50,
+      "propVersion": 6
+    },
+    {
+      "at": 1793515286085,
+      "id": "ps_0a8c9535725b10ad:51",
+      "type": "audience.presence",
+      "actor": "twitch",
+      "owner": "A",
+      "detail": {
+        "effect": "cheer",
+        "sentAt": 1793515285415,
+        "synthetic": false
+      },
+      "propId": "ps_0a8c9535725b10ad-umbrella-1",
+      "summary": "Audience presence: cheer.",
+      "sequence": 51,
+      "propVersion": 6
+    }
+  ],
+  "scope": "Current state and recent server events; rehearsal is synthetic, not remote-media or audience evidence.",
+  "publicationNote": "Actual UI export with private consent, camera-presence and media-grant events omitted. No raw camera frames, pairing codes or credentials. One operator used two owned real Twitch accounts; this is not an independent audience or remote-human test."
+}

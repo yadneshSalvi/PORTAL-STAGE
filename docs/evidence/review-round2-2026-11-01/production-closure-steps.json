@@ -1,0 +1,244 @@
+{
+  "requestId": "kdhhl-1793515307464-9f559259a4a8",
+  "httpStatus": 200,
+  "deploymentId": "dpl_8oGMFeUjC8J4rtAtpRopgUUGasv2",
+  "note": "Actual Vercel closure logs. Participant identities replaced with role names; reservation ID omitted. Every recorded step used attempt 1. Already-absent participant removals are successful idempotent cleanup.",
+  "steps": [
+    {
+      "showId": "ps_0a8c9535725b10ad",
+      "generation": 1,
+      "step": "media-configuration",
+      "outcome": "started",
+      "attempt": 1
+    },
+    {
+      "showId": "ps_0a8c9535725b10ad",
+      "generation": 1,
+      "step": "media-configuration",
+      "outcome": "succeeded",
+      "attempt": 1
+    },
+    {
+      "showId": "ps_0a8c9535725b10ad",
+      "generation": 1,
+      "step": "remove-participant",
+      "outcome": "started",
+      "attempt": 1,
+      "room": "portal-ps_0a8c9535725b10ad-backstage",
+      "phase": "before-delete",
+      "identityRole": "director"
+    },
+    {
+      "showId": "ps_0a8c9535725b10ad",
+      "generation": 1,
+      "step": "remove-participant",
+      "outcome": "started",
+      "attempt": 1,
+      "room": "portal-ps_0a8c9535725b10ad-program",
+      "phase": "before-delete",
+      "identityRole": "renderer"
+    },
+    {
+      "showId": "ps_0a8c9535725b10ad",
+      "generation": 1,
+      "step": "remove-participant",
+      "outcome": "started",
+      "attempt": 1,
+      "room": "portal-ps_0a8c9535725b10ad-program",
+      "phase": "before-delete",
+      "identityRole": "program"
+    },
+    {
+      "showId": "ps_0a8c9535725b10ad",
+      "generation": 1,
+      "step": "remove-participant",
+      "outcome": "already-absent",
+      "attempt": 1,
+      "room": "portal-ps_0a8c9535725b10ad-backstage",
+      "phase": "before-delete",
+      "identityRole": "director"
+    },
+    {
+      "showId": "ps_0a8c9535725b10ad",
+      "generation": 1,
+      "step": "remove-participant",
+      "outcome": "already-absent",
+      "attempt": 1,
+      "room": "portal-ps_0a8c9535725b10ad-program",
+      "phase": "before-delete",
+      "identityRole": "program"
+    },
+    {
+      "showId": "ps_0a8c9535725b10ad",
+      "generation": 1,
+      "step": "remove-participant",
+      "outcome": "already-absent",
+      "attempt": 1,
+      "room": "portal-ps_0a8c9535725b10ad-program",
+      "phase": "before-delete",
+      "identityRole": "renderer"
+    },
+    {
+      "showId": "ps_0a8c9535725b10ad",
+      "generation": 1,
+      "step": "record-progress",
+      "outcome": "started",
+      "attempt": 1
+    },
+    {
+      "showId": "ps_0a8c9535725b10ad",
+      "generation": 1,
+      "step": "record-progress",
+      "outcome": "succeeded",
+      "attempt": 1
+    },
+    {
+      "showId": "ps_0a8c9535725b10ad",
+      "generation": 1,
+      "step": "delete-room",
+      "outcome": "started",
+      "attempt": 1,
+      "room": "portal-ps_0a8c9535725b10ad-backstage"
+    },
+    {
+      "showId": "ps_0a8c9535725b10ad",
+      "generation": 1,
+      "step": "delete-room",
+      "outcome": "started",
+      "attempt": 1,
+      "room": "portal-ps_0a8c9535725b10ad-program"
+    },
+    {
+      "showId": "ps_0a8c9535725b10ad",
+      "generation": 1,
+      "step": "delete-room",
+      "outcome": "succeeded",
+      "attempt": 1,
+      "room": "portal-ps_0a8c9535725b10ad-program"
+    },
+    {
+      "showId": "ps_0a8c9535725b10ad",
+      "generation": 1,
+      "step": "delete-room",
+      "outcome": "succeeded",
+      "attempt": 1,
+      "room": "portal-ps_0a8c9535725b10ad-backstage"
+    },
+    {
+      "showId": "ps_0a8c9535725b10ad",
+      "generation": 1,
+      "step": "record-progress",
+      "outcome": "started",
+      "attempt": 1
+    },
+    {
+      "showId": "ps_0a8c9535725b10ad",
+      "generation": 1,
+      "step": "record-progress",
+      "outcome": "succeeded",
+      "attempt": 1
+    },
+    {
+      "showId": "ps_0a8c9535725b10ad",
+      "generation": 1,
+      "step": "remove-participant",
+      "outcome": "started",
+      "attempt": 1,
+      "room": "portal-ps_0a8c9535725b10ad-backstage",
+      "phase": "after-delete",
+      "identityRole": "director"
+    },
+    {
+      "showId": "ps_0a8c9535725b10ad",
+      "generation": 1,
+      "step": "remove-participant",
+      "outcome": "started",
+      "attempt": 1,
+      "room": "portal-ps_0a8c9535725b10ad-program",
+      "phase": "after-delete",
+      "identityRole": "renderer"
+    },
+    {
+      "showId": "ps_0a8c9535725b10ad",
+      "generation": 1,
+      "step": "remove-participant",
+      "outcome": "started",
+      "attempt": 1,
+      "room": "portal-ps_0a8c9535725b10ad-program",
+      "phase": "after-delete",
+      "identityRole": "program"
+    },
+    {
+      "showId": "ps_0a8c9535725b10ad",
+      "generation": 1,
+      "step": "remove-participant",
+      "outcome": "succeeded",
+      "attempt": 1,
+      "room": "portal-ps_0a8c9535725b10ad-backstage",
+      "phase": "after-delete",
+      "identityRole": "director"
+    },
+    {
+      "showId": "ps_0a8c9535725b10ad",
+      "generation": 1,
+      "step": "remove-participant",
+      "outcome": "succeeded",
+      "attempt": 1,
+      "room": "portal-ps_0a8c9535725b10ad-program",
+      "phase": "after-delete",
+      "identityRole": "renderer"
+    },
+    {
+      "showId": "ps_0a8c9535725b10ad",
+      "generation": 1,
+      "step": "remove-participant",
+      "outcome": "succeeded",
+      "attempt": 1,
+      "room": "portal-ps_0a8c9535725b10ad-program",
+      "phase": "after-delete",
+      "identityRole": "program"
+    },
+    {
+      "showId": "ps_0a8c9535725b10ad",
+      "generation": 1,
+      "step": "record-progress",
+      "outcome": "started",
+      "attempt": 1
+    },
+    {
+      "showId": "ps_0a8c9535725b10ad",
+      "generation": 1,
+      "step": "record-progress",
+      "outcome": "succeeded",
+      "attempt": 1
+    },
+    {
+      "showId": "ps_0a8c9535725b10ad",
+      "generation": 1,
+      "step": "release-quota",
+      "outcome": "started",
+      "attempt": 1
+    },
+    {
+      "showId": "ps_0a8c9535725b10ad",
+      "generation": 1,
+      "step": "release-quota",
+      "outcome": "released",
+      "attempt": 1
+    },
+    {
+      "showId": "ps_0a8c9535725b10ad",
+      "generation": 1,
+      "step": "record-closure",
+      "outcome": "started",
+      "attempt": 1
+    },
+    {
+      "showId": "ps_0a8c9535725b10ad",
+      "generation": 1,
+      "step": "record-closure",
+      "outcome": "succeeded",
+      "attempt": 1
+    }
+  ]
+}

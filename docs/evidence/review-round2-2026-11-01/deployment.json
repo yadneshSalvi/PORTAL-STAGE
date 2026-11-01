@@ -1,0 +1,13 @@
+{
+  "observedAt": "2026-11-01T06:35:01.801Z",
+  "id": "dpl_8oGMFeUjC8J4rtAtpRopgUUGasv2",
+  "readyState": "READY",
+  "target": "production",
+  "url": "portal-stage-4okga95pq-yadneshsalvis-projects.vercel.app",
+  "aliases": [
+    "portal-stage-eight.vercel.app",
+    "portal-stage-yadneshsalvis-projects.vercel.app"
+  ],
+  "gitCommit": "3c2b310198b4b3cf405d333f3c356837aeb39041",
+  "gitRef": "main"
+}

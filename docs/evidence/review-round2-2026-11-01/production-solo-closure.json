@@ -1,0 +1,17 @@
+{
+  "observedAt": "2026-11-01T06:41:52.696Z",
+  "showId": "ps_0a8c9535725b10ad",
+  "phase": "ended",
+  "solo": {
+    "endsAt": 1793516115445,
+    "status": "closed"
+  },
+  "reservationStatus": "closed",
+  "expiresAt": 1793516115445,
+  "closedAt": 1793515309398,
+  "issuedGrantCount": 3,
+  "quotaActive": false,
+  "liveKitRooms": [],
+  "manualRetryUsed": false,
+  "method": "Read-only state and LiveKit Cloud listRooms for this owned show after the End-show UI returned successfully."
+}

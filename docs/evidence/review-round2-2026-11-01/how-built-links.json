@@ -1,0 +1,76 @@
+{
+  "observedAt": "2026-11-01T06:34:29.139Z",
+  "method": "Each of the ten visible How-built source/test links was clicked in the in-app browser, then returned to the source page.",
+  "checks": [
+    {
+      "label": "Read the development record",
+      "url": "https://github.com/yadneshSalvi/PORTAL-STAGE/blob/main/docs/evidence/codex.md",
+      "notFound": false,
+      "signInVisible": false,
+      "title": "PORTAL-STAGE/docs/evidence/codex.md at main · yadneshSalvi/PORTAL-STAGE"
+    },
+    {
+      "label": "Source",
+      "url": "https://github.com/yadneshSalvi/PORTAL-STAGE/blob/main/src/server/core.ts",
+      "notFound": false,
+      "signInVisible": false,
+      "title": "PORTAL-STAGE/src/server/core.ts at main · yadneshSalvi/PORTAL-STAGE"
+    },
+    {
+      "label": "Ownership and transfer tests",
+      "url": "https://github.com/yadneshSalvi/PORTAL-STAGE/blob/main/tests/stage-core.test.ts",
+      "notFound": false,
+      "signInVisible": false,
+      "title": "PORTAL-STAGE/tests/stage-core.test.ts at main · yadneshSalvi/PORTAL-STAGE"
+    },
+    {
+      "label": "Source",
+      "url": "https://github.com/yadneshSalvi/PORTAL-STAGE/blob/main/src/media/room-controller.ts",
+      "notFound": false,
+      "signInVisible": false,
+      "title": "PORTAL-STAGE/src/media/room-controller.ts at main · yadneshSalvi/PORTAL-STAGE"
+    },
+    {
+      "label": "Installed-SDK decoder regression",
+      "url": "https://github.com/yadneshSalvi/PORTAL-STAGE/blob/main/tests/media-decoder.test.ts",
+      "notFound": false,
+      "signInVisible": false,
+      "title": "PORTAL-STAGE/tests/media-decoder.test.ts at main · yadneshSalvi/PORTAL-STAGE"
+    },
+    {
+      "label": "Source",
+      "url": "https://github.com/yadneshSalvi/PORTAL-STAGE/blob/main/src/lib/show-grammar.ts",
+      "notFound": false,
+      "signInVisible": false,
+      "title": "PORTAL-STAGE/src/lib/show-grammar.ts at main · yadneshSalvi/PORTAL-STAGE"
+    },
+    {
+      "label": "Complete authored cue paths",
+      "url": "https://github.com/yadneshSalvi/PORTAL-STAGE/blob/main/src/components/cue-flow.test.ts",
+      "notFound": false,
+      "signInVisible": false,
+      "title": "PORTAL-STAGE/src/components/cue-flow.test.ts at main · yadneshSalvi/PORTAL-STAGE"
+    },
+    {
+      "label": "Source",
+      "url": "https://github.com/yadneshSalvi/PORTAL-STAGE/blob/main/src/media/local-rehearsal-camera.ts",
+      "notFound": false,
+      "signInVisible": false,
+      "title": "PORTAL-STAGE/src/media/local-rehearsal-camera.ts at main · yadneshSalvi/PORTAL-STAGE"
+    },
+    {
+      "label": "Local camera lifecycle tests",
+      "url": "https://github.com/yadneshSalvi/PORTAL-STAGE/blob/main/tests/media-local-rehearsal-camera.test.ts",
+      "notFound": false,
+      "signInVisible": false,
+      "title": "PORTAL-STAGE/tests/media-local-rehearsal-camera.test.ts at main · yadneshSalvi/PORTAL-STAGE"
+    },
+    {
+      "label": "Recorded verification",
+      "url": "https://github.com/yadneshSalvi/PORTAL-STAGE/blob/main/docs/evidence/release.md",
+      "notFound": false,
+      "signInVisible": false,
+      "title": "PORTAL-STAGE/docs/evidence/release.md at main · yadneshSalvi/PORTAL-STAGE"
+    }
+  ]
+}

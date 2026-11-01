@@ -1,5 +1,5 @@
 {
-  "observedAt": "2026-11-01T06:33:21.488Z",
+  "observedAt": "2026-11-01T06:47:13.257Z",
   "method": "Exact private values from the five existing environment files compared with current publishable files and every reachable Git history blob. No secret value is emitted.",
   "envFiles": 5,
   "distinctPrivateValues": 18,
@@ -14,8 +14,8 @@
     },
     {
       "project": "PORTAL-STAGE",
-      "workingFiles": 295,
-      "historyBlobs": 446,
+      "workingFiles": 314,
+      "historyBlobs": 466,
       "matches": [],
       "forbiddenTrackedPaths": [],
       "passed": true

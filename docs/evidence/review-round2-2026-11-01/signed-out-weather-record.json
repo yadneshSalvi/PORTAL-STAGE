@@ -1,0 +1,533 @@
+{
+  "exportedAt": "2026-11-01T06:43:48.553Z",
+  "mode": "rehearsal",
+  "showId": "ps_893ab9b1080d2a87",
+  "sequence": 27,
+  "episode": "borrowed-weather",
+  "umbrella": {
+    "id": "ps_893ab9b1080d2a87-umbrella-1",
+    "armed": true,
+    "owner": "A",
+    "version": 6,
+    "wetness": 0.52,
+    "transfer": {
+      "id": "ps_893ab9b1080d2a87-transfer-20",
+      "to": "A",
+      "from": "B",
+      "status": "arrived",
+      "arrivedAt": 1793515419224,
+      "expiresAt": 1793515427703,
+      "offeredAt": 1793515407703,
+      "committedAt": 1793515417710,
+      "commitSequence": 21
+    },
+    "repairPatch": "coral",
+    "acceptedTransfers": 2
+  },
+  "parcel": null,
+  "decisions": {
+    "mood": {
+      "at": 1793515400122,
+      "choice": "shy",
+      "source": "rehearsal",
+      "voters": 1,
+      "roundId": "ps_893ab9b1080d2a87-round-15",
+      "contributors": []
+    },
+    "name": {
+      "at": 1793515396251,
+      "choice": "pip3",
+      "source": "rehearsal",
+      "voters": 1,
+      "roundId": "ps_893ab9b1080d2a87-round-11",
+      "contributors": []
+    },
+    "ending": {
+      "at": 1793515422632,
+      "choice": "chase",
+      "source": "rehearsal",
+      "voters": 1,
+      "roundId": "ps_893ab9b1080d2a87-round-23",
+      "contributors": []
+    },
+    "weather": {
+      "at": 1793515387551,
+      "choice": "wild",
+      "source": "rehearsal",
+      "voters": 1,
+      "roundId": "ps_893ab9b1080d2a87-round-4",
+      "contributors": []
+    }
+  },
+  "presenceEffects": [],
+  "creature": {
+    "id": "ps_893ab9b1080d2a87-pip-1",
+    "mood": "gentle",
+    "hatched": true,
+    "hatchedAt": 1793515402565,
+    "shelterOwner": "A"
+  },
+  "round": {
+    "id": "ps_893ab9b1080d2a87-round-23",
+    "kind": "ending",
+    "epoch": 1,
+    "result": "chase",
+    "source": "rehearsal",
+    "status": "applied",
+    "tallies": {
+      "chase": 1,
+      "share": 0
+    },
+    "closedAt": 1793515420550,
+    "closesAt": 1793515420550,
+    "openedAt": 1793515419663,
+    "contributors": [],
+    "uniqueVoters": 1,
+    "lastMessageAt": 1793515420016,
+    "boundTransferId": "ps_893ab9b1080d2a87-transfer-20",
+    "boundPropVersion": 6,
+    "needsDirectorChoice": false
+  },
+  "events": [
+    {
+      "at": 1793515349493,
+      "id": "ps_893ab9b1080d2a87:1",
+      "type": "show.created",
+      "actor": "director",
+      "owner": "A",
+      "propId": "ps_893ab9b1080d2a87-umbrella-1",
+      "summary": "Labeled solo rehearsal created with synthetic test plates.",
+      "sequence": 1,
+      "propVersion": 1
+    },
+    {
+      "at": 1793515350413,
+      "id": "ps_893ab9b1080d2a87:2",
+      "type": "renderer.acquired",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "epoch": 1
+      },
+      "propId": "ps_893ab9b1080d2a87-umbrella-1",
+      "summary": "One director tab acquired the canonical stage.",
+      "sequence": 2,
+      "propVersion": 1
+    },
+    {
+      "at": 1793515359980,
+      "id": "ps_893ab9b1080d2a87:3",
+      "type": "action.start",
+      "actor": "director",
+      "owner": "A",
+      "propId": "ps_893ab9b1080d2a87-umbrella-1",
+      "summary": "The curtain rose on two admitted performers.",
+      "sequence": 3,
+      "propVersion": 1
+    },
+    {
+      "at": 1793515367840,
+      "id": "ps_893ab9b1080d2a87:4",
+      "type": "round.opened",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "kind": "weather",
+        "roundId": "ps_893ab9b1080d2a87-round-4"
+      },
+      "propId": "ps_893ab9b1080d2a87-umbrella-1",
+      "summary": "What kind of weather should arrive? One replaceable choice per Twitch account.",
+      "sequence": 4,
+      "propVersion": 1
+    },
+    {
+      "at": 1793515384914,
+      "id": "ps_893ab9b1080d2a87:5",
+      "type": "round.vote",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "choice": "wild",
+        "sentAt": 1793515384914,
+        "roundId": "ps_893ab9b1080d2a87-round-4",
+        "replaced": false,
+        "synthetic": true,
+        "messageRef": "fixture:527a64d7"
+      },
+      "propId": "ps_893ab9b1080d2a87-umbrella-1",
+      "summary": "A labeled test ballot chose wild.",
+      "sequence": 5,
+      "propVersion": 1
+    },
+    {
+      "at": 1793515385273,
+      "id": "ps_893ab9b1080d2a87:6",
+      "type": "round.closed",
+      "actor": "system",
+      "owner": "A",
+      "detail": {
+        "kind": "weather",
+        "result": "wild",
+        "source": "rehearsal",
+        "voters": 1,
+        "roundId": "ps_893ab9b1080d2a87-round-4",
+        "needsDirectorChoice": false
+      },
+      "propId": "ps_893ab9b1080d2a87-umbrella-1",
+      "summary": "Labeled rehearsal ballots chose: wild.",
+      "sequence": 6,
+      "propVersion": 1
+    },
+    {
+      "at": 1793515387551,
+      "id": "ps_893ab9b1080d2a87:7",
+      "type": "action.apply-weather",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "source": "rehearsal",
+        "roundId": "ps_893ab9b1080d2a87-round-4",
+        "weather": "wild"
+      },
+      "propId": "ps_893ab9b1080d2a87-umbrella-1",
+      "summary": "Labeled rehearsal ballot: wild weather is now on stage.",
+      "sequence": 7,
+      "propVersion": 2
+    },
+    {
+      "at": 1793515387917,
+      "id": "ps_893ab9b1080d2a87:8",
+      "type": "action.offer",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "to": "B",
+        "from": "A",
+        "transferId": "ps_893ab9b1080d2a87-transfer-8"
+      },
+      "propId": "ps_893ab9b1080d2a87-umbrella-1",
+      "summary": "Test plate A offered the same umbrella to Test plate B. Ownership remains with A.",
+      "sequence": 8,
+      "propVersion": 3
+    },
+    {
+      "at": 1793515390831,
+      "id": "ps_893ab9b1080d2a87:9",
+      "type": "action.accept",
+      "actor": "director",
+      "owner": "B",
+      "detail": {
+        "to": "B",
+        "from": "A",
+        "patch": "coral",
+        "wetness": 0.52,
+        "transferId": "ps_893ab9b1080d2a87-transfer-8"
+      },
+      "propId": "ps_893ab9b1080d2a87-umbrella-1",
+      "summary": "Acceptance committed owner B before the crossing animation. Patch and wetness are retained.",
+      "sequence": 9,
+      "propVersion": 4
+    },
+    {
+      "at": 1793515392322,
+      "id": "ps_893ab9b1080d2a87:10",
+      "type": "action.arrive",
+      "actor": "director",
+      "owner": "B",
+      "detail": {
+        "transferId": "ps_893ab9b1080d2a87-transfer-8",
+        "commitSequence": 9
+      },
+      "propId": "ps_893ab9b1080d2a87-umbrella-1",
+      "summary": "The renderer acknowledged arrival. Owner B was already committed; ownership was not written again.",
+      "sequence": 10,
+      "propVersion": 4
+    },
+    {
+      "at": 1793515392784,
+      "id": "ps_893ab9b1080d2a87:11",
+      "type": "round.opened",
+      "actor": "director",
+      "owner": "B",
+      "detail": {
+        "kind": "name",
+        "roundId": "ps_893ab9b1080d2a87-round-11"
+      },
+      "propId": "ps_893ab9b1080d2a87-umbrella-1",
+      "summary": "What shall we call our little visitor? One replaceable choice per Twitch account.",
+      "sequence": 11,
+      "propVersion": 4
+    },
+    {
+      "at": 1793515395417,
+      "id": "ps_893ab9b1080d2a87:12",
+      "type": "round.vote",
+      "actor": "director",
+      "owner": "B",
+      "detail": {
+        "choice": "pip3",
+        "sentAt": 1793515395417,
+        "roundId": "ps_893ab9b1080d2a87-round-11",
+        "replaced": false,
+        "synthetic": true,
+        "messageRef": "fixture:23808098"
+      },
+      "propId": "ps_893ab9b1080d2a87-umbrella-1",
+      "summary": "A labeled test ballot chose pip3.",
+      "sequence": 12,
+      "propVersion": 4
+    },
+    {
+      "at": 1793515395819,
+      "id": "ps_893ab9b1080d2a87:13",
+      "type": "round.closed",
+      "actor": "system",
+      "owner": "B",
+      "detail": {
+        "kind": "name",
+        "result": "pip3",
+        "source": "rehearsal",
+        "voters": 1,
+        "roundId": "ps_893ab9b1080d2a87-round-11",
+        "needsDirectorChoice": false
+      },
+      "propId": "ps_893ab9b1080d2a87-umbrella-1",
+      "summary": "Labeled rehearsal ballots chose: pip3.",
+      "sequence": 13,
+      "propVersion": 4
+    },
+    {
+      "at": 1793515396251,
+      "id": "ps_893ab9b1080d2a87:14",
+      "type": "action.apply-choice",
+      "actor": "director",
+      "owner": "B",
+      "detail": {
+        "kind": "name",
+        "choice": "pip3",
+        "source": "rehearsal",
+        "roundId": "ps_893ab9b1080d2a87-round-11"
+      },
+      "propId": "ps_893ab9b1080d2a87-umbrella-1",
+      "summary": "Labeled rehearsal choice applied name: pip3.",
+      "sequence": 14,
+      "propVersion": 4
+    },
+    {
+      "at": 1793515398920,
+      "id": "ps_893ab9b1080d2a87:15",
+      "type": "round.opened",
+      "actor": "director",
+      "owner": "B",
+      "detail": {
+        "kind": "mood",
+        "roundId": "ps_893ab9b1080d2a87-round-15"
+      },
+      "propId": "ps_893ab9b1080d2a87-umbrella-1",
+      "summary": "How does the visitor greet this room? One replaceable choice per Twitch account.",
+      "sequence": 15,
+      "propVersion": 4
+    },
+    {
+      "at": 1793515399278,
+      "id": "ps_893ab9b1080d2a87:16",
+      "type": "round.vote",
+      "actor": "director",
+      "owner": "B",
+      "detail": {
+        "choice": "shy",
+        "sentAt": 1793515399278,
+        "roundId": "ps_893ab9b1080d2a87-round-15",
+        "replaced": false,
+        "synthetic": true,
+        "messageRef": "fixture:6a859457"
+      },
+      "propId": "ps_893ab9b1080d2a87-umbrella-1",
+      "summary": "A labeled test ballot chose shy.",
+      "sequence": 16,
+      "propVersion": 4
+    },
+    {
+      "at": 1793515399632,
+      "id": "ps_893ab9b1080d2a87:17",
+      "type": "round.closed",
+      "actor": "system",
+      "owner": "B",
+      "detail": {
+        "kind": "mood",
+        "result": "shy",
+        "source": "rehearsal",
+        "voters": 1,
+        "roundId": "ps_893ab9b1080d2a87-round-15",
+        "needsDirectorChoice": false
+      },
+      "propId": "ps_893ab9b1080d2a87-umbrella-1",
+      "summary": "Labeled rehearsal ballots chose: shy.",
+      "sequence": 17,
+      "propVersion": 4
+    },
+    {
+      "at": 1793515400122,
+      "id": "ps_893ab9b1080d2a87:18",
+      "type": "action.apply-choice",
+      "actor": "director",
+      "owner": "B",
+      "detail": {
+        "kind": "mood",
+        "choice": "shy",
+        "source": "rehearsal",
+        "roundId": "ps_893ab9b1080d2a87-round-15"
+      },
+      "propId": "ps_893ab9b1080d2a87-umbrella-1",
+      "summary": "Labeled rehearsal choice applied mood: shy.",
+      "sequence": 18,
+      "propVersion": 4
+    },
+    {
+      "at": 1793515402565,
+      "id": "ps_893ab9b1080d2a87:19",
+      "type": "action.hatch",
+      "actor": "director",
+      "owner": "B",
+      "detail": {
+        "weather": "gentle",
+        "creatureId": "ps_893ab9b1080d2a87-pip-1"
+      },
+      "propId": "ps_893ab9b1080d2a87-umbrella-1",
+      "summary": "Moth hatched from the same umbrella's runoff with gentle behavior.",
+      "sequence": 19,
+      "propVersion": 4
+    },
+    {
+      "at": 1793515407703,
+      "id": "ps_893ab9b1080d2a87:20",
+      "type": "action.offer",
+      "actor": "director",
+      "owner": "B",
+      "detail": {
+        "to": "A",
+        "from": "B",
+        "transferId": "ps_893ab9b1080d2a87-transfer-20"
+      },
+      "propId": "ps_893ab9b1080d2a87-umbrella-1",
+      "summary": "Test plate B offered the same umbrella to Test plate A. Ownership remains with B.",
+      "sequence": 20,
+      "propVersion": 5
+    },
+    {
+      "at": 1793515417710,
+      "id": "ps_893ab9b1080d2a87:21",
+      "type": "action.accept",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "to": "A",
+        "from": "B",
+        "patch": "coral",
+        "wetness": 0.52,
+        "transferId": "ps_893ab9b1080d2a87-transfer-20"
+      },
+      "propId": "ps_893ab9b1080d2a87-umbrella-1",
+      "summary": "Acceptance committed owner A before the crossing animation. Patch and wetness are retained.",
+      "sequence": 21,
+      "propVersion": 6
+    },
+    {
+      "at": 1793515419224,
+      "id": "ps_893ab9b1080d2a87:22",
+      "type": "action.arrive",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "transferId": "ps_893ab9b1080d2a87-transfer-20",
+        "commitSequence": 21
+      },
+      "propId": "ps_893ab9b1080d2a87-umbrella-1",
+      "summary": "The renderer acknowledged arrival. Owner A was already committed; ownership was not written again.",
+      "sequence": 22,
+      "propVersion": 6
+    },
+    {
+      "at": 1793515419663,
+      "id": "ps_893ab9b1080d2a87:23",
+      "type": "round.opened",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "kind": "ending",
+        "roundId": "ps_893ab9b1080d2a87-round-23"
+      },
+      "propId": "ps_893ab9b1080d2a87-umbrella-1",
+      "summary": "How should this weather story end? One replaceable choice per Twitch account.",
+      "sequence": 23,
+      "propVersion": 6
+    },
+    {
+      "at": 1793515420016,
+      "id": "ps_893ab9b1080d2a87:24",
+      "type": "round.vote",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "choice": "chase",
+        "sentAt": 1793515420016,
+        "roundId": "ps_893ab9b1080d2a87-round-23",
+        "replaced": false,
+        "synthetic": true,
+        "messageRef": "fixture:d03a9ea3"
+      },
+      "propId": "ps_893ab9b1080d2a87-umbrella-1",
+      "summary": "A labeled test ballot chose chase.",
+      "sequence": 24,
+      "propVersion": 6
+    },
+    {
+      "at": 1793515420550,
+      "id": "ps_893ab9b1080d2a87:25",
+      "type": "round.closed",
+      "actor": "system",
+      "owner": "A",
+      "detail": {
+        "kind": "ending",
+        "result": "chase",
+        "source": "rehearsal",
+        "voters": 1,
+        "roundId": "ps_893ab9b1080d2a87-round-23",
+        "needsDirectorChoice": false
+      },
+      "propId": "ps_893ab9b1080d2a87-umbrella-1",
+      "summary": "Labeled rehearsal ballots chose: chase.",
+      "sequence": 25,
+      "propVersion": 6
+    },
+    {
+      "at": 1793515422632,
+      "id": "ps_893ab9b1080d2a87:26",
+      "type": "action.apply-choice",
+      "actor": "director",
+      "owner": "A",
+      "detail": {
+        "kind": "ending",
+        "choice": "chase",
+        "source": "rehearsal",
+        "roundId": "ps_893ab9b1080d2a87-round-23"
+      },
+      "propId": "ps_893ab9b1080d2a87-umbrella-1",
+      "summary": "Labeled rehearsal choice applied ending: chase.",
+      "sequence": 26,
+      "propVersion": 6
+    },
+    {
+      "at": 1793515425240,
+      "id": "ps_893ab9b1080d2a87:27",
+      "type": "action.shelter",
+      "actor": "director",
+      "owner": "A",
+      "propId": "ps_893ab9b1080d2a87-umbrella-1",
+      "summary": "Moth invites one last playful chase after the same umbrella.",
+      "sequence": 27,
+      "propVersion": 6
+    }
+  ],
+  "scope": "Current state and recent server events; rehearsal is synthetic, not remote-media or audience evidence."
+}

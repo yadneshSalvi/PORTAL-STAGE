@@ -1,360 +1,274 @@
 {
-  "format": "portal-stage.release-evidence/v2",
-  "evidenceAsOf": "2026-11-01T03:55:59.782717+00:00",
-  "repository": "https://github.com/yadneshSalvi/PORTAL-STAGE",
-  "sourceCommit": "96fea8781dd86bf23a95126247b1e703b8babde9",
-  "runtimeCommit": "16b11003dd066424f30e93dc2c04dfaccb3e072e",
-  "sourceTrees": {
-    "src": "4d560a89d5e4fefb88c1ba6a57470b4b39b3c485",
-    "server": "1494f2679744789fdf4f9dc144ac0246493c8989",
-    "workflow": "bb88e1fb6197b8fbfdaf0e6c30982f77854bf176"
-  },
-  "packageLockSha256": "6f046645ea0614f7ec104641f23711a6624892c72df13f74409fb78727f8e427",
+  "schemaVersion": 3,
+  "recordedAt": "2026-11-01T06:47:50.586381+00:00",
+  "canonicalUrl": "https://portal-stage-eight.vercel.app",
+  "deployedSource": "3c2b310198b4b3cf405d333f3c356837aeb39041",
+  "latestRuntimeCommit": "36d31829b5f3b2e368ec96b6c54ab548884b776f",
   "deployment": {
-    "id": "dpl_mUKo1r1j3ojraoWWmKWgToPeGCp5",
-    "url": "https://portal-stage-eight.vercel.app",
-    "uniqueUrl": "https://portal-stage-o8yk3wwet-yadneshsalvis-projects.vercel.app",
-    "status": "READY",
-    "remoteBuild": "passed;18pages,18Workflowsteps,1workflow"
+    "observedAt": "2026-11-01T06:35:01.801Z",
+    "id": "dpl_8oGMFeUjC8J4rtAtpRopgUUGasv2",
+    "readyState": "READY",
+    "target": "production",
+    "url": "portal-stage-4okga95pq-yadneshsalvis-projects.vercel.app",
+    "aliases": [
+      "portal-stage-eight.vercel.app",
+      "portal-stage-yadneshsalvis-projects.vercel.app"
+    ],
+    "gitCommit": "3c2b310198b4b3cf405d333f3c356837aeb39041",
+    "gitRef": "main"
+  },
+  "buildId": "-iU6lkbQ7bzzuyamjWIuN",
+  "sourceBoundary": "Later commits contain documentation and evidence only; deployed application source is unchanged.",
+  "license": "MIT",
+  "repository": {
+    "url": "https://github.com/yadneshSalvi/PORTAL-STAGE",
+    "visibility": "PUBLIC"
+  },
+  "codex": {
+    "projectImplementationSession": "01a191d6-551a-7cd2-9cd8-30611a7ee60b",
+    "coordinatingConversation": "01a190da-3cee-7a10-b7c1-e0cdbb379510"
   },
   "gates": {
-    "sourceCommit": "96fea8781dd86bf23a95126247b1e703b8babde9",
-    "runtimeCommit": "16b11003dd066424f30e93dc2c04dfaccb3e072e",
-    "buildId": "jKHgKbotO8fc4sJHSBn3c",
-    "fullPassed": 370,
-    "optInSkipped": 7,
+    "recordedAt": "2026-11-01T06:33:28.101Z",
+    "sourceCommit": "36d31829b5f3b2e368ec96b6c54ab548884b776f",
+    "buildId": "-iU6lkbQ7bzzuyamjWIuN",
+    "ordinary": {
+      "passed": 435,
+      "skipped": 7,
+      "filesPassed": 36,
+      "filesSkipped": 2,
+      "reportedSeconds": 1.58
+    },
     "typecheck": "passed",
     "format": "passed",
-    "diffCheck": "passed",
     "build": "passed",
-    "reportedBy": "integration lead, final run before source freeze",
-    "changesAfterFeatureProtocol": "Opaque Twitch notification IDs accepted; current-browser chat status; regression coverage distinguishing join-token expiry and session expiry."
-  },
-  "actualNeon": {
-    "passed": 7,
-    "failed": 0,
-    "skipped": 0,
-    "capturedSourceUnchanged": true,
-    "artifact": "review-2026-11-01/feature-gates.json"
-  },
-  "production": {
-    "actualTwitch": "Host account only; actual opaque-ID failure fixed, ordered presence effects, accept/giveback ballots and both handoffs. No independent viewer claim.",
-    "soloWeatherShow": "ps_c39a971c7d948d0e",
-    "appExpiry": {
-      "status": "passed",
-      "workflowStatus": "completed",
-      "reservationClosed": true,
-      "quotaActive": false,
-      "roomsRemaining": 0,
-      "validRefreshedTokenReplayRejected": true,
-      "browserRemainedOpen": true,
-      "artifact": "review-2026-11-01/app-solo-expiry.json"
+    "diffCheck": "passed",
+    "nextEnvironmentDeclarationDrift": false,
+    "actualNeon": {
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "capturedFiles": 12,
+      "hashesMatchFinalSource": true,
+      "artifact": "neon-checks.json"
     },
-    "soloParcel": {
-      "showId": "ps_fd9d44159b7b4ffb",
-      "completeStorySequence": 46,
-      "endSequence": 47,
-      "initialClosure": "incomplete;causeunknown",
-      "explicitRetryClicks": 1,
-      "closed": true,
-      "quotaActive": false,
-      "roomsRemaining": 0,
-      "artifact": "review-2026-11-01/production-solo-parcel.json"
+    "browser": "local-browser.md"
+  },
+  "productionSoloLimits": {
+    "globalDaily": 100,
+    "globalConcurrent": 10,
+    "perAccountDaily": 3,
+    "minutes": 20
+  },
+  "productionAcceptance": {
+    "soloShow": "ps_0a8c9535725b10ad",
+    "operatorCount": 1,
+    "realOwnedTwitchAccounts": 2,
+    "independentAudienceClaim": false,
+    "physicalCamera": true,
+    "microphone": false,
+    "actualTwitchBroadcast": false,
+    "obsUsed": false,
+    "realChoiceWindowsPassed": 6,
+    "realPresenceCommandsIngested": ["rain", "thunder", "cheer"],
+    "propReturned": {
+      "owner": "A",
+      "version": 6,
+      "wetness": 0.52,
+      "repairPatch": "coral"
     },
-    "signedOutParcel": "Stars/deliver complete story;explicitly labeled rehearsal test ballots.",
-    "localChromeCamera": "Physical1280x720 muted preview, hand worker active/no hand detected, zero video elements on End. Tab network only; no gesture accuracy claim.",
-    "finalSignedOutLandingAndHowBuilt": "passed",
-    "secondAccount": {
-      "login": "yadneshsalvi96",
-      "showId": "ps_3f611bff54420820",
-      "freshOAuthAndOrdinarySoloEntry": "passed",
-      "existingBrowserSessionSwitchedTwitchIdentity": true,
-      "allowlistEvidence": "Configured local allowlist false; production duet UI showed Invited duet host sign-in. No production /api/session flag capture.",
-      "twitchSubscriptionSetup": "Listening observed; no public messages sent",
-      "soloStartsBefore": 3,
-      "soloStartsAfter": 2,
-      "soloDailyLimit": 3,
-      "workflowReceiptConfirmed": true,
-      "issuedMediaGrants": 0,
-      "reservationClosed": true,
-      "quotaActiveAfterEnd": false,
-      "dailyStartsAfterEnd": 1,
-      "soloCreateAvailableAfterEnd": true,
-      "cameraOrMicrophoneUsed": false,
-      "publicMessagesSent": 0,
-      "independentHumanOrAudienceClaim": false,
-      "artifact": "review-2026-11-01/second-account-acceptance.json"
+    "programResolution": [1920, 1080],
+    "earlyEnd": {
+      "observedAt": "2026-11-01T06:41:52.696Z",
+      "showId": "ps_0a8c9535725b10ad",
+      "phase": "ended",
+      "solo": {
+        "endsAt": 1793516115445,
+        "status": "closed"
+      },
+      "reservationStatus": "closed",
+      "expiresAt": 1793516115445,
+      "closedAt": 1793515309398,
+      "issuedGrantCount": 3,
+      "quotaActive": false,
+      "liveKitRooms": [],
+      "manualRetryUsed": false,
+      "method": "Read-only state and LiveKit Cloud listRooms for this owned show after the End-show UI returned successfully."
+    },
+    "browserWarningErrorLogs": {
+      "soloStudio": [],
+      "program": [],
+      "signedOutStories": []
     }
   },
-  "pending": [
-    "Two remote consenting humans on separate devices/networks",
-    "Physical microphones, audible echo/synchronization and actual OBS broadcast",
-    "Gesture accuracy/alignment and measured input-to-stream delay",
-    "Second-account delivered messages/moderator behavior and independent audience participation",
-    "Reliable native hidden-document browser acceptance",
-    "Organizer source access and project-level licensing"
+  "signedOutProductionRehearsals": [
+    {
+      "showId": "ps_893ab9b1080d2a87",
+      "episode": "Borrowed Weather",
+      "choices": ["wild", "pip3", "shy", "chase"],
+      "exportSequence": 27,
+      "endedSequence": 28,
+      "record": "review-round2-2026-11-01/signed-out-weather-record.json"
+    },
+    {
+      "showId": "ps_7fb2b599196311b7",
+      "episode": "Midnight Parcel",
+      "choices": ["garden", "keep"],
+      "exportSequence": 20,
+      "endedSequence": 21,
+      "record": "review-round2-2026-11-01/signed-out-parcel-record.json"
+    }
   ],
-  "historicalRelease": "pre-review-release-manifest.json",
+  "remainingAcceptance": [
+    "Two consenting performers on separate networks with microphones and real OBS Twitch broadcast",
+    "Guest replacement while actual OBS output continues",
+    "Physical offer/accept hand-cue success and failure rate",
+    "Genuinely minimized/covered director: hidden 8 fps output and warning",
+    "Isolated visual checks of short-lived rain/thunder presence effects",
+    "Current-release real timed expiry/provider-outage behavior; regression coverage and historical prior-release expiry are separate evidence"
+  ],
+  "historicalRelease": "round-1-release.md",
+  "historicalManifest": "round-1-release-manifest.json",
   "artifacts": [
     {
-      "path": "checks.md",
-      "sha256": "808f0a303e8e67c5ee04160f770511c77bf297bac08bf66b996d6f3a115583eb"
+      "path": "review-round2-2026-11-01/deployment.json",
+      "sha256": "b9c2e4506347af8b1d6c6847b4bdbf8885f3b099e7ae1434949f32830859b97b"
     },
     {
-      "path": "pre-review-release-manifest.json",
-      "sha256": "25f112707b77a15793f3a6a29da68bc497a3b96047eca97db130a4dc3da5b1b7"
+      "path": "review-round2-2026-11-01/final-progress-layout.json",
+      "sha256": "171089987c57d5fdc8182f18262a456cf12e6096d0917ad016593aa57450d1b1"
     },
     {
-      "path": "pre-review-release.md",
-      "sha256": "23fe381762ee25f571e6df01bf29ee1e3712b75e3e0dc17c85997d1c68cc0ef5"
+      "path": "review-round2-2026-11-01/final-weather-progress-layout.json",
+      "sha256": "0480bd209010ce9278cfe30075a499801d539aea20c1acdc277d27a30fafae58"
     },
     {
-      "path": "release.md",
-      "sha256": "d837d6e068ff9ae25b70104c1e2c7c48d806ecb3a53019f47a39d4607db5ad56"
+      "path": "review-round2-2026-11-01/gates.json",
+      "sha256": "84294e0b51121044ee4aa0b196c186958330ad26e66be9200179c93775cba6e7"
     },
     {
-      "path": "review-2026-11-01/README.md",
-      "sha256": "d264a10af2fb379ad9b4318f95ca29872e2c636b884406ebbc5aef2adb3e178d"
+      "path": "review-round2-2026-11-01/how-built-links.json",
+      "sha256": "d7076f3e58bb8979ddacd905b7258e2a8d96591d28bc99aa99e85e2c9024f7bc"
     },
     {
-      "path": "review-2026-11-01/app-solo-expiry.json",
-      "sha256": "497a6b97ccdd1b024fe72474ef8558ab73a60ca4975eb25a8ed3fc2281f9180a"
+      "path": "review-round2-2026-11-01/local-browser.md",
+      "sha256": "3f24ff826ce9a21dbe150a22858d0b553d993433442c2e86fb2514b68f9d9f3c"
     },
     {
-      "path": "review-2026-11-01/baseline-after-reload-early.jpg",
-      "sha256": "12939474c0b9f2208b96906dd74576335f73f7d56517ec80299d8d8958bb07bf"
+      "path": "review-round2-2026-11-01/local-mobile.jpg",
+      "sha256": "5fe98882b63b608192ce603f97e83a02dda5cf039673660b50d403bb8c7ca3b5"
     },
     {
-      "path": "review-2026-11-01/baseline-browser.md",
-      "sha256": "06d5a7c9903ae3f3398c5fc6cc2dc65a7f92aad34b7a9e7e3a9e9ef83561c9b1"
+      "path": "review-round2-2026-11-01/local-parcel-delivered-stage.jpg",
+      "sha256": "c72fa014c3d1545fc205bda22677a88d72bfb4f24867d5a54e40efd89e01824c"
     },
     {
-      "path": "review-2026-11-01/baseline-ended-after-lease.jpg",
-      "sha256": "ab6820d1f0151d6d5ec1be2ab101258f19fed360ee44b628bf3f724d5b8b66ed"
+      "path": "review-round2-2026-11-01/local-parcel-delivered.jpg",
+      "sha256": "a6fa59c0db2af57a61d1ed856e80525f4aed9ee8194d5ce6085e1813bf66ba6d"
     },
     {
-      "path": "review-2026-11-01/baseline-landing.jpg",
-      "sha256": "8fc733d7f9a640d9d75f7bf9af6ef40b7e9453dec84ca2911c02845ca4653956"
+      "path": "review-round2-2026-11-01/local-parcel-record.json",
+      "sha256": "2b06f01ed2487b7af2796c889f92d8f6a91c9917932e0998117a6abd3a9e8530"
     },
     {
-      "path": "review-2026-11-01/baseline-pending-offer.jpg",
-      "sha256": "b44628d2b9ce834bf8cb534500d99fef1e66e39187e7f51e09b0d035fcfaa6f8"
+      "path": "review-round2-2026-11-01/local-parcel-stars.jpg",
+      "sha256": "4a054ed38cbcff217bb59b65c30e70bcd05257ef6df7a84355590574b1b4ebe7"
     },
     {
-      "path": "review-2026-11-01/baseline-rehearsal-sequence8.json",
-      "sha256": "a00d25627043476bf7ea8ee57dd7e9e3e4391670fa70cf77d4034ecc8af7d8ff"
+      "path": "review-round2-2026-11-01/local-weather-record.json",
+      "sha256": "076af85d7727665b8ecfea934a314a6c5cb7256b0acd161d564d7bd436371ccf"
     },
     {
-      "path": "review-2026-11-01/baseline-reset-after-end.jpg",
-      "sha256": "4d97dfde08634a72a6a1818fc4c355fc9fa34719ecd02111f712c745c9bb4f4c"
+      "path": "review-round2-2026-11-01/local-weather-shelter.jpg",
+      "sha256": "815f94e03175dc466ebfb0ef08178daa5d7c02248125cbec593f4308f31d6535"
     },
     {
-      "path": "review-2026-11-01/cloud-refresh-replay-probe.json",
-      "sha256": "9346087ad4f5ff383afd9f78f2450ea77ca35b6d76786670fe191d2b830478ee"
+      "path": "review-round2-2026-11-01/local-weather-tally-stage.jpg",
+      "sha256": "9897c001c8679c6683cfa640935ec306125c81a09f4e7207a6efb283b523f220"
     },
     {
-      "path": "review-2026-11-01/cloud-revocation.md",
-      "sha256": "8c8721e406bcff2beefb4444ef64e67593318a1a7c2f89633096a23ee89cb0ae"
+      "path": "review-round2-2026-11-01/local-weather-tally.jpg",
+      "sha256": "13f3f45ac8926edbbfbdd793c22d937aee45cb7c3c1b1bca85b98c03495c0c55"
     },
     {
-      "path": "review-2026-11-01/cloud-revoke-probe.json",
-      "sha256": "5ef06acfa49ca7d86112747fd18f10b3b88886de9bb359665f93b77563c4f324"
+      "path": "review-round2-2026-11-01/neon-checks.json",
+      "sha256": "32dfab0ec993add3c205cb7bc0032cbe467cb517527ba5cabff50c401c170781"
     },
     {
-      "path": "review-2026-11-01/cloud-token-replay-probe.json",
-      "sha256": "7a94507a99bf659b385bce35e2acdf1f7407be516a44b35706b8f82f449f0bdc"
+      "path": "review-round2-2026-11-01/production-browser.md",
+      "sha256": "be508be87bf232251cc8d9f60481508406f3c0e3d140e725da094676a85620e7"
     },
     {
-      "path": "review-2026-11-01/feature-browser.md",
-      "sha256": "8e331214faa800a9af6e0a784252ef53edeb19ce14fd7045c2d630d5e25e26e8"
+      "path": "review-round2-2026-11-01/production-closure-steps.json",
+      "sha256": "504008a125fd7612d397a443d4235aa22302879ca54f40bbd6dcc8875c7fc799"
     },
     {
-      "path": "review-2026-11-01/feature-gates.json",
-      "sha256": "038667f15ab7a887b8d77eed525f2cd46139f72afa6bd21f0505cf44e906a1a0"
+      "path": "review-round2-2026-11-01/production-program-closed.jpg",
+      "sha256": "ae2c7d60471bb5091b93c24fa59e82e303d2dde91b4950678ac30a40b0f69dca"
     },
     {
-      "path": "review-2026-11-01/feature-http-burst.json",
-      "sha256": "45b588132041f6e00a4e73b16f3b4c7efbf82bd74fba4cfd5907122bbd76bcf6"
+      "path": "review-round2-2026-11-01/production-program-playback.json",
+      "sha256": "7fbdb0495bf3f432355e77359b436c928aa4f6ee0ff2846b2e109e2a3490262b"
     },
     {
-      "path": "review-2026-11-01/feature-local-camera.json",
-      "sha256": "70c421bad9880970ddcffd254d6ce7c632a3b7d6116861cfbd4ff3e52f730740"
+      "path": "review-round2-2026-11-01/production-solo-backstage.jpg",
+      "sha256": "be2b9cd030ab8f6af7340ce9d27a19a257c263b09d46fc6b3cc4379ef8c8ee96"
     },
     {
-      "path": "review-2026-11-01/feature-mobile-landing.jpg",
-      "sha256": "501012f3d716cdeb80706c3528ee4232fcef4b25fc04da7c73d0455bd5fcb9ef"
+      "path": "review-round2-2026-11-01/production-solo-closed.jpg",
+      "sha256": "1cdbc068ceddd0bdd8c77f3c4514f2c6aeccde43886f5c07eb9cfce2d3b5e686"
     },
     {
-      "path": "review-2026-11-01/feature-native-visibility.json",
-      "sha256": "953340f317768cbc6edebcfbc371589dd8c1afe76970a75d932bfd8bede6841d"
+      "path": "review-round2-2026-11-01/production-solo-closure.json",
+      "sha256": "e151c5adde86d3072451e6f453267b2f2388afeaf8730b0e4d795b530ede3206"
     },
     {
-      "path": "review-2026-11-01/feature-parcel-garden-home-overview.jpg",
-      "sha256": "9e06ce2de031aa8fbd6cebb7f3c260c309dc21cc4eb092d9b8ed7aae949b8db1"
+      "path": "review-round2-2026-11-01/production-story-record.json",
+      "sha256": "6c665a18e3b134b3ac04dd8977695cdf710c742e2e24609b62d365fa19bbda0d"
     },
     {
-      "path": "review-2026-11-01/feature-parcel-garden-home.jpg",
-      "sha256": "b117df5d8c70b798fe0b64d224a1dbe9ee48859a725fa0e3a96f92561c44eb5d"
+      "path": "review-round2-2026-11-01/production-twitch-messages.json",
+      "sha256": "817b1985146eed7df7aac2ebeb3b5af9d9c1be26476f7696249990f24b124106"
     },
     {
-      "path": "review-2026-11-01/feature-parcel-garden-in-b.jpg",
-      "sha256": "908d5ef17412daf34f2782c70e622216866708751e3ca0ff1af06a9e19a20b1b"
+      "path": "review-round2-2026-11-01/public-links.json",
+      "sha256": "111519b3886f9c7f5aca22eb48f332f20742787ab396a4e487424c26dfa8bf06"
     },
     {
-      "path": "review-2026-11-01/feature-story-state.json",
-      "sha256": "a16925e806cfdb0ed8495f7cebfa8713b888482d1da9f36a599b0832fece4e37"
+      "path": "review-round2-2026-11-01/responsive-parcel.json",
+      "sha256": "b56b80b372ed02743dd38e14459ebd5659cbc0be66f3c71dfdce72015daedd9d"
     },
     {
-      "path": "review-2026-11-01/feature-weather-shared-shelter.jpg",
-      "sha256": "f0481f0b8160070510df11cb0a20b5002c55e5f28172811a8aa16fafe4ef24a9"
+      "path": "review-round2-2026-11-01/responsive-widths.json",
+      "sha256": "547f8d17c51640b1b5fcb5d304b46060ce9a5587bf240b4e34fc67931e229869"
     },
     {
-      "path": "review-2026-11-01/final-guest-ended.jpg",
-      "sha256": "deca09e4fd3895a562fba21bdbff66ad8bc073cab2afdb8fe1987ca8695b52a0"
+      "path": "review-round2-2026-11-01/signed-out-parcel-ended.jpg",
+      "sha256": "3434f0e30f22484bc538a664937e4b428f386fa6052f9809b81b06c06b25aab6"
     },
     {
-      "path": "review-2026-11-01/final-guest-ended.json",
-      "sha256": "4d31a85e55f723610ea72f6557aecde8994f0e9a8d7e8c75f4213eee0611132b"
+      "path": "review-round2-2026-11-01/signed-out-parcel-garden.jpg",
+      "sha256": "d07b7c06c9db22283c5497b83d442411b797f2a43288fece16adcee67e9e8c4e"
     },
     {
-      "path": "review-2026-11-01/final-production-landing.jpg",
-      "sha256": "9c2360f920876ba5ed8dbb9da6220daa4ca74fab20de8d2b709fc5f070eae418"
+      "path": "review-round2-2026-11-01/signed-out-parcel-record.json",
+      "sha256": "a1ad5e78ff5263217db88aa30f8226071358655fdd7b073a9a3e8e2e56dadec2"
     },
     {
-      "path": "review-2026-11-01/p0-browser.md",
-      "sha256": "907528a9cdc19620d8ee569f56db3dba628b7652009d68be34378b6acdfc7c88"
+      "path": "review-round2-2026-11-01/signed-out-weather-chase.jpg",
+      "sha256": "b891f91762ffff023bf2a2994530da2fb51030d04194b7f15d3abd8e6fd1b3e0"
     },
     {
-      "path": "review-2026-11-01/p0-duplicate-after-original-close.jpg",
-      "sha256": "4debdea20d071948e01c153ca7c11ef09d33af1bcbc74d44086ecff3eb833996"
+      "path": "review-round2-2026-11-01/signed-out-weather-ended.jpg",
+      "sha256": "e80d946fe015f4932cdcbde74a109b34a92cb700ad24524a25c499f6c8397e4d"
     },
     {
-      "path": "review-2026-11-01/p0-duplicate-cue-working.jpg",
-      "sha256": "e4ecb886c5f72492788ce722cd521a7ed9f6c48adc14de1cf14a80957642e935"
+      "path": "review-round2-2026-11-01/signed-out-weather-record.json",
+      "sha256": "b830318633fdabce298fa5068bb29589d97feb9ab8f2e2a54a1290501d653841"
     },
     {
-      "path": "review-2026-11-01/p0-ended-after-lease.jpg",
-      "sha256": "377aa98f1e93770e91106557fe5952331f72fb94751ddca0ef059d080e15e7aa"
-    },
-    {
-      "path": "review-2026-11-01/p0-ended-immediate.jpg",
-      "sha256": "0aecdb80279f11abd696f27fdfade0436768b5d93475786d5fded3731a12c4f5"
-    },
-    {
-      "path": "review-2026-11-01/p0-ended-mobile.jpg",
-      "sha256": "c6f2b78386dbaffefffe3739f79a2804b82d1fbb940a6d683f19df161b6382dd"
-    },
-    {
-      "path": "review-2026-11-01/p0-landing.jpg",
-      "sha256": "17ea28584d8940890cf6ae2dc72e5efcb9a0aa3c7984b7ed1275f88b6af604cf"
-    },
-    {
-      "path": "review-2026-11-01/p0-offer-accepted-after-reload.jpg",
-      "sha256": "42a187c772a02d43716020931dafd53fc2b64854d62b9317e4a05070812d34ed"
-    },
-    {
-      "path": "review-2026-11-01/p0-offer-after-reload.jpg",
-      "sha256": "587563d3e9d65352be794ae12cef8f9c5fa09c38b9b6149bdb3594ea648085f9"
-    },
-    {
-      "path": "review-2026-11-01/p0-old-guest-rejected.jpg",
-      "sha256": "95095b6c6bfc801cf1dba51f2a7666c2e879f17eae64599de51c2c3e6b1e8be4"
-    },
-    {
-      "path": "review-2026-11-01/p0-original-after-duplicate.jpg",
-      "sha256": "0b2f65c7fbbb6615c4b37360c0120fd13b832774b0bb8558261e9224f324e9f3"
-    },
-    {
-      "path": "review-2026-11-01/p0-program-after-replacement.jpg",
-      "sha256": "2aa3cdb711401223221db0ba04b7034f6c5ad865af32cf8e9a2d5b5f8d9450fc"
-    },
-    {
-      "path": "review-2026-11-01/p0-program-before-replacement.jpg",
-      "sha256": "79cff4381df53ba10cc766592a71b5e64d495010ececb82e59f6a94858248c84"
-    },
-    {
-      "path": "review-2026-11-01/p0-program-during-replacement.jpg",
-      "sha256": "f9d06ed3fdceaadd977fcba37027ed030995f69daf2bc323db1a56aa9b29be08"
-    },
-    {
-      "path": "review-2026-11-01/p0-program-explicitly-unpaired.jpg",
-      "sha256": "4fa017bfda48de596c47d3c2585e9952de2e4004a53b5174fcd0a5f28045959b"
-    },
-    {
-      "path": "review-2026-11-01/p0-program-paired-while-held.jpg",
-      "sha256": "423ad6c9cbfe91da42560dbde8fabdbfc62b0c16f5d1919417939e903cc483d5"
-    },
-    {
-      "path": "review-2026-11-01/p0-reliability-results.json",
-      "sha256": "5629559f89f98b023a8b7f56611835a1d82646751f76894465a7237e2e98e015"
-    },
-    {
-      "path": "review-2026-11-01/p0-synthetic-two-tracks.jpg",
-      "sha256": "f6ab7710a1e7a7ed4f081f55bdc895143731eb79aa723a674df427bb691a4e51"
-    },
-    {
-      "path": "review-2026-11-01/p0-tab-lifecycle-results.json",
-      "sha256": "4776b1ce78914e039cad327d2d33325de9933afc3672c2225d948f1ad106990b"
-    },
-    {
-      "path": "review-2026-11-01/p0-tab-lifecycle.md",
-      "sha256": "7617d6735e2bcb3dd22dba76ba256dc4866371af8df2b16cf5f95d5dad27ee28"
-    },
-    {
-      "path": "review-2026-11-01/production-chrome-camera.json",
-      "sha256": "cb108b1c694f6aaadc3f7f9d2bdc7b1bb04d13ab1931e49f938155148ec26338"
-    },
-    {
-      "path": "review-2026-11-01/production-expired.jpg",
-      "sha256": "9e48e4bd73ce7097958f41b43120c95b6fc5956850df176d655ddccd546253a0"
-    },
-    {
-      "path": "review-2026-11-01/production-parcel-ended.jpg",
-      "sha256": "a333d1c0dbef628db365a91888c53bb93b74944b44ada011b017fb9348ebb488"
-    },
-    {
-      "path": "review-2026-11-01/production-parcel-stars-gift.jpg",
-      "sha256": "0ab8e6c8d482be117e251aec3723150ec23d43aea9a969d6420a9db1639c6712"
-    },
-    {
-      "path": "review-2026-11-01/production-parcel-state.json",
-      "sha256": "6c3c8830e06e3ba85e3e08fe5173bd2860694acd419f37dc5341bff2889a8da7"
-    },
-    {
-      "path": "review-2026-11-01/production-reconnect-logs.json",
-      "sha256": "82f119f050b8204a3aea0c30d6f2c1efff1c8f17f4e1ce67b988171005f1c363"
-    },
-    {
-      "path": "review-2026-11-01/production-solo-parcel.json",
-      "sha256": "1052c319bed38346b6658c4d1da6f4a2f5209453bbb4b376791bbd204c8a53da"
-    },
-    {
-      "path": "review-2026-11-01/production-solo-state.json",
-      "sha256": "ac11e993f8c4dd59804fb7afc9c4a4fb59b8c24f8c8594152e4b01cb913d24b3"
-    },
-    {
-      "path": "review-2026-11-01/production-twitch-discovery.json",
-      "sha256": "5c53df98ecad11c48e67b72ae119fef7f53fb0d7d0efcd081dfce832954d6449"
-    },
-    {
-      "path": "review-2026-11-01/production-twitch-fix.md",
-      "sha256": "a996a21baff6a4c67c2dd44406dce8b8d6e1ba58baf258de6559505b2431b451"
-    },
-    {
-      "path": "review-2026-11-01/production-verification.md",
-      "sha256": "becc9147baab04f4fe0e77ff0ede6c6c2086a2dcdaeb3feb77c9050af74d4d81"
-    },
-    {
-      "path": "review-implementation.md",
-      "sha256": "09468f21ab3e08c67b0ed962c7c69b4823f5d01264962605a30fb2b9879dbd5d"
-    },
-    {
-      "path": "review-2026-11-01/second-account-acceptance.json",
-      "sha256": "e573925f990557ef8585d1cc967c2bf9f6e4972ffd2bba0014587c468da7e1a6"
-    },
-    {
-      "path": "review-2026-11-01/second-account-acceptance.md",
-      "sha256": "2b9ee372a952b9da8e84f2ce82bb244fbf78d4d5c16a65353e570de62cb9fce4"
+      "path": "review-round2-2026-11-01/source-access-scan.json",
+      "sha256": "41afe63f89bf2c7f7dcbbc6e0585502554d487de698e3009afa3ebed9aa13dae"
     }
   ]
 }
