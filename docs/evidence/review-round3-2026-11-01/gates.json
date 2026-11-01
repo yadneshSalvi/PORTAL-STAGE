@@ -1,0 +1,30 @@
+{
+  "sourceCommit": "fece42381d569bd70b9ce81055c71b664000e9a1",
+  "testStartedAt": "2026-11-01T11:16:58Z",
+  "buildWrittenAt": "2026-11-01T11:17:23Z",
+  "ordinary": {
+    "passed": 455,
+    "skipped": 7,
+    "failed": 0,
+    "filesPassed": 40,
+    "filesSkipped": 2,
+    "reportedSeconds": 1.58
+  },
+  "typecheck": "passed",
+  "format": "passed",
+  "diffCheck": "passed",
+  "build": "passed",
+  "buildId": "f1DrX0vL5US-p6LTr5BWa",
+  "staticPages": 18,
+  "nextEnvironmentDeclarationDrift": false,
+  "actualNeon": {
+    "passed": 7,
+    "failed": 0,
+    "skipped": 0,
+    "capturedFiles": 12,
+    "hashesMatchFinalSource": true,
+    "artifact": "neon-checks.json"
+  },
+  "localBrowserCheckpoint": "c59a5bb5e65e4cccf8414c0af479facdbf9e5d43",
+  "finalPresentationFixes": "Canonical room labels; 14px guest/error typography; hand-cue hints moved to controls."
+}

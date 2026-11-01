@@ -1,0 +1,274 @@
+{
+  "schemaVersion": 3,
+  "recordedAt": "2026-11-01T06:47:50.586381+00:00",
+  "canonicalUrl": "https://portal-stage-eight.vercel.app",
+  "deployedSource": "3c2b310198b4b3cf405d333f3c356837aeb39041",
+  "latestRuntimeCommit": "36d31829b5f3b2e368ec96b6c54ab548884b776f",
+  "deployment": {
+    "observedAt": "2026-11-01T06:35:01.801Z",
+    "id": "dpl_8oGMFeUjC8J4rtAtpRopgUUGasv2",
+    "readyState": "READY",
+    "target": "production",
+    "url": "portal-stage-4okga95pq-yadneshsalvis-projects.vercel.app",
+    "aliases": [
+      "portal-stage-eight.vercel.app",
+      "portal-stage-yadneshsalvis-projects.vercel.app"
+    ],
+    "gitCommit": "3c2b310198b4b3cf405d333f3c356837aeb39041",
+    "gitRef": "main"
+  },
+  "buildId": "-iU6lkbQ7bzzuyamjWIuN",
+  "sourceBoundary": "Later commits contain documentation and evidence only; deployed application source is unchanged.",
+  "license": "MIT",
+  "repository": {
+    "url": "https://github.com/yadneshSalvi/PORTAL-STAGE",
+    "visibility": "PUBLIC"
+  },
+  "codex": {
+    "projectImplementationSession": "01a191d6-551a-7cd2-9cd8-30611a7ee60b",
+    "coordinatingConversation": "01a190da-3cee-7a10-b7c1-e0cdbb379510"
+  },
+  "gates": {
+    "recordedAt": "2026-11-01T06:33:28.101Z",
+    "sourceCommit": "36d31829b5f3b2e368ec96b6c54ab548884b776f",
+    "buildId": "-iU6lkbQ7bzzuyamjWIuN",
+    "ordinary": {
+      "passed": 435,
+      "skipped": 7,
+      "filesPassed": 36,
+      "filesSkipped": 2,
+      "reportedSeconds": 1.58
+    },
+    "typecheck": "passed",
+    "format": "passed",
+    "build": "passed",
+    "diffCheck": "passed",
+    "nextEnvironmentDeclarationDrift": false,
+    "actualNeon": {
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "capturedFiles": 12,
+      "hashesMatchFinalSource": true,
+      "artifact": "neon-checks.json"
+    },
+    "browser": "local-browser.md"
+  },
+  "productionSoloLimits": {
+    "globalDaily": 100,
+    "globalConcurrent": 10,
+    "perAccountDaily": 3,
+    "minutes": 20
+  },
+  "productionAcceptance": {
+    "soloShow": "ps_0a8c9535725b10ad",
+    "operatorCount": 1,
+    "realOwnedTwitchAccounts": 2,
+    "independentAudienceClaim": false,
+    "physicalCamera": true,
+    "microphone": false,
+    "actualTwitchBroadcast": false,
+    "obsUsed": false,
+    "realChoiceWindowsPassed": 6,
+    "realPresenceCommandsIngested": ["rain", "thunder", "cheer"],
+    "propReturned": {
+      "owner": "A",
+      "version": 6,
+      "wetness": 0.52,
+      "repairPatch": "coral"
+    },
+    "programResolution": [1920, 1080],
+    "earlyEnd": {
+      "observedAt": "2026-11-01T06:41:52.696Z",
+      "showId": "ps_0a8c9535725b10ad",
+      "phase": "ended",
+      "solo": {
+        "endsAt": 1793516115445,
+        "status": "closed"
+      },
+      "reservationStatus": "closed",
+      "expiresAt": 1793516115445,
+      "closedAt": 1793515309398,
+      "issuedGrantCount": 3,
+      "quotaActive": false,
+      "liveKitRooms": [],
+      "manualRetryUsed": false,
+      "method": "Read-only state and LiveKit Cloud listRooms for this owned show after the End-show UI returned successfully."
+    },
+    "browserWarningErrorLogs": {
+      "soloStudio": [],
+      "program": [],
+      "signedOutStories": []
+    }
+  },
+  "signedOutProductionRehearsals": [
+    {
+      "showId": "ps_893ab9b1080d2a87",
+      "episode": "Borrowed Weather",
+      "choices": ["wild", "pip3", "shy", "chase"],
+      "exportSequence": 27,
+      "endedSequence": 28,
+      "record": "review-round2-2026-11-01/signed-out-weather-record.json"
+    },
+    {
+      "showId": "ps_7fb2b599196311b7",
+      "episode": "Midnight Parcel",
+      "choices": ["garden", "keep"],
+      "exportSequence": 20,
+      "endedSequence": 21,
+      "record": "review-round2-2026-11-01/signed-out-parcel-record.json"
+    }
+  ],
+  "remainingAcceptance": [
+    "Two consenting performers on separate networks with microphones and real OBS Twitch broadcast",
+    "Guest replacement while actual OBS output continues",
+    "Physical offer/accept hand-cue success and failure rate",
+    "Genuinely minimized/covered director: hidden 8 fps output and warning",
+    "Isolated visual checks of short-lived rain/thunder presence effects",
+    "Current-release real timed expiry/provider-outage behavior; regression coverage and historical prior-release expiry are separate evidence"
+  ],
+  "historicalRelease": "round-1-release.md",
+  "historicalManifest": "round-1-release-manifest.json",
+  "artifacts": [
+    {
+      "path": "review-round2-2026-11-01/deployment.json",
+      "sha256": "b9c2e4506347af8b1d6c6847b4bdbf8885f3b099e7ae1434949f32830859b97b"
+    },
+    {
+      "path": "review-round2-2026-11-01/final-progress-layout.json",
+      "sha256": "171089987c57d5fdc8182f18262a456cf12e6096d0917ad016593aa57450d1b1"
+    },
+    {
+      "path": "review-round2-2026-11-01/final-weather-progress-layout.json",
+      "sha256": "0480bd209010ce9278cfe30075a499801d539aea20c1acdc277d27a30fafae58"
+    },
+    {
+      "path": "review-round2-2026-11-01/gates.json",
+      "sha256": "84294e0b51121044ee4aa0b196c186958330ad26e66be9200179c93775cba6e7"
+    },
+    {
+      "path": "review-round2-2026-11-01/how-built-links.json",
+      "sha256": "d7076f3e58bb8979ddacd905b7258e2a8d96591d28bc99aa99e85e2c9024f7bc"
+    },
+    {
+      "path": "review-round2-2026-11-01/local-browser.md",
+      "sha256": "3f24ff826ce9a21dbe150a22858d0b553d993433442c2e86fb2514b68f9d9f3c"
+    },
+    {
+      "path": "review-round2-2026-11-01/local-mobile.jpg",
+      "sha256": "5fe98882b63b608192ce603f97e83a02dda5cf039673660b50d403bb8c7ca3b5"
+    },
+    {
+      "path": "review-round2-2026-11-01/local-parcel-delivered-stage.jpg",
+      "sha256": "c72fa014c3d1545fc205bda22677a88d72bfb4f24867d5a54e40efd89e01824c"
+    },
+    {
+      "path": "review-round2-2026-11-01/local-parcel-delivered.jpg",
+      "sha256": "a6fa59c0db2af57a61d1ed856e80525f4aed9ee8194d5ce6085e1813bf66ba6d"
+    },
+    {
+      "path": "review-round2-2026-11-01/local-parcel-record.json",
+      "sha256": "2b06f01ed2487b7af2796c889f92d8f6a91c9917932e0998117a6abd3a9e8530"
+    },
+    {
+      "path": "review-round2-2026-11-01/local-parcel-stars.jpg",
+      "sha256": "4a054ed38cbcff217bb59b65c30e70bcd05257ef6df7a84355590574b1b4ebe7"
+    },
+    {
+      "path": "review-round2-2026-11-01/local-weather-record.json",
+      "sha256": "076af85d7727665b8ecfea934a314a6c5cb7256b0acd161d564d7bd436371ccf"
+    },
+    {
+      "path": "review-round2-2026-11-01/local-weather-shelter.jpg",
+      "sha256": "815f94e03175dc466ebfb0ef08178daa5d7c02248125cbec593f4308f31d6535"
+    },
+    {
+      "path": "review-round2-2026-11-01/local-weather-tally-stage.jpg",
+      "sha256": "9897c001c8679c6683cfa640935ec306125c81a09f4e7207a6efb283b523f220"
+    },
+    {
+      "path": "review-round2-2026-11-01/local-weather-tally.jpg",
+      "sha256": "13f3f45ac8926edbbfbdd793c22d937aee45cb7c3c1b1bca85b98c03495c0c55"
+    },
+    {
+      "path": "review-round2-2026-11-01/neon-checks.json",
+      "sha256": "32dfab0ec993add3c205cb7bc0032cbe467cb517527ba5cabff50c401c170781"
+    },
+    {
+      "path": "review-round2-2026-11-01/production-browser.md",
+      "sha256": "be508be87bf232251cc8d9f60481508406f3c0e3d140e725da094676a85620e7"
+    },
+    {
+      "path": "review-round2-2026-11-01/production-closure-steps.json",
+      "sha256": "504008a125fd7612d397a443d4235aa22302879ca54f40bbd6dcc8875c7fc799"
+    },
+    {
+      "path": "review-round2-2026-11-01/production-program-closed.jpg",
+      "sha256": "ae2c7d60471bb5091b93c24fa59e82e303d2dde91b4950678ac30a40b0f69dca"
+    },
+    {
+      "path": "review-round2-2026-11-01/production-program-playback.json",
+      "sha256": "7fbdb0495bf3f432355e77359b436c928aa4f6ee0ff2846b2e109e2a3490262b"
+    },
+    {
+      "path": "review-round2-2026-11-01/production-solo-backstage.jpg",
+      "sha256": "be2b9cd030ab8f6af7340ce9d27a19a257c263b09d46fc6b3cc4379ef8c8ee96"
+    },
+    {
+      "path": "review-round2-2026-11-01/production-solo-closed.jpg",
+      "sha256": "1cdbc068ceddd0bdd8c77f3c4514f2c6aeccde43886f5c07eb9cfce2d3b5e686"
+    },
+    {
+      "path": "review-round2-2026-11-01/production-solo-closure.json",
+      "sha256": "e151c5adde86d3072451e6f453267b2f2388afeaf8730b0e4d795b530ede3206"
+    },
+    {
+      "path": "review-round2-2026-11-01/production-story-record.json",
+      "sha256": "6c665a18e3b134b3ac04dd8977695cdf710c742e2e24609b62d365fa19bbda0d"
+    },
+    {
+      "path": "review-round2-2026-11-01/production-twitch-messages.json",
+      "sha256": "817b1985146eed7df7aac2ebeb3b5af9d9c1be26476f7696249990f24b124106"
+    },
+    {
+      "path": "review-round2-2026-11-01/public-links.json",
+      "sha256": "e92c6530c0a228949949dbbf97a2dc1a2df17ab0478c5f9db18c1590c192ea81"
+    },
+    {
+      "path": "review-round2-2026-11-01/responsive-parcel.json",
+      "sha256": "b56b80b372ed02743dd38e14459ebd5659cbc0be66f3c71dfdce72015daedd9d"
+    },
+    {
+      "path": "review-round2-2026-11-01/responsive-widths.json",
+      "sha256": "547f8d17c51640b1b5fcb5d304b46060ce9a5587bf240b4e34fc67931e229869"
+    },
+    {
+      "path": "review-round2-2026-11-01/signed-out-parcel-ended.jpg",
+      "sha256": "3434f0e30f22484bc538a664937e4b428f386fa6052f9809b81b06c06b25aab6"
+    },
+    {
+      "path": "review-round2-2026-11-01/signed-out-parcel-garden.jpg",
+      "sha256": "d07b7c06c9db22283c5497b83d442411b797f2a43288fece16adcee67e9e8c4e"
+    },
+    {
+      "path": "review-round2-2026-11-01/signed-out-parcel-record.json",
+      "sha256": "a1ad5e78ff5263217db88aa30f8226071358655fdd7b073a9a3e8e2e56dadec2"
+    },
+    {
+      "path": "review-round2-2026-11-01/signed-out-weather-chase.jpg",
+      "sha256": "b891f91762ffff023bf2a2994530da2fb51030d04194b7f15d3abd8e6fd1b3e0"
+    },
+    {
+      "path": "review-round2-2026-11-01/signed-out-weather-ended.jpg",
+      "sha256": "e80d946fe015f4932cdcbde74a109b34a92cb700ad24524a25c499f6c8397e4d"
+    },
+    {
+      "path": "review-round2-2026-11-01/signed-out-weather-record.json",
+      "sha256": "b830318633fdabce298fa5068bb29589d97feb9ab8f2e2a54a1290501d653841"
+    },
+    {
+      "path": "review-round2-2026-11-01/source-access-scan.json",
+      "sha256": "41afe63f89bf2c7f7dcbbc6e0585502554d487de698e3009afa3ebed9aa13dae"
+    }
+  ]
+}

@@ -1,24 +1,26 @@
 {
-  "schemaVersion": 3,
-  "recordedAt": "2026-11-01T06:47:50.586381+00:00",
+  "schemaVersion": 4,
+  "recordedAt": "2026-11-01T11:23:22.371151+00:00",
   "canonicalUrl": "https://portal-stage-eight.vercel.app",
-  "deployedSource": "3c2b310198b4b3cf405d333f3c356837aeb39041",
-  "latestRuntimeCommit": "36d31829b5f3b2e368ec96b6c54ab548884b776f",
+  "deployedSource": "fece42381d569bd70b9ce81055c71b664000e9a1",
+  "latestRuntimeCommit": "fece42381d569bd70b9ce81055c71b664000e9a1",
   "deployment": {
-    "observedAt": "2026-11-01T06:35:01.801Z",
-    "id": "dpl_8oGMFeUjC8J4rtAtpRopgUUGasv2",
-    "readyState": "READY",
-    "target": "production",
-    "url": "portal-stage-4okga95pq-yadneshsalvis-projects.vercel.app",
+    "observedAt": "2026-11-01T11:22:31.226286+00:00",
+    "source": "fece42381d569bd70b9ce81055c71b664000e9a1",
+    "method": "Exact git archive; only Vercel project linkage added. CLI inspect independently confirmed Ready and canonical aliases.",
+    "deploymentId": "dpl_91FUymt469TFNoo3iRnHSu3S41R9",
+    "url": "https://portal-stage-56170j7vw-yadneshsalvis-projects.vercel.app",
+    "canonicalUrl": "https://portal-stage-eight.vercel.app",
     "aliases": [
       "portal-stage-eight.vercel.app",
       "portal-stage-yadneshsalvis-projects.vercel.app"
     ],
-    "gitCommit": "3c2b310198b4b3cf405d333f3c356837aeb39041",
-    "gitRef": "main"
+    "status": "READY",
+    "target": "production",
+    "localBuildId": "f1DrX0vL5US-p6LTr5BWa"
   },
-  "buildId": "-iU6lkbQ7bzzuyamjWIuN",
-  "sourceBoundary": "Later commits contain documentation and evidence only; deployed application source is unchanged.",
+  "buildId": "f1DrX0vL5US-p6LTr5BWa",
+  "sourceBoundary": "Later commits contain documentation and evidence only. The application was deployed from this exact Git archive.",
   "license": "MIT",
   "repository": {
     "url": "https://github.com/yadneshSalvi/PORTAL-STAGE",
@@ -29,20 +31,23 @@
     "coordinatingConversation": "01a190da-3cee-7a10-b7c1-e0cdbb379510"
   },
   "gates": {
-    "recordedAt": "2026-11-01T06:33:28.101Z",
-    "sourceCommit": "36d31829b5f3b2e368ec96b6c54ab548884b776f",
-    "buildId": "-iU6lkbQ7bzzuyamjWIuN",
+    "sourceCommit": "fece42381d569bd70b9ce81055c71b664000e9a1",
+    "testStartedAt": "2026-11-01T11:16:58Z",
+    "buildWrittenAt": "2026-11-01T11:17:23Z",
     "ordinary": {
-      "passed": 435,
+      "passed": 455,
       "skipped": 7,
-      "filesPassed": 36,
+      "failed": 0,
+      "filesPassed": 40,
       "filesSkipped": 2,
       "reportedSeconds": 1.58
     },
     "typecheck": "passed",
     "format": "passed",
-    "build": "passed",
     "diffCheck": "passed",
+    "build": "passed",
+    "buildId": "f1DrX0vL5US-p6LTr5BWa",
+    "staticPages": 18,
     "nextEnvironmentDeclarationDrift": false,
     "actualNeon": {
       "passed": 7,
@@ -52,7 +57,8 @@
       "hashesMatchFinalSource": true,
       "artifact": "neon-checks.json"
     },
-    "browser": "local-browser.md"
+    "localBrowserCheckpoint": "c59a5bb5e65e4cccf8414c0af479facdbf9e5d43",
+    "finalPresentationFixes": "Canonical room labels; 14px guest/error typography; hand-cue hints moved to controls."
   },
   "productionSoloLimits": {
     "globalDaily": 100,
@@ -60,65 +66,48 @@
     "perAccountDaily": 3,
     "minutes": 20
   },
-  "productionAcceptance": {
-    "soloShow": "ps_0a8c9535725b10ad",
-    "operatorCount": 1,
-    "realOwnedTwitchAccounts": 2,
-    "independentAudienceClaim": false,
-    "physicalCamera": true,
-    "microphone": false,
-    "actualTwitchBroadcast": false,
-    "obsUsed": false,
-    "realChoiceWindowsPassed": 6,
-    "realPresenceCommandsIngested": ["rain", "thunder", "cheer"],
-    "propReturned": {
-      "owner": "A",
-      "version": 6,
-      "wetness": 0.52,
-      "repairPatch": "coral"
-    },
-    "programResolution": [1920, 1080],
-    "earlyEnd": {
-      "observedAt": "2026-11-01T06:41:52.696Z",
-      "showId": "ps_0a8c9535725b10ad",
-      "phase": "ended",
-      "solo": {
-        "endsAt": 1793516115445,
-        "status": "closed"
-      },
-      "reservationStatus": "closed",
-      "expiresAt": 1793516115445,
-      "closedAt": 1793515309398,
-      "issuedGrantCount": 3,
-      "quotaActive": false,
-      "liveKitRooms": [],
-      "manualRetryUsed": false,
-      "method": "Read-only state and LiveKit Cloud listRooms for this owned show after the End-show UI returned successfully."
-    },
-    "browserWarningErrorLogs": {
-      "soloStudio": [],
-      "program": [],
-      "signedOutStories": []
-    }
-  },
   "signedOutProductionRehearsals": [
     {
-      "showId": "ps_893ab9b1080d2a87",
+      "showId": "ps_924cf2bd19142b0a",
       "episode": "Borrowed Weather",
-      "choices": ["wild", "pip3", "shy", "chase"],
-      "exportSequence": 27,
-      "endedSequence": 28,
-      "record": "review-round2-2026-11-01/signed-out-weather-record.json"
+      "choices": ["gentle", "pip3", "shy", "chase"],
+      "endedExportSequence": 28,
+      "record": "review-round3-2026-11-01/production-weather-record.json"
     },
     {
-      "showId": "ps_7fb2b599196311b7",
+      "showId": "ps_345d878d804fbde2",
       "episode": "Midnight Parcel",
       "choices": ["garden", "keep"],
-      "exportSequence": 20,
-      "endedSequence": 21,
-      "record": "review-round2-2026-11-01/signed-out-parcel-record.json"
+      "endedExportSequence": 21,
+      "record": "review-round3-2026-11-01/production-parcel-record.json"
     }
   ],
+  "currentBrowserScope": {
+    "illustratedRehearsals": true,
+    "newPhysicalCamera": false,
+    "newMicrophone": false,
+    "newLiveKitSession": false,
+    "newTwitchMessage": false,
+    "newModelRequest": false,
+    "actualTwitchBroadcast": false,
+    "obsUsed": false,
+    "browserWarningErrorLogs": {
+      "rehearsalStudio": [],
+      "rehearsalProgram": []
+    },
+    "existingClosedSoloUiOnly": "ps_0a8c9535725b10ad"
+  },
+  "layout": {
+    "states": 20,
+    "widths": [1280, 1440, 1920, 390],
+    "observations": 80,
+    "overflowFindings": 0,
+    "maximumDomTextSizes": 3,
+    "canvasOnlyProgramHandledSeparately": true,
+    "deployedBeforeImages": 16,
+    "deployedAfterImages": 22,
+    "artifact": "ui-pass-2026-11-01/production-layout.json"
+  },
   "remainingAcceptance": [
     "Two consenting performers on separate networks with microphones and real OBS Twitch broadcast",
     "Guest replacement while actual OBS output continues",
@@ -127,148 +116,309 @@
     "Isolated visual checks of short-lived rain/thunder presence effects",
     "Current-release real timed expiry/provider-outage behavior; regression coverage and historical prior-release expiry are separate evidence"
   ],
-  "historicalRelease": "round-1-release.md",
-  "historicalManifest": "round-1-release-manifest.json",
+  "historicalRelease": "round-2-release.md",
+  "historicalManifest": "round-2-release-manifest.json",
+  "historicalRealMediaBoundary": "Round-two real camera/Twitch run and manual early End are preserved historically; not repeated or relabeled as current real-media acceptance.",
   "artifacts": [
     {
-      "path": "review-round2-2026-11-01/deployment.json",
-      "sha256": "b9c2e4506347af8b1d6c6847b4bdbf8885f3b099e7ae1434949f32830859b97b"
+      "path": "review-round3-2026-11-01/deployment.json",
+      "sha256": "734e5ae37ca914deb3ecbee40da53107748171e4994ae8416ecb93e03382c7e7"
     },
     {
-      "path": "review-round2-2026-11-01/final-progress-layout.json",
-      "sha256": "171089987c57d5fdc8182f18262a456cf12e6096d0917ad016593aa57450d1b1"
+      "path": "review-round3-2026-11-01/gates.json",
+      "sha256": "c53ec63eee84bd001efec5925b3ee8a141ec87c33aed976beebafa06094b72b0"
     },
     {
-      "path": "review-round2-2026-11-01/final-weather-progress-layout.json",
-      "sha256": "0480bd209010ce9278cfe30075a499801d539aea20c1acdc277d27a30fafae58"
+      "path": "review-round3-2026-11-01/local-browser.md",
+      "sha256": "4d0267dc3a11d903c95b24ea0e2d3ffdb5f9d557a0b28db275dac5c72b681fd6"
     },
     {
-      "path": "review-round2-2026-11-01/gates.json",
-      "sha256": "84294e0b51121044ee4aa0b196c186958330ad26e66be9200179c93775cba6e7"
+      "path": "review-round3-2026-11-01/local-parcel-record.json",
+      "sha256": "36986a16267ac0e828978f376a90ceb1f67469bbabae5c47cf1cb7353c122391"
     },
     {
-      "path": "review-round2-2026-11-01/how-built-links.json",
-      "sha256": "d7076f3e58bb8979ddacd905b7258e2a8d96591d28bc99aa99e85e2c9024f7bc"
+      "path": "review-round3-2026-11-01/local-weather-record.json",
+      "sha256": "465fcff1b0f9f29fd9b380ba20a42a23f7ccec33ef3a0a51327b51c8c989431c"
     },
     {
-      "path": "review-round2-2026-11-01/local-browser.md",
-      "sha256": "3f24ff826ce9a21dbe150a22858d0b553d993433442c2e86fb2514b68f9d9f3c"
+      "path": "review-round3-2026-11-01/neon-checks.json",
+      "sha256": "eff2b3f7c9b3cda9a225b351ac2e0bb8ad9fa7907c683ea391ddb09515a574fc"
     },
     {
-      "path": "review-round2-2026-11-01/local-mobile.jpg",
-      "sha256": "5fe98882b63b608192ce603f97e83a02dda5cf039673660b50d403bb8c7ca3b5"
+      "path": "review-round3-2026-11-01/p0-browser.md",
+      "sha256": "3e292d87dd9e66fb55b6727e923ee111e8014f8a01cf3a4090beca887a69fef2"
     },
     {
-      "path": "review-round2-2026-11-01/local-parcel-delivered-stage.jpg",
-      "sha256": "c72fa014c3d1545fc205bda22677a88d72bfb4f24867d5a54e40efd89e01824c"
+      "path": "review-round3-2026-11-01/p0-deployment.json",
+      "sha256": "1e3a3dd2cf828cba41716898fca99a2b8321bbc2ed51e2eb22c4213860561464"
     },
     {
-      "path": "review-round2-2026-11-01/local-parcel-delivered.jpg",
-      "sha256": "a6fa59c0db2af57a61d1ed856e80525f4aed9ee8194d5ce6085e1813bf66ba6d"
+      "path": "review-round3-2026-11-01/production-browser.md",
+      "sha256": "2bc540d5eefe80204dc01c09795eaf6faa56b472e445e3df7f0c393cca9e83ed"
     },
     {
-      "path": "review-round2-2026-11-01/local-parcel-record.json",
-      "sha256": "2b06f01ed2487b7af2796c889f92d8f6a91c9917932e0998117a6abd3a9e8530"
+      "path": "review-round3-2026-11-01/production-parcel-record.json",
+      "sha256": "92fd2a54126c5841470b1be9297180c13c004f41856161a834053524dd4c856b"
     },
     {
-      "path": "review-round2-2026-11-01/local-parcel-stars.jpg",
-      "sha256": "4a054ed38cbcff217bb59b65c30e70bcd05257ef6df7a84355590574b1b4ebe7"
+      "path": "review-round3-2026-11-01/production-weather-record.json",
+      "sha256": "b2126c8152501ea0abed83aa0befa5315f7739f131b00c66407d1dc8e5a1681a"
     },
     {
-      "path": "review-round2-2026-11-01/local-weather-record.json",
-      "sha256": "076af85d7727665b8ecfea934a314a6c5cb7256b0acd161d564d7bd436371ccf"
+      "path": "review-round3-2026-11-01/source-access-scan.json",
+      "sha256": "abbdd9cf6789b77a30c344c98680f3761dab8ce20bb02afd706cb8ee5aceedf4"
     },
     {
-      "path": "review-round2-2026-11-01/local-weather-shelter.jpg",
-      "sha256": "815f94e03175dc466ebfb0ef08178daa5d7c02248125cbec593f4308f31d6535"
+      "path": "ui-pass-2026-11-01/README.md",
+      "sha256": "3beab43c133a21aa87b7e48763b2334a3964b70db6f9ebf18d3137dcf0439eb5"
     },
     {
-      "path": "review-round2-2026-11-01/local-weather-tally-stage.jpg",
-      "sha256": "9897c001c8679c6683cfa640935ec306125c81a09f4e7207a6efb283b523f220"
+      "path": "ui-pass-2026-11-01/after-backstage-entry.png",
+      "sha256": "d5cee4841f49d5e37677b6f4454b867efd5ec63a9eb10ff445f662bab3caf58e"
     },
     {
-      "path": "review-round2-2026-11-01/local-weather-tally.jpg",
-      "sha256": "13f3f45ac8926edbbfbdd793c22d937aee45cb7c3c1b1bca85b98c03495c0c55"
+      "path": "ui-pass-2026-11-01/after-camera-dialog.png",
+      "sha256": "0cf79f3ba5b789b778ff949f509be2d1a103875e1a16f461e43cff41fc06e9a3"
     },
     {
-      "path": "review-round2-2026-11-01/neon-checks.json",
-      "sha256": "32dfab0ec993add3c205cb7bc0032cbe467cb517527ba5cabff50c401c170781"
+      "path": "ui-pass-2026-11-01/after-captures.json",
+      "sha256": "0412d9f59b38ab52e663b846746160982ced9d315e8810f2bc4a75daa530e393"
     },
     {
-      "path": "review-round2-2026-11-01/production-browser.md",
-      "sha256": "be508be87bf232251cc8d9f60481508406f3c0e3d140e725da094676a85620e7"
+      "path": "ui-pass-2026-11-01/after-end-dialog.png",
+      "sha256": "e73dc23610be0cf5aeb46bf0fb00f05da7a1f20f49ebc55352f127c98fbc8cf2"
     },
     {
-      "path": "review-round2-2026-11-01/production-closure-steps.json",
-      "sha256": "504008a125fd7612d397a443d4235aa22302879ca54f40bbd6dcc8875c7fc799"
+      "path": "ui-pass-2026-11-01/after-guide.png",
+      "sha256": "455c43656a5a8135158fd1d0f67efb350e72fe9739a92389bd1f6656424a35a7"
     },
     {
-      "path": "review-round2-2026-11-01/production-program-closed.jpg",
-      "sha256": "ae2c7d60471bb5091b93c24fa59e82e303d2dde91b4950678ac30a40b0f69dca"
+      "path": "ui-pass-2026-11-01/after-how-built.png",
+      "sha256": "73ba6f1bd6b7fd105d604d642d645c0b8fd3c119a5efd30531e2c1da51cd544c"
     },
     {
-      "path": "review-round2-2026-11-01/production-program-playback.json",
-      "sha256": "7fbdb0495bf3f432355e77359b436c928aa4f6ee0ff2846b2e109e2a3490262b"
+      "path": "ui-pass-2026-11-01/after-inspect.png",
+      "sha256": "729ea762f829213afd9e47d60ec3da57de9e5f0f71180b47459c1a3e1c4e62ab"
     },
     {
-      "path": "review-round2-2026-11-01/production-solo-backstage.jpg",
-      "sha256": "be2b9cd030ab8f6af7340ce9d27a19a257c263b09d46fc6b3cc4379ef8c8ee96"
+      "path": "ui-pass-2026-11-01/after-landing-mobile.png",
+      "sha256": "57970d0717ec8544354fc80611c39efcd4456e40c6d9c8dbb3afe8e401e95440"
     },
     {
-      "path": "review-round2-2026-11-01/production-solo-closed.jpg",
-      "sha256": "1cdbc068ceddd0bdd8c77f3c4514f2c6aeccde43886f5c07eb9cfce2d3b5e686"
+      "path": "ui-pass-2026-11-01/after-landing.png",
+      "sha256": "554ca7a1c2d1621c8d90966888fd223ac63c13d2c16c1b7772131ec314eee324"
     },
     {
-      "path": "review-round2-2026-11-01/production-solo-closure.json",
-      "sha256": "e151c5adde86d3072451e6f453267b2f2388afeaf8730b0e4d795b530ede3206"
+      "path": "ui-pass-2026-11-01/after-not-found.png",
+      "sha256": "c050307c2a6f1d5e19125c18e4dafae2609d63eac2ef0c6a65a5f1dba3ad7ea4"
     },
     {
-      "path": "review-round2-2026-11-01/production-story-record.json",
-      "sha256": "6c665a18e3b134b3ac04dd8977695cdf710c742e2e24609b62d365fa19bbda0d"
+      "path": "ui-pass-2026-11-01/after-output-dialog.png",
+      "sha256": "7c8461a1ebbb716d2521d3ec3ff9edd1770deaa48a25feff715d436f405e8a2c"
     },
     {
-      "path": "review-round2-2026-11-01/production-twitch-messages.json",
-      "sha256": "817b1985146eed7df7aac2ebeb3b5af9d9c1be26476f7696249990f24b124106"
+      "path": "ui-pass-2026-11-01/after-parcel-ended.png",
+      "sha256": "4fd2b0326b60871670c860e4eadc38327afcda222cd0dcea252842b709f847e2"
     },
     {
-      "path": "review-round2-2026-11-01/public-links.json",
-      "sha256": "e92c6530c0a228949949dbbf97a2dc1a2df17ab0478c5f9db18c1590c192ea81"
+      "path": "ui-pass-2026-11-01/after-parcel-finale.png",
+      "sha256": "e7c5cd28b2c95ffed19445786f7077efaa8e648349c5f4d6f54e9a8dfca7ea06"
     },
     {
-      "path": "review-round2-2026-11-01/responsive-parcel.json",
-      "sha256": "b56b80b372ed02743dd38e14459ebd5659cbc0be66f3c71dfdce72015daedd9d"
+      "path": "ui-pass-2026-11-01/after-parcel-mobile.png",
+      "sha256": "3e2fbdd85ee522ea4eb03087b36c13bf700428d2df5026c88f22761545f3f712"
     },
     {
-      "path": "review-round2-2026-11-01/responsive-widths.json",
-      "sha256": "547f8d17c51640b1b5fcb5d304b46060ce9a5587bf240b4e34fc67931e229869"
+      "path": "ui-pass-2026-11-01/after-parcel-studio.png",
+      "sha256": "ac49bdba41c684bc9fbbb0526f5169190331e82a007af681787f5d97e89145de"
     },
     {
-      "path": "review-round2-2026-11-01/signed-out-parcel-ended.jpg",
-      "sha256": "3434f0e30f22484bc538a664937e4b428f386fa6052f9809b81b06c06b25aab6"
+      "path": "ui-pass-2026-11-01/after-picker.png",
+      "sha256": "0ee06a3c48b361164aac99f748b9790a3c8b88b2abe12455035abcbf46f08203"
     },
     {
-      "path": "review-round2-2026-11-01/signed-out-parcel-garden.jpg",
-      "sha256": "d07b7c06c9db22283c5497b83d442411b797f2a43288fece16adcee67e9e8c4e"
+      "path": "ui-pass-2026-11-01/after-presets.png",
+      "sha256": "a29e8bb10987fa59d0e3f91bfb385b77025cd5f9364871d69319fc4757418385"
     },
     {
-      "path": "review-round2-2026-11-01/signed-out-parcel-record.json",
-      "sha256": "a1ad5e78ff5263217db88aa30f8226071358655fdd7b073a9a3e8e2e56dadec2"
+      "path": "ui-pass-2026-11-01/after-program.png",
+      "sha256": "d28a67665478a03a0f2782dc2feb7f3b15b526615132b32955442467d345f8b0"
     },
     {
-      "path": "review-round2-2026-11-01/signed-out-weather-chase.jpg",
-      "sha256": "b891f91762ffff023bf2a2994530da2fb51030d04194b7f15d3abd8e6fd1b3e0"
+      "path": "ui-pass-2026-11-01/after-solo-closed.png",
+      "sha256": "607ae9be332d4fad3b8b8eae768ed4704641fb7e94c1d9efe3251ac0bbfae012"
     },
     {
-      "path": "review-round2-2026-11-01/signed-out-weather-ended.jpg",
-      "sha256": "e80d946fe015f4932cdcbde74a109b34a92cb700ad24524a25c499f6c8397e4d"
+      "path": "ui-pass-2026-11-01/after-vote.png",
+      "sha256": "7441a9c50b7cf7c5c7f172e7a058204dea224492f95b156f3889b261dd20cf5f"
     },
     {
-      "path": "review-round2-2026-11-01/signed-out-weather-record.json",
-      "sha256": "b830318633fdabce298fa5068bb29589d97feb9ab8f2e2a54a1290501d653841"
+      "path": "ui-pass-2026-11-01/after-weather-ended.png",
+      "sha256": "d21d2c5a69e3f798175c7e76b56df17676f69c118f29f2c3bdf6bee7c8d34c4c"
     },
     {
-      "path": "review-round2-2026-11-01/source-access-scan.json",
-      "sha256": "41afe63f89bf2c7f7dcbbc6e0585502554d487de698e3009afa3ebed9aa13dae"
+      "path": "ui-pass-2026-11-01/after-weather-finale.png",
+      "sha256": "63fb4e7024ce654cfaf598f169285f32c0cbdd299db821089daed4e851a3d496"
+    },
+    {
+      "path": "ui-pass-2026-11-01/after-weather-studio.png",
+      "sha256": "e3911e3092d1420f0282b9441dcc318d83dee3d781bfa7a63d28fd849154cf55"
+    },
+    {
+      "path": "ui-pass-2026-11-01/before-backstage-entry.png",
+      "sha256": "a4b4c491aa9b796fac0ab67796ebd3106eb1d423ee37a8dade2bfe0b65bc7e83"
+    },
+    {
+      "path": "ui-pass-2026-11-01/before-camera-dialog.png",
+      "sha256": "2cce7f5ad207adf6bb78d2164d416fdc2d71fdc73f69f8dfc11825c1ce2d7b6c"
+    },
+    {
+      "path": "ui-pass-2026-11-01/before-captures.json",
+      "sha256": "7356178242c45be2da858c6ea814fc6ea273fac2926274f5b09d797e41c0b05f"
+    },
+    {
+      "path": "ui-pass-2026-11-01/before-end-dialog.png",
+      "sha256": "1676dbd51d6b832f338ef849ced2bcb95be1a7cdf005bbe186b2576277edff66"
+    },
+    {
+      "path": "ui-pass-2026-11-01/before-guide.png",
+      "sha256": "f2a4c25abbd355d9e24e538cce83366c5d5dd8a00e639cceef58738d576f6f0f"
+    },
+    {
+      "path": "ui-pass-2026-11-01/before-how-built.png",
+      "sha256": "abb457ece320dc7813f38fdf15d63a3a2cec71ef2f3d8c58019034e48943c2d5"
+    },
+    {
+      "path": "ui-pass-2026-11-01/before-inspect.png",
+      "sha256": "8ac0c7e7e11dfbf4be5b5eb06609227b2cccea817f7859993e05c07b9f6e0325"
+    },
+    {
+      "path": "ui-pass-2026-11-01/before-landing.png",
+      "sha256": "10cc16d38dc1e67b78849fedd0f35e914ce6ef8a6c0a47deeb08da833b1ab52d"
+    },
+    {
+      "path": "ui-pass-2026-11-01/before-not-found.png",
+      "sha256": "c0243ce82d13ce08068f9110dde0c34a400afc082f5716d1597fffdaea892b52"
+    },
+    {
+      "path": "ui-pass-2026-11-01/before-output-dialog.png",
+      "sha256": "4e9f7f374a51e96a47ae3faf47f2c18189824820b83893bb66f849c06f40b1e5"
+    },
+    {
+      "path": "ui-pass-2026-11-01/before-parcel-studio.png",
+      "sha256": "d9d2517827639b89a3a9837eb77483acbdb530b075454c6c3638f050aae4bc50"
+    },
+    {
+      "path": "ui-pass-2026-11-01/before-picker.png",
+      "sha256": "048db24692569b953ab4e1d5fe9d5c88ffcef5a45f1138b287394928e9724cb7"
+    },
+    {
+      "path": "ui-pass-2026-11-01/before-presets.png",
+      "sha256": "af905dc13748ed033b8464dd91c1a87bee12171466f0ef718d703f9920e5f757"
+    },
+    {
+      "path": "ui-pass-2026-11-01/before-program.png",
+      "sha256": "1ed5c24f204fd03019ba54bae215c786862c1fefd41c31caa0b5c1f68e79a113"
+    },
+    {
+      "path": "ui-pass-2026-11-01/before-solo-closed.png",
+      "sha256": "e0afe5f0c30a996c617b47958e6919f1fae034160951c750f5887274caa00983"
+    },
+    {
+      "path": "ui-pass-2026-11-01/before-vote.png",
+      "sha256": "db553226ada6be4d1352f76caa5303ea5e8f53895641036ef38b9ad0eceea3e7"
+    },
+    {
+      "path": "ui-pass-2026-11-01/before-weather-studio.png",
+      "sha256": "75f15be0d5933447f7b879b16d4a81c461dfa1723b8698dbd3ac235b3d5bebc4"
+    },
+    {
+      "path": "ui-pass-2026-11-01/local-backstage-entry.png",
+      "sha256": "d4f43ea338b7ed72b92c32c95e7594524aeefa25e2e3e36c5426e9004ec52a75"
+    },
+    {
+      "path": "ui-pass-2026-11-01/local-camera-dialog.png",
+      "sha256": "f8022b712797f10ab3eb98e24b60b70537a7226ff8bc6544cd5b9fdd9d93e6ae"
+    },
+    {
+      "path": "ui-pass-2026-11-01/local-end-dialog.png",
+      "sha256": "235b06f133bd2418d4a8694fb5be2ee7d760ec5add5ff528db27be1f201b94b1"
+    },
+    {
+      "path": "ui-pass-2026-11-01/local-guide.png",
+      "sha256": "d5a5d162c3b1b1764171fcd00eeac037822d2f05a2f4ae05b2f26b9954551f31"
+    },
+    {
+      "path": "ui-pass-2026-11-01/local-how-built.png",
+      "sha256": "a84238feef8f6ae9eef04b133d16477b99b19e60a606a7ab398c134d3dce49e4"
+    },
+    {
+      "path": "ui-pass-2026-11-01/local-inspect.png",
+      "sha256": "8c33a771fa1d54ac7fc83b39a876ac484d4b7ca06e67b9ca4e3570b8fd499ca5"
+    },
+    {
+      "path": "ui-pass-2026-11-01/local-landing.png",
+      "sha256": "bdb02fdee631351e364002aa0d3e5b55ce184b3c8dad2e5ebc7c3113f3367d88"
+    },
+    {
+      "path": "ui-pass-2026-11-01/local-layout.json",
+      "sha256": "1adb19114e1b49bae3f90a712c72e0c803c1102b397e37f39677422687ab0e8d"
+    },
+    {
+      "path": "ui-pass-2026-11-01/local-not-found.png",
+      "sha256": "ffaec43e48b21a33e497e01adf9f234b8ac2af745b150a7f60b182379ebb8595"
+    },
+    {
+      "path": "ui-pass-2026-11-01/local-output-dialog.png",
+      "sha256": "fe7d3199b26450b8bd5b3b67b00c42f803ae8a97df3cd55b402bbd06c74a7aef"
+    },
+    {
+      "path": "ui-pass-2026-11-01/local-parcel-ended.png",
+      "sha256": "99ccbda9257201a72a98183b76723c3687a8146ede214d02793787973bca2928"
+    },
+    {
+      "path": "ui-pass-2026-11-01/local-parcel-finale.png",
+      "sha256": "294b9af4162cf4df30343983ab216ac496aac5eacb4ee6987b4633278e93e044"
+    },
+    {
+      "path": "ui-pass-2026-11-01/local-parcel-studio.png",
+      "sha256": "20e02886fd910d75aa967c3522fa8c76de9c895ac28606103fdf4276d96cc285"
+    },
+    {
+      "path": "ui-pass-2026-11-01/local-picker.png",
+      "sha256": "b9dca90daf8b06e55eaf560b6babfc0c7bec0341baa035f3f172f2b61521416d"
+    },
+    {
+      "path": "ui-pass-2026-11-01/local-presets.png",
+      "sha256": "4126106b4db19f8f40d13e37c5d4ba183e992c180e3475af1b3430ecd44d6de5"
+    },
+    {
+      "path": "ui-pass-2026-11-01/local-program.png",
+      "sha256": "8b9836e0c99ba315c12931415231801169987c5b4e018539e0a6b7427457efe4"
+    },
+    {
+      "path": "ui-pass-2026-11-01/local-vote.png",
+      "sha256": "e81148cb4179153f83b8efe011b762ca20fdfb39e2757470bee0b5fc19f8da77"
+    },
+    {
+      "path": "ui-pass-2026-11-01/local-weather-ended.png",
+      "sha256": "4380e8ed6b6458d8c14df99fddbf1daa41e39ae282b88b97a065323148854bfc"
+    },
+    {
+      "path": "ui-pass-2026-11-01/local-weather-finale.png",
+      "sha256": "584cad294c0085257a18f6a72bf680a1199fd9fd9383a189b38a4074b8769d4f"
+    },
+    {
+      "path": "ui-pass-2026-11-01/local-weather-studio.png",
+      "sha256": "cd4710b3534534d1dcfc4b383ab8c092454117e889af0fcae2dae7c30abc346b"
+    },
+    {
+      "path": "ui-pass-2026-11-01/p0-picker.png",
+      "sha256": "c070e135c25c7baaab6887f5dbb8279f7f6a26814b3c8fa35643f69091539154"
+    },
+    {
+      "path": "ui-pass-2026-11-01/production-layout.json",
+      "sha256": "30241c2568c2aa858225383e00eda24cc35c7302ae65028f30690205e3db48a9"
     }
   ]
 }

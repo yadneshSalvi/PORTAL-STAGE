@@ -1,0 +1,135 @@
+{
+  "deployedRuntime": "36d31829b5f3b2e368ec96b6c54ab548884b776f",
+  "browser": "Signed-out Chrome for rehearsals/static pages; in-app browser for the existing closed solo show. Initial tiled captures were discarded.",
+  "conditions": "Deployed application. Rehearsals use synthetic plates and test ballots; closed solo screenshot is the historical real show after shutdown. No media was started, no private camera frames or invitation codes were captured.",
+  "images": [
+    {
+      "path": "before-backstage-entry.png",
+      "sha256": "a4b4c491aa9b796fac0ab67796ebd3106eb1d423ee37a8dade2bfe0b65bc7e83",
+      "width": 1440,
+      "height": 1000,
+      "capturedAt": "2026-11-01T10:38:18.564803+00:00",
+      "rgbStandardDeviationSum": 52.417
+    },
+    {
+      "path": "before-camera-dialog.png",
+      "sha256": "2cce7f5ad207adf6bb78d2164d416fdc2d71fdc73f69f8dfc11825c1ce2d7b6c",
+      "width": 1440,
+      "height": 1000,
+      "capturedAt": "2026-11-01T10:38:38.671366+00:00",
+      "rgbStandardDeviationSum": 79.916
+    },
+    {
+      "path": "before-end-dialog.png",
+      "sha256": "1676dbd51d6b832f338ef849ced2bcb95be1a7cdf005bbe186b2576277edff66",
+      "width": 1440,
+      "height": 1000,
+      "capturedAt": "2026-11-01T10:39:01.723897+00:00",
+      "rgbStandardDeviationSum": 76.279
+    },
+    {
+      "path": "before-guide.png",
+      "sha256": "f2a4c25abbd355d9e24e538cce83366c5d5dd8a00e639cceef58738d576f6f0f",
+      "width": 1440,
+      "height": 1000,
+      "capturedAt": "2026-11-01T10:38:18.001458+00:00",
+      "rgbStandardDeviationSum": 83.528
+    },
+    {
+      "path": "before-how-built.png",
+      "sha256": "abb457ece320dc7813f38fdf15d63a3a2cec71ef2f3d8c58019034e48943c2d5",
+      "width": 1440,
+      "height": 1000,
+      "capturedAt": "2026-11-01T10:38:17.712671+00:00",
+      "rgbStandardDeviationSum": 82.894
+    },
+    {
+      "path": "before-inspect.png",
+      "sha256": "8ac0c7e7e11dfbf4be5b5eb06609227b2cccea817f7859993e05c07b9f6e0325",
+      "width": 1440,
+      "height": 1000,
+      "capturedAt": "2026-11-01T10:39:27.036211+00:00",
+      "rgbStandardDeviationSum": 84.529
+    },
+    {
+      "path": "before-landing.png",
+      "sha256": "10cc16d38dc1e67b78849fedd0f35e914ce6ef8a6c0a47deeb08da833b1ab52d",
+      "width": 1440,
+      "height": 1000,
+      "capturedAt": "2026-11-01T10:38:12.966373+00:00",
+      "rgbStandardDeviationSum": 261.724
+    },
+    {
+      "path": "before-not-found.png",
+      "sha256": "c0243ce82d13ce08068f9110dde0c34a400afc082f5716d1597fffdaea892b52",
+      "width": 1440,
+      "height": 1000,
+      "capturedAt": "2026-11-01T10:38:18.144707+00:00",
+      "rgbStandardDeviationSum": 55.959
+    },
+    {
+      "path": "before-output-dialog.png",
+      "sha256": "4e9f7f374a51e96a47ae3faf47f2c18189824820b83893bb66f849c06f40b1e5",
+      "width": 1440,
+      "height": 1000,
+      "capturedAt": "2026-11-01T10:38:39.322087+00:00",
+      "rgbStandardDeviationSum": 93.791
+    },
+    {
+      "path": "before-parcel-studio.png",
+      "sha256": "d9d2517827639b89a3a9837eb77483acbdb530b075454c6c3638f050aae4bc50",
+      "width": 1440,
+      "height": 1000,
+      "capturedAt": "2026-11-01T10:39:26.532089+00:00",
+      "rgbStandardDeviationSum": 101.294
+    },
+    {
+      "path": "before-picker.png",
+      "sha256": "048db24692569b953ab4e1d5fe9d5c88ffcef5a45f1138b287394928e9724cb7",
+      "width": 1440,
+      "height": 1000,
+      "capturedAt": "2026-11-01T10:38:19.014533+00:00",
+      "rgbStandardDeviationSum": 247.907
+    },
+    {
+      "path": "before-presets.png",
+      "sha256": "af905dc13748ed033b8464dd91c1a87bee12171466f0ef718d703f9920e5f757",
+      "width": 1440,
+      "height": 1000,
+      "capturedAt": "2026-11-01T10:39:27.706790+00:00",
+      "rgbStandardDeviationSum": 92.9
+    },
+    {
+      "path": "before-program.png",
+      "sha256": "1ed5c24f204fd03019ba54bae215c786862c1fefd41c31caa0b5c1f68e79a113",
+      "width": 1440,
+      "height": 1000,
+      "capturedAt": "2026-11-01T10:39:01.324840+00:00",
+      "rgbStandardDeviationSum": 94.103
+    },
+    {
+      "path": "before-vote.png",
+      "sha256": "db553226ada6be4d1352f76caa5303ea5e8f53895641036ef38b9ad0eceea3e7",
+      "width": 1440,
+      "height": 1000,
+      "capturedAt": "2026-11-01T10:38:47.371368+00:00",
+      "rgbStandardDeviationSum": 111.933
+    },
+    {
+      "path": "before-weather-studio.png",
+      "sha256": "75f15be0d5933447f7b879b16d4a81c461dfa1723b8698dbd3ac235b3d5bebc4",
+      "width": 1440,
+      "height": 1000,
+      "capturedAt": "2026-11-01T10:38:38.271327+00:00",
+      "rgbStandardDeviationSum": 100.807
+    },
+    {
+      "path": "before-solo-closed.png",
+      "sha256": "e0afe5f0c30a996c617b47958e6919f1fae034160951c750f5887274caa00983",
+      "width": 1425,
+      "height": 990,
+      "capturedAt": "2026-11-01T10:42:04.008762+00:00",
+      "rgbStandardDeviationSum": 93.761
+    }
+  ]
+}

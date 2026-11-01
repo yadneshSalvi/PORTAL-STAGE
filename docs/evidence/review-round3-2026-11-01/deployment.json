@@ -1,0 +1,15 @@
+{
+  "observedAt": "2026-11-01T11:22:31.226286+00:00",
+  "source": "fece42381d569bd70b9ce81055c71b664000e9a1",
+  "method": "Exact git archive; only Vercel project linkage added. CLI inspect independently confirmed Ready and canonical aliases.",
+  "deploymentId": "dpl_91FUymt469TFNoo3iRnHSu3S41R9",
+  "url": "https://portal-stage-56170j7vw-yadneshsalvis-projects.vercel.app",
+  "canonicalUrl": "https://portal-stage-eight.vercel.app",
+  "aliases": [
+    "portal-stage-eight.vercel.app",
+    "portal-stage-yadneshsalvis-projects.vercel.app"
+  ],
+  "status": "READY",
+  "target": "production",
+  "localBuildId": "f1DrX0vL5US-p6LTr5BWa"
+}

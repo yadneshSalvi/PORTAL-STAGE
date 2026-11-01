@@ -1,0 +1,24 @@
+{
+  "observedAt": "2026-11-01T11:23:10.423Z",
+  "method": "Exact private values from the five existing environment files compared with current publishable files and every reachable Git history blob. No secret value is emitted.",
+  "envFiles": 5,
+  "distinctPrivateValues": 18,
+  "repositories": [
+    {
+      "project": "LIVEFORGE",
+      "workingFiles": 401,
+      "historyBlobs": 659,
+      "matches": [],
+      "forbiddenTrackedPaths": [],
+      "passed": true
+    },
+    {
+      "project": "PORTAL-STAGE",
+      "workingFiles": 396,
+      "historyBlobs": 546,
+      "matches": [],
+      "forbiddenTrackedPaths": [],
+      "passed": true
+    }
+  ]
+}

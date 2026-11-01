@@ -1,0 +1,208 @@
+{
+  "deployedRuntime": "fece42381d569bd70b9ce81055c71b664000e9a1",
+  "deploymentId": "dpl_91FUymt469TFNoo3iRnHSu3S41R9",
+  "canonicalUrl": "https://portal-stage-eight.vercel.app",
+  "browser": "Signed-out Chrome; in-app browser for the existing closed solo show.",
+  "conditions": "Illustrated rehearsals and labeled test ballots. No new camera, microphone, LiveKit session, Twitch message or broadcast. Closed solo is an existing historical show rendered by the current UI.",
+  "visualInspection": "All 22 images inspected in a contact sheet; Program also inspected individually at full size. Statistical nonblank check is supplementary, not a substitute for visual inspection.",
+  "images": [
+    {
+      "path": "after-backstage-entry.png",
+      "sha256": "d5cee4841f49d5e37677b6f4454b867efd5ec63a9eb10ff445f662bab3caf58e",
+      "width": 1440,
+      "height": 1000,
+      "capturedAt": "2026-11-01T11:21:20.495145+00:00",
+      "rgbStandardDeviationSum": 40.611,
+      "source": "fece42381d569bd70b9ce81055c71b664000e9a1"
+    },
+    {
+      "path": "after-camera-dialog.png",
+      "sha256": "0cf79f3ba5b789b778ff949f509be2d1a103875e1a16f461e43cff41fc06e9a3",
+      "width": 1440,
+      "height": 1000,
+      "capturedAt": "2026-11-01T11:19:01.610252+00:00",
+      "rgbStandardDeviationSum": 61.014,
+      "source": "fece42381d569bd70b9ce81055c71b664000e9a1"
+    },
+    {
+      "path": "after-end-dialog.png",
+      "sha256": "e73dc23610be0cf5aeb46bf0fb00f05da7a1f20f49ebc55352f127c98fbc8cf2",
+      "width": 1440,
+      "height": 1000,
+      "capturedAt": "2026-11-01T11:19:09.038774+00:00",
+      "rgbStandardDeviationSum": 41.816,
+      "source": "fece42381d569bd70b9ce81055c71b664000e9a1"
+    },
+    {
+      "path": "after-guide.png",
+      "sha256": "455c43656a5a8135158fd1d0f67efb350e72fe9739a92389bd1f6656424a35a7",
+      "width": 1440,
+      "height": 1000,
+      "capturedAt": "2026-11-01T11:21:19.050709+00:00",
+      "rgbStandardDeviationSum": 72.188,
+      "source": "fece42381d569bd70b9ce81055c71b664000e9a1"
+    },
+    {
+      "path": "after-how-built.png",
+      "sha256": "73ba6f1bd6b7fd105d604d642d645c0b8fd3c119a5efd30531e2c1da51cd544c",
+      "width": 1440,
+      "height": 1000,
+      "capturedAt": "2026-11-01T11:21:19.960314+00:00",
+      "rgbStandardDeviationSum": 75.481,
+      "source": "fece42381d569bd70b9ce81055c71b664000e9a1"
+    },
+    {
+      "path": "after-inspect.png",
+      "sha256": "729ea762f829213afd9e47d60ec3da57de9e5f0f71180b47459c1a3e1c4e62ab",
+      "width": 1440,
+      "height": 1000,
+      "capturedAt": "2026-11-01T11:19:07.245275+00:00",
+      "rgbStandardDeviationSum": 56.856,
+      "source": "fece42381d569bd70b9ce81055c71b664000e9a1"
+    },
+    {
+      "path": "after-landing-mobile.png",
+      "sha256": "57970d0717ec8544354fc80611c39efcd4456e40c6d9c8dbb3afe8e401e95440",
+      "width": 390,
+      "height": 844,
+      "capturedAt": "2026-11-01T11:21:42.366869+00:00",
+      "rgbStandardDeviationSum": 264.539,
+      "source": "fece42381d569bd70b9ce81055c71b664000e9a1"
+    },
+    {
+      "path": "after-landing.png",
+      "sha256": "554ca7a1c2d1621c8d90966888fd223ac63c13d2c16c1b7772131ec314eee324",
+      "width": 1440,
+      "height": 1000,
+      "capturedAt": "2026-11-01T11:18:55.877010+00:00",
+      "rgbStandardDeviationSum": 263.447,
+      "source": "fece42381d569bd70b9ce81055c71b664000e9a1"
+    },
+    {
+      "path": "after-not-found.png",
+      "sha256": "c050307c2a6f1d5e19125c18e4dafae2609d63eac2ef0c6a65a5f1dba3ad7ea4",
+      "width": 1440,
+      "height": 1000,
+      "capturedAt": "2026-11-01T11:21:24.114050+00:00",
+      "rgbStandardDeviationSum": 38.293,
+      "source": "fece42381d569bd70b9ce81055c71b664000e9a1"
+    },
+    {
+      "path": "after-output-dialog.png",
+      "sha256": "7c8461a1ebbb716d2521d3ec3ff9edd1770deaa48a25feff715d436f405e8a2c",
+      "width": 1440,
+      "height": 1000,
+      "capturedAt": "2026-11-01T11:19:02.552019+00:00",
+      "rgbStandardDeviationSum": 65.432,
+      "source": "fece42381d569bd70b9ce81055c71b664000e9a1"
+    },
+    {
+      "path": "after-parcel-ended.png",
+      "sha256": "4fd2b0326b60871670c860e4eadc38327afcda222cd0dcea252842b709f847e2",
+      "width": 1440,
+      "height": 1000,
+      "capturedAt": "2026-11-01T11:21:09.809457+00:00",
+      "rgbStandardDeviationSum": 69.834,
+      "source": "fece42381d569bd70b9ce81055c71b664000e9a1"
+    },
+    {
+      "path": "after-parcel-finale.png",
+      "sha256": "e7c5cd28b2c95ffed19445786f7077efaa8e648349c5f4d6f54e9a8dfca7ea06",
+      "width": 1440,
+      "height": 1000,
+      "capturedAt": "2026-11-01T11:21:09.183890+00:00",
+      "rgbStandardDeviationSum": 90.31,
+      "source": "fece42381d569bd70b9ce81055c71b664000e9a1"
+    },
+    {
+      "path": "after-parcel-mobile.png",
+      "sha256": "3e2fbdd85ee522ea4eb03087b36c13bf700428d2df5026c88f22761545f3f712",
+      "width": 390,
+      "height": 844,
+      "capturedAt": "2026-11-01T11:21:42.157621+00:00",
+      "rgbStandardDeviationSum": 110.062,
+      "source": "fece42381d569bd70b9ce81055c71b664000e9a1"
+    },
+    {
+      "path": "after-parcel-studio.png",
+      "sha256": "ac49bdba41c684bc9fbbb0526f5169190331e82a007af681787f5d97e89145de",
+      "width": 1440,
+      "height": 1000,
+      "capturedAt": "2026-11-01T11:20:57.011596+00:00",
+      "rgbStandardDeviationSum": 84.038,
+      "source": "fece42381d569bd70b9ce81055c71b664000e9a1"
+    },
+    {
+      "path": "after-picker.png",
+      "sha256": "0ee06a3c48b361164aac99f748b9790a3c8b88b2abe12455035abcbf46f08203",
+      "width": 1440,
+      "height": 1000,
+      "capturedAt": "2026-11-01T11:18:55.010280+00:00",
+      "rgbStandardDeviationSum": 234.586,
+      "source": "fece42381d569bd70b9ce81055c71b664000e9a1"
+    },
+    {
+      "path": "after-presets.png",
+      "sha256": "a29e8bb10987fa59d0e3f91bfb385b77025cd5f9364871d69319fc4757418385",
+      "width": 1440,
+      "height": 1000,
+      "capturedAt": "2026-11-01T11:19:08.162698+00:00",
+      "rgbStandardDeviationSum": 73.652,
+      "source": "fece42381d569bd70b9ce81055c71b664000e9a1"
+    },
+    {
+      "path": "after-program.png",
+      "sha256": "d28a67665478a03a0f2782dc2feb7f3b15b526615132b32955442467d345f8b0",
+      "width": 1440,
+      "height": 1000,
+      "capturedAt": "2026-11-01T11:19:17.691960+00:00",
+      "rgbStandardDeviationSum": 93.291,
+      "source": "fece42381d569bd70b9ce81055c71b664000e9a1"
+    },
+    {
+      "path": "after-solo-closed.png",
+      "sha256": "607ae9be332d4fad3b8b8eae768ed4704641fb7e94c1d9efe3251ac0bbfae012",
+      "width": 1280,
+      "height": 720,
+      "capturedAt": "2026-11-01T11:21:33.983826+00:00",
+      "rgbStandardDeviationSum": 77.783,
+      "source": "fece42381d569bd70b9ce81055c71b664000e9a1"
+    },
+    {
+      "path": "after-vote.png",
+      "sha256": "7441a9c50b7cf7c5c7f172e7a058204dea224492f95b156f3889b261dd20cf5f",
+      "width": 1440,
+      "height": 1000,
+      "capturedAt": "2026-11-01T11:19:10.421662+00:00",
+      "rgbStandardDeviationSum": 87.142,
+      "source": "fece42381d569bd70b9ce81055c71b664000e9a1"
+    },
+    {
+      "path": "after-weather-ended.png",
+      "sha256": "d21d2c5a69e3f798175c7e76b56df17676f69c118f29f2c3bdf6bee7c8d34c4c",
+      "width": 1440,
+      "height": 1000,
+      "capturedAt": "2026-11-01T11:20:01.806317+00:00",
+      "rgbStandardDeviationSum": 71.958,
+      "source": "fece42381d569bd70b9ce81055c71b664000e9a1"
+    },
+    {
+      "path": "after-weather-finale.png",
+      "sha256": "63fb4e7024ce654cfaf598f169285f32c0cbdd299db821089daed4e851a3d496",
+      "width": 1440,
+      "height": 1000,
+      "capturedAt": "2026-11-01T11:20:01.028914+00:00",
+      "rgbStandardDeviationSum": 88.529,
+      "source": "fece42381d569bd70b9ce81055c71b664000e9a1"
+    },
+    {
+      "path": "after-weather-studio.png",
+      "sha256": "e3911e3092d1420f0282b9441dcc318d83dee3d781bfa7a63d28fd849154cf55",
+      "width": 1440,
+      "height": 1000,
+      "capturedAt": "2026-11-01T11:19:01.094482+00:00",
+      "rgbStandardDeviationSum": 86.695,
+      "source": "fece42381d569bd70b9ce81055c71b664000e9a1"
+    }
+  ]
+}

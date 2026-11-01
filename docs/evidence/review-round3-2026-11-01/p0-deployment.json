@@ -1,0 +1,11 @@
+{
+  "source": "6a263042818db10e35ce0e8aadb114bd566ccefc",
+  "deploymentId": "dpl_2vMBLb6TgK2v8hQDcWUe1FaSborK",
+  "url": "https://portal-stage-g8b8kh8kj-yadneshsalvis-projects.vercel.app",
+  "canonicalUrl": "https://portal-stage-eight.vercel.app",
+  "status": "READY",
+  "testsPassed": 439,
+  "databaseTestsSkipped": 7,
+  "buildStaticPages": 18,
+  "signedOutSessionObservedDurationMs": 251
+}

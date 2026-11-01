@@ -4,26 +4,28 @@
 
 PORTAL STAGE is a small live theater: people improvise, chat makes authored choices, and the same virtual prop travels between rooms. Play with a consenting guest, or perform solo opposite an illustrated **Audience Room**. The software handles stagecraft; no runtime language model controls the performance.
 
-![Borrowed Weather with an on-stage tally and the repaired camera control](docs/evidence/review-round2-2026-11-01/local-weather-tally-stage.jpg)
+![Borrowed Weather in the simplified director’s studio](docs/evidence/ui-pass-2026-11-01/after-weather-studio.png)
 
-_Current illustrated rehearsal with one labeled test ballot. Cropped to the stage; no live camera or real audience is shown._
+_Current deployed illustrated rehearsal. Rehearsal and test-vote chips identify the source of the scene; no live camera or real audience is shown._
 
 **[Open the live site](https://portal-stage-eight.vercel.app)** · [How it works](docs/architecture.md) · [Verification record](docs/evidence/README.md)
 
-The round-2 release strengthens busy-chat voting, refunds failed starts before media access, and makes interrupted solo cleanup recoverable. It passed **435 ordinary tests and seven actual Neon checks**, plus optimized local and signed-out production walkthroughs of both stories. A real two-account solo run exercised all six choice windows and automatic media shutdown. [Implementation and regressions](docs/evidence/round-2-implementation.md) · [Local browser evidence](docs/evidence/review-round2-2026-11-01/local-browser.md) · [Production evidence](docs/evidence/review-round2-2026-11-01/production-browser.md) · [Current release](docs/evidence/release.md).
+The round-3 release simplifies the Studio, scenes and public pages, fixes anonymous page loads that could trigger media cleanup, and restores a compact warning when chat commands are rate-limited. **455 ordinary tests passed**, with **seven actual Neon checks passing separately**. Both stories completed locally and in signed-out production Chrome; 80 production layout observations across four widths reported no overflow. [Implementation](docs/evidence/round-3-implementation.md) · [Browser evidence](docs/evidence/review-round3-2026-11-01/production-browser.md) · [Before/after UI](docs/evidence/ui-pass-2026-11-01/README.md) · [Current release](docs/release-manifest.md).
+
+The earlier round-2 private solo run used two owned Twitch accounts, exercised all six choice windows, and a **manual early End** closed its media on the first attempt. That real-camera evidence remains [historical](docs/evidence/round-2-release.md); this round’s illustrated rehearsals do not replace the outstanding human-performance checks.
 
 ## Try it in 60 seconds
 
-1. Open Studio, choose **Borrowed Weather**, and **Start a rehearsal**. No account or camera is required.
+1. Open Studio, choose **Borrowed Weather**, and **Start rehearsal**. No account or camera is required.
 2. Open the curtain and weather choice. Cast a clearly labeled test ballot, close the choice, and let it rain.
 3. Offer the patched umbrella and accept as illustrated part B. Its new owner is committed before it crosses the portal.
 4. Continue with the cue card: name the visitor, choose its mood, bring the umbrella home, and choose a shared shelter or playful chase.
 
 Try **Midnight Parcel** for a different story: choose a pocket of stars or a midnight garden, stamp a tagged parcel, send it across, and change the receiving room. Its tag and handling marks survive the return; the final choice decides which room keeps the gift.
 
-![Midnight Parcel leaves its constellation in the receiving room](docs/evidence/review-round2-2026-11-01/local-parcel-delivered-stage.jpg)
+![Midnight Parcel in the current director’s studio](docs/evidence/ui-pass-2026-11-01/after-parcel-studio.png)
 
-_The illustrated parcel came home with the same tag and handling marks; a labeled test choice left its stars in room B._
+_Illustrated Midnight Parcel rehearsal; the full out-and-back prop journey and its final choice are recorded separately in the round-3 browser evidence._
 
 **Try camera & hand cues** is optional inside ordinary rehearsal. Give local preview consent, enable the camera, confirm framing, enable hand cues, and arm them. Your camera and landmarks stay in that browser; rehearsal requests no microphone or media room. Offer/Accept buttons remain available. Framing and dwell have automated tests; physical hand accuracy is still an acceptance task.
 
@@ -31,9 +33,9 @@ _The illustrated parcel came home with the same tag and handling marks; a labele
 
 Sign in with Twitch and create a **solo Twitch show**, subject to the displayed shared allowance. You prepare, consent, and admit your own camera. The illustrated Audience Room needs no guest invitation: chat's `!accept`/`!wait` choice receives the prop, and `!giveback`/`!keep` decides its return. You explicitly accept it back.
 
-![The production solo studio before enabling the private camera](docs/evidence/review-round2-2026-11-01/production-solo-backstage.jpg)
+![The episode and mode picker, including Solo with chat](docs/evidence/ui-pass-2026-11-01/after-picker.png)
 
-_Actual solo setup for an owned Twitch account, before camera activation. The subsequent private test used two real accounts controlled by one test operator; it is not independent audience or two-person performance evidence._
+_Current signed-out mode picker. The earlier private solo acceptance used two real accounts controlled by one test operator; it remains separate from this illustrated UI check and is not independent audience or two-person performance evidence._
 
 Both modes offer weather (`!gentle`/`!wild`), a fixed visitor name (`!pip1`/`!pip2`/`!pip3`), mood (`!curious`/`!shy`), and ending (`!share`/`!chase`) choices. Parcel uses `!stars`/`!garden` and `!deliver`/`!keep`. Bounded `!rain`, `!thunder`, and `!cheer` effects let chat stay present. Each account has one replaceable ballot per window. Empty or tied results wait for an explicit, labeled Director's choice.
 

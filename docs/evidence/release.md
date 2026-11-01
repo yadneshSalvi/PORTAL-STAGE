@@ -1,31 +1,29 @@
-# Round-two release — 1 November 2026
+# Round-three release — 1 November 2026
 
-The review fixes are live at [portal-stage-eight.vercel.app](https://portal-stage-eight.vercel.app). Busy effects no longer exhaust voting capacity, malformed messages do not discard valid batch neighbors, and solo media cleanup can recover after an interrupted workflow. Failed starts before media access return their daily allowance. The camera control and final progress label fit the tested layouts.
+The review’s functional fixes and UI pass are live at [portal-stage-eight.vercel.app](https://portal-stage-eight.vercel.app). Anonymous session loads no longer invoke solo cleanup; authenticated solo starts retain recovery. Rate-limited chat has its own count and a compact Commands dropped warning. Narrow-panel controls wrap safely. The Studio, scenes, picker and public pages use simpler copy and consistent typography while preserving consent and rehearsal/test labels.
 
 | Identity                             | Value                                                              |
 | ------------------------------------ | ------------------------------------------------------------------ |
-| Deployed source                      | `3c2b310198b4b3cf405d333f3c356837aeb39041`                         |
-| Latest runtime change                | `36d31829b5f3b2e368ec96b6c54ab548884b776f`                         |
-| Vercel deployment                    | `dpl_8oGMFeUjC8J4rtAtpRopgUUGasv2` — Ready                         |
-| Local optimized build                | `-iU6lkbQ7bzzuyamjWIuN`                                            |
+| Deployed runtime/source              | `fece42381d569bd70b9ce81055c71b664000e9a1`                         |
+| Vercel deployment                    | `dpl_91FUymt469TFNoo3iRnHSu3S41R9` — Ready                         |
+| Local optimized build                | `f1DrX0vL5US-p6LTr5BWa`                                            |
 | Project Codex implementation session | `01a191d6-551a-7cd2-9cd8-30611a7ee60b`                             |
 | Coordinating conversation            | `01a190da-3cee-7a10-b7c1-e0cdbb379510`                             |
 | Source access                        | Public GitHub repository, MIT license                              |
 | Production solo limits               | 100 globally per UTC day; 10 concurrent; 3 per account; 20 minutes |
 
-Subsequent documentation and evidence commits do not change the application. [Deployment metadata](review-round2-2026-11-01/deployment.json), [structured manifest](release-manifest.json), and [implementation details](round-2-implementation.md) preserve the boundaries. The preceding [round-one release](round-1-release.md) and [manifest](round-1-release-manifest.json) remain available separately.
+Later documentation/evidence commits do not change this deployed runtime. [Deployment](review-round3-2026-11-01/deployment.json) · [Structured manifest](release-manifest.json) · [Implementation](round-3-implementation.md).
 
-## Verified on this release
+## Verified
 
-- **435 ordinary tests passed**, seven opt-in database cases skipped in that run. Whole-tree typecheck, formatting, diff check, and optimized build passed. All **seven actual-Neon cases passed separately**, with twelve recorded source/test hashes matching the final runtime. Vercel independently completed the production build. [Gates](review-round2-2026-11-01/gates.json).
-- Both episodes completed against the optimized local build. Camera-control and progress layout checks covered 1280, 1440, 1920 and 390 px widths. [Local observations](review-round2-2026-11-01/local-browser.md).
-- Signed-out production Chrome completed Borrowed Weather with wild rain, Moth, shy mood and the chase ending; Midnight Parcel completed garden/keep. Both preserved prop identity through accepted outward and return transfers, and both ended cleanly. These were labeled illustrated rehearsals with test ballots.
-- A private production solo show used a physical 1280×720 camera, microphones off, and a separate receive-only 1920×1080 Program stream. The second real Twitch account voted in weather, accept, name, mood, give-back and ending windows. All six decisions recorded one real voter. The umbrella returned to A at version 6 with its coral patch and 52% wetness. Rain, thunder and cheer events were ingested. This was one operator using two owned accounts, not an independent audience or remote-human performance.
-- Early **End show** succeeded without manual retry. The closed reservation, inactive quota slot, zero remaining LiveKit Cloud rooms, ended studio and closed Program page agreed. Every recorded closure step used server attempt 1. [Production record and limits](review-round2-2026-11-01/production-browser.md).
-- The ten How-built links opened correctly. Anonymous requests to the README/source targets confirmed public access; credential/history scans found no matching private environment values. The README now includes current Weather, Parcel and solo views.
+- **455 ordinary tests passed**, seven opt-in database tests skipped in that run. Typecheck, formatting, diff check and optimized build passed; 18 static pages were generated and `next-env.d.ts` did not drift. [Gates](review-round3-2026-11-01/gates.json).
+- **Seven actual Neon checks passed separately**, zero skipped, with all twelve recorded backend/test hashes matching the final deployed source. Random labeled fixture rows were cleaned up. [Database record](review-round3-2026-11-01/neon-checks.json).
+- Both stories completed against the optimized local UI checkpoint, then again on the final signed-out production build. Production Weather used gentle/Moth/shy/chase; the umbrella returned with its coral patch and 29% displayed wetness. Parcel used garden/keep, returning the same tag and 48% handling marks with the gift in room A. Both ended cleanly. [Local report](review-round3-2026-11-01/local-browser.md) · [Production report and exports](review-round3-2026-11-01/production-browser.md).
+- Twenty production states were checked at 1280, 1440, 1920 and 390 px: **80 observations, zero overflow, at most three visible DOM text sizes per state**. Sixteen deployed before/after pairs and six additional final/mobile captures were visually inspected and hashed. The canonical room names appear once; renderer regressions cover the composition of both artwork layers. [UI evidence](ui-pass-2026-11-01/README.md).
+- The final browser flow inspected camera consent without enabling media, Scene preview, Inspect, Customize and End dialogs. Studio and Program warning/error logs were empty. An existing ended solo show verified the longer camera control without opening a new media session.
 
-## Still unverified
+## Evidence boundaries
 
-The human-performance checks remain explicit: two consenting performers on separate networks with microphones, a full real Twitch broadcast through OBS, guest replacement while OBS continues, and physical hand offer/accept accuracy. Browser automation did not produce a genuine hidden/minimized director state, so the 8 fps hidden-window path and warning remain unobserved in a real hidden window. Program playback observations do not establish latency or continuous zero-frame-loss delivery. Short-lived rain/thunder effects were ingested but not isolated visually from the story's own weather; cheering stars were observed on Program.
+This round used illustrated rehearsals with labeled test ballots and no fresh Twitch messages, camera/microphone sessions, broadcasts or model requests. The prior [round-two release](round-2-release.md) and [manifest](round-2-release-manifest.json) retain the real two-account solo run, physical camera and successful manual early End. That result is not automatic timed-expiry evidence. The anonymous P0 picker resource observation was 251 ms for `/api/session`; it is one observation, not a latency guarantee.
 
-The previous release's real twenty-minute expiry observation is retained historically. This release directly verifies early End; missed-workflow recovery, post-deadline grants, failed-start refunds and cleanup races have regression coverage, without claiming provider-outage or long-duration field validation.
+The optional human checks remain open: two consenting performers on separate networks with microphones and actual OBS broadcast, guest replacement while OBS continues, genuine hidden/minimized director behavior, and physical hand-cue accuracy. Isolated visual presence-effect checks and current-release real timed expiry/provider-outage acceptance also remain distinct. Automated coverage and historical prior-release expiry do not establish those field results.

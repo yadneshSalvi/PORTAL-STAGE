@@ -1,0 +1,1054 @@
+[
+  {
+    "screen": "picker",
+    "phase": "local",
+    "width": 1280,
+    "height": 1080,
+    "documentWidth": 1280,
+    "visibleElements": 31,
+    "issues": [],
+    "fontSizes": ["14px", "48px", "20px"],
+    "chips": ["3 left today"]
+  },
+  {
+    "screen": "picker",
+    "phase": "local",
+    "width": 1440,
+    "height": 1080,
+    "documentWidth": 1440,
+    "visibleElements": 31,
+    "issues": [],
+    "fontSizes": ["14px", "48px", "20px"],
+    "chips": ["3 left today"]
+  },
+  {
+    "screen": "picker",
+    "phase": "local",
+    "width": 1920,
+    "height": 1080,
+    "documentWidth": 1920,
+    "visibleElements": 31,
+    "issues": [],
+    "fontSizes": ["14px", "48px", "20px"],
+    "chips": ["3 left today"]
+  },
+  {
+    "screen": "picker",
+    "phase": "local",
+    "width": 390,
+    "height": 844,
+    "documentWidth": 390,
+    "visibleElements": 31,
+    "issues": [],
+    "fontSizes": ["14px", "48px", "20px"],
+    "chips": ["3 left today"]
+  },
+  {
+    "screen": "camera-dialog",
+    "phase": "local",
+    "width": 1280,
+    "height": 1080,
+    "documentWidth": 1280,
+    "visibleElements": 70,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote"]
+  },
+  {
+    "screen": "camera-dialog",
+    "phase": "local",
+    "width": 1440,
+    "height": 1080,
+    "documentWidth": 1440,
+    "visibleElements": 70,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote"]
+  },
+  {
+    "screen": "camera-dialog",
+    "phase": "local",
+    "width": 1920,
+    "height": 1080,
+    "documentWidth": 1920,
+    "visibleElements": 70,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote"]
+  },
+  {
+    "screen": "camera-dialog",
+    "phase": "local",
+    "width": 390,
+    "height": 844,
+    "documentWidth": 390,
+    "visibleElements": 70,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote"]
+  },
+  {
+    "screen": "output-dialog",
+    "phase": "local",
+    "width": 1280,
+    "height": 1080,
+    "documentWidth": 1280,
+    "visibleElements": 63,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote", "Rehearsal"]
+  },
+  {
+    "screen": "output-dialog",
+    "phase": "local",
+    "width": 1440,
+    "height": 1080,
+    "documentWidth": 1440,
+    "visibleElements": 63,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote", "Rehearsal"]
+  },
+  {
+    "screen": "output-dialog",
+    "phase": "local",
+    "width": 1920,
+    "height": 1080,
+    "documentWidth": 1920,
+    "visibleElements": 63,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote", "Rehearsal"]
+  },
+  {
+    "screen": "output-dialog",
+    "phase": "local",
+    "width": 390,
+    "height": 844,
+    "documentWidth": 390,
+    "visibleElements": 63,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote", "Rehearsal"]
+  },
+  {
+    "screen": "inspect",
+    "phase": "local",
+    "width": 1280,
+    "height": 1080,
+    "documentWidth": 1280,
+    "visibleElements": 76,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote", "Rehearsal"]
+  },
+  {
+    "screen": "inspect",
+    "phase": "local",
+    "width": 1440,
+    "height": 1080,
+    "documentWidth": 1440,
+    "visibleElements": 76,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote", "Rehearsal"]
+  },
+  {
+    "screen": "inspect",
+    "phase": "local",
+    "width": 1920,
+    "height": 1080,
+    "documentWidth": 1920,
+    "visibleElements": 76,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote", "Rehearsal"]
+  },
+  {
+    "screen": "inspect",
+    "phase": "local",
+    "width": 390,
+    "height": 844,
+    "documentWidth": 390,
+    "visibleElements": 76,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote", "Rehearsal"]
+  },
+  {
+    "screen": "presets",
+    "phase": "local",
+    "width": 1280,
+    "height": 1080,
+    "documentWidth": 1280,
+    "visibleElements": 78,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote"]
+  },
+  {
+    "screen": "presets",
+    "phase": "local",
+    "width": 1440,
+    "height": 1080,
+    "documentWidth": 1440,
+    "visibleElements": 78,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote"]
+  },
+  {
+    "screen": "presets",
+    "phase": "local",
+    "width": 1920,
+    "height": 1080,
+    "documentWidth": 1920,
+    "visibleElements": 78,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote"]
+  },
+  {
+    "screen": "presets",
+    "phase": "local",
+    "width": 390,
+    "height": 844,
+    "documentWidth": 390,
+    "visibleElements": 78,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote"]
+  },
+  {
+    "screen": "end-dialog",
+    "phase": "local",
+    "width": 1280,
+    "height": 1080,
+    "documentWidth": 1280,
+    "visibleElements": 61,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote"]
+  },
+  {
+    "screen": "end-dialog",
+    "phase": "local",
+    "width": 1440,
+    "height": 1080,
+    "documentWidth": 1440,
+    "visibleElements": 61,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote"]
+  },
+  {
+    "screen": "end-dialog",
+    "phase": "local",
+    "width": 1920,
+    "height": 1080,
+    "documentWidth": 1920,
+    "visibleElements": 61,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote"]
+  },
+  {
+    "screen": "end-dialog",
+    "phase": "local",
+    "width": 390,
+    "height": 844,
+    "documentWidth": 390,
+    "visibleElements": 61,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote"]
+  },
+  {
+    "screen": "vote",
+    "phase": "local",
+    "width": 1280,
+    "height": 1080,
+    "documentWidth": 1280,
+    "visibleElements": 61,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote", "23s"]
+  },
+  {
+    "screen": "vote",
+    "phase": "local",
+    "width": 1440,
+    "height": 1080,
+    "documentWidth": 1440,
+    "visibleElements": 61,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote", "23s"]
+  },
+  {
+    "screen": "vote",
+    "phase": "local",
+    "width": 1920,
+    "height": 1080,
+    "documentWidth": 1920,
+    "visibleElements": 61,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote", "23s"]
+  },
+  {
+    "screen": "vote",
+    "phase": "local",
+    "width": 390,
+    "height": 844,
+    "documentWidth": 390,
+    "visibleElements": 61,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote", "23s"]
+  },
+  {
+    "screen": "program",
+    "phase": "local",
+    "width": 1280,
+    "height": 1080,
+    "documentWidth": 1280,
+    "renderSurfaces": [
+      {
+        "tag": "CANVAS",
+        "width": 1280,
+        "right": 1280
+      }
+    ],
+    "visibleElements": 0,
+    "issues": [],
+    "fontSizes": [],
+    "chips": []
+  },
+  {
+    "screen": "program",
+    "phase": "local",
+    "width": 1440,
+    "height": 1080,
+    "documentWidth": 1440,
+    "renderSurfaces": [
+      {
+        "tag": "CANVAS",
+        "width": 1440,
+        "right": 1440
+      }
+    ],
+    "visibleElements": 0,
+    "issues": [],
+    "fontSizes": [],
+    "chips": []
+  },
+  {
+    "screen": "program",
+    "phase": "local",
+    "width": 1920,
+    "height": 1080,
+    "documentWidth": 1920,
+    "renderSurfaces": [
+      {
+        "tag": "CANVAS",
+        "width": 1920,
+        "right": 1920
+      }
+    ],
+    "visibleElements": 0,
+    "issues": [],
+    "fontSizes": [],
+    "chips": []
+  },
+  {
+    "screen": "program",
+    "phase": "local",
+    "width": 390,
+    "height": 844,
+    "documentWidth": 390,
+    "renderSurfaces": [
+      {
+        "tag": "CANVAS",
+        "width": 390,
+        "right": 390
+      }
+    ],
+    "visibleElements": 0,
+    "issues": [],
+    "fontSizes": [],
+    "chips": []
+  },
+  {
+    "screen": "weather-studio",
+    "phase": "local",
+    "width": 1280,
+    "height": 1080,
+    "documentWidth": 1280,
+    "renderSurfaces": [
+      {
+        "tag": "CANVAS",
+        "width": 670,
+        "right": 935
+      }
+    ],
+    "visibleElements": 60,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote", "On stage"]
+  },
+  {
+    "screen": "weather-studio",
+    "phase": "local",
+    "width": 1440,
+    "height": 1080,
+    "documentWidth": 1440,
+    "renderSurfaces": [
+      {
+        "tag": "CANVAS",
+        "width": 830,
+        "right": 1095
+      }
+    ],
+    "visibleElements": 60,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote", "On stage"]
+  },
+  {
+    "screen": "weather-studio",
+    "phase": "local",
+    "width": 1920,
+    "height": 1080,
+    "documentWidth": 1920,
+    "renderSurfaces": [
+      {
+        "tag": "CANVAS",
+        "width": 1158,
+        "right": 1499
+      }
+    ],
+    "visibleElements": 60,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote", "On stage"]
+  },
+  {
+    "screen": "weather-studio",
+    "phase": "local",
+    "width": 390,
+    "height": 844,
+    "documentWidth": 390,
+    "renderSurfaces": [
+      {
+        "tag": "CANVAS",
+        "width": 356,
+        "right": 373
+      }
+    ],
+    "visibleElements": 60,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote", "On stage"]
+  },
+  {
+    "screen": "weather-finale",
+    "phase": "local",
+    "width": 1280,
+    "height": 1080,
+    "documentWidth": 1280,
+    "renderSurfaces": [
+      {
+        "tag": "CANVAS",
+        "width": 670,
+        "right": 935
+      }
+    ],
+    "visibleElements": 60,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote", "On stage"]
+  },
+  {
+    "screen": "weather-finale",
+    "phase": "local",
+    "width": 1440,
+    "height": 1080,
+    "documentWidth": 1440,
+    "renderSurfaces": [
+      {
+        "tag": "CANVAS",
+        "width": 830,
+        "right": 1095
+      }
+    ],
+    "visibleElements": 60,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote", "On stage"]
+  },
+  {
+    "screen": "weather-finale",
+    "phase": "local",
+    "width": 1920,
+    "height": 1080,
+    "documentWidth": 1920,
+    "renderSurfaces": [
+      {
+        "tag": "CANVAS",
+        "width": 1158,
+        "right": 1499
+      }
+    ],
+    "visibleElements": 60,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote", "On stage"]
+  },
+  {
+    "screen": "weather-finale",
+    "phase": "local",
+    "width": 390,
+    "height": 844,
+    "documentWidth": 390,
+    "renderSurfaces": [
+      {
+        "tag": "CANVAS",
+        "width": 356,
+        "right": 373
+      }
+    ],
+    "visibleElements": 60,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote", "On stage"]
+  },
+  {
+    "screen": "weather-ended",
+    "phase": "local",
+    "width": 1280,
+    "height": 1080,
+    "documentWidth": 1280,
+    "renderSurfaces": [
+      {
+        "tag": "CANVAS",
+        "width": 670,
+        "right": 935
+      }
+    ],
+    "visibleElements": 58,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote", "On stage"]
+  },
+  {
+    "screen": "weather-ended",
+    "phase": "local",
+    "width": 1440,
+    "height": 1080,
+    "documentWidth": 1440,
+    "renderSurfaces": [
+      {
+        "tag": "CANVAS",
+        "width": 830,
+        "right": 1095
+      }
+    ],
+    "visibleElements": 58,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote", "On stage"]
+  },
+  {
+    "screen": "weather-ended",
+    "phase": "local",
+    "width": 1920,
+    "height": 1080,
+    "documentWidth": 1920,
+    "renderSurfaces": [
+      {
+        "tag": "CANVAS",
+        "width": 1158,
+        "right": 1499
+      }
+    ],
+    "visibleElements": 58,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote", "On stage"]
+  },
+  {
+    "screen": "weather-ended",
+    "phase": "local",
+    "width": 390,
+    "height": 844,
+    "documentWidth": 390,
+    "renderSurfaces": [
+      {
+        "tag": "CANVAS",
+        "width": 356,
+        "right": 373
+      }
+    ],
+    "visibleElements": 58,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote", "On stage"]
+  },
+  {
+    "screen": "guide",
+    "phase": "local",
+    "width": 1280,
+    "height": 1080,
+    "documentWidth": 1280,
+    "renderSurfaces": [],
+    "visibleElements": 46,
+    "issues": [],
+    "fontSizes": ["14px", "48px", "24px"],
+    "chips": []
+  },
+  {
+    "screen": "guide",
+    "phase": "local",
+    "width": 1440,
+    "height": 1080,
+    "documentWidth": 1440,
+    "renderSurfaces": [],
+    "visibleElements": 46,
+    "issues": [],
+    "fontSizes": ["14px", "48px", "24px"],
+    "chips": []
+  },
+  {
+    "screen": "guide",
+    "phase": "local",
+    "width": 1920,
+    "height": 1080,
+    "documentWidth": 1920,
+    "renderSurfaces": [],
+    "visibleElements": 46,
+    "issues": [],
+    "fontSizes": ["14px", "48px", "24px"],
+    "chips": []
+  },
+  {
+    "screen": "guide",
+    "phase": "local",
+    "width": 390,
+    "height": 844,
+    "documentWidth": 390,
+    "renderSurfaces": [],
+    "visibleElements": 46,
+    "issues": [],
+    "fontSizes": ["14px", "48px", "24px"],
+    "chips": []
+  },
+  {
+    "screen": "how-built",
+    "phase": "local",
+    "width": 1280,
+    "height": 1080,
+    "documentWidth": 1280,
+    "renderSurfaces": [],
+    "visibleElements": 35,
+    "issues": [],
+    "fontSizes": ["14px", "48px", "24px"],
+    "chips": []
+  },
+  {
+    "screen": "how-built",
+    "phase": "local",
+    "width": 1440,
+    "height": 1080,
+    "documentWidth": 1440,
+    "renderSurfaces": [],
+    "visibleElements": 35,
+    "issues": [],
+    "fontSizes": ["14px", "48px", "24px"],
+    "chips": []
+  },
+  {
+    "screen": "how-built",
+    "phase": "local",
+    "width": 1920,
+    "height": 1080,
+    "documentWidth": 1920,
+    "renderSurfaces": [],
+    "visibleElements": 35,
+    "issues": [],
+    "fontSizes": ["14px", "48px", "24px"],
+    "chips": []
+  },
+  {
+    "screen": "how-built",
+    "phase": "local",
+    "width": 390,
+    "height": 844,
+    "documentWidth": 390,
+    "renderSurfaces": [],
+    "visibleElements": 35,
+    "issues": [],
+    "fontSizes": ["14px", "48px", "24px"],
+    "chips": []
+  },
+  {
+    "screen": "backstage-entry",
+    "phase": "local",
+    "width": 1280,
+    "height": 1080,
+    "documentWidth": 1280,
+    "renderSurfaces": [],
+    "visibleElements": 11,
+    "issues": [],
+    "fontSizes": ["18px", "14px", "28px"],
+    "chips": []
+  },
+  {
+    "screen": "backstage-entry",
+    "phase": "local",
+    "width": 1440,
+    "height": 1080,
+    "documentWidth": 1440,
+    "renderSurfaces": [],
+    "visibleElements": 11,
+    "issues": [],
+    "fontSizes": ["18px", "14px", "28px"],
+    "chips": []
+  },
+  {
+    "screen": "backstage-entry",
+    "phase": "local",
+    "width": 1920,
+    "height": 1080,
+    "documentWidth": 1920,
+    "renderSurfaces": [],
+    "visibleElements": 11,
+    "issues": [],
+    "fontSizes": ["18px", "14px", "28px"],
+    "chips": []
+  },
+  {
+    "screen": "backstage-entry",
+    "phase": "local",
+    "width": 390,
+    "height": 844,
+    "documentWidth": 390,
+    "renderSurfaces": [],
+    "visibleElements": 11,
+    "issues": [],
+    "fontSizes": ["18px", "14px", "28px", "13px"],
+    "chips": []
+  },
+  {
+    "screen": "parcel-studio",
+    "phase": "local",
+    "width": 1280,
+    "height": 1080,
+    "documentWidth": 1280,
+    "renderSurfaces": [
+      {
+        "tag": "CANVAS",
+        "width": 670,
+        "right": 935
+      }
+    ],
+    "visibleElements": 60,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote", "On stage"]
+  },
+  {
+    "screen": "parcel-studio",
+    "phase": "local",
+    "width": 1440,
+    "height": 1080,
+    "documentWidth": 1440,
+    "renderSurfaces": [
+      {
+        "tag": "CANVAS",
+        "width": 830,
+        "right": 1095
+      }
+    ],
+    "visibleElements": 60,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote", "On stage"]
+  },
+  {
+    "screen": "parcel-studio",
+    "phase": "local",
+    "width": 1920,
+    "height": 1080,
+    "documentWidth": 1920,
+    "renderSurfaces": [
+      {
+        "tag": "CANVAS",
+        "width": 1158,
+        "right": 1499
+      }
+    ],
+    "visibleElements": 60,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote", "On stage"]
+  },
+  {
+    "screen": "parcel-studio",
+    "phase": "local",
+    "width": 390,
+    "height": 844,
+    "documentWidth": 390,
+    "renderSurfaces": [
+      {
+        "tag": "CANVAS",
+        "width": 356,
+        "right": 373
+      }
+    ],
+    "visibleElements": 60,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote", "On stage"]
+  },
+  {
+    "screen": "not-found",
+    "phase": "local",
+    "width": 1280,
+    "height": 1080,
+    "documentWidth": 1280,
+    "renderSurfaces": [],
+    "visibleElements": 5,
+    "issues": [],
+    "fontSizes": ["12px", "14px", "28px"],
+    "chips": []
+  },
+  {
+    "screen": "not-found",
+    "phase": "local",
+    "width": 1440,
+    "height": 1080,
+    "documentWidth": 1440,
+    "renderSurfaces": [],
+    "visibleElements": 5,
+    "issues": [],
+    "fontSizes": ["12px", "14px", "28px"],
+    "chips": []
+  },
+  {
+    "screen": "not-found",
+    "phase": "local",
+    "width": 1920,
+    "height": 1080,
+    "documentWidth": 1920,
+    "renderSurfaces": [],
+    "visibleElements": 5,
+    "issues": [],
+    "fontSizes": ["12px", "14px", "28px"],
+    "chips": []
+  },
+  {
+    "screen": "not-found",
+    "phase": "local",
+    "width": 390,
+    "height": 844,
+    "documentWidth": 390,
+    "renderSurfaces": [],
+    "visibleElements": 5,
+    "issues": [],
+    "fontSizes": ["10px", "14px", "28px"],
+    "chips": []
+  },
+  {
+    "screen": "landing",
+    "phase": "local",
+    "width": 1280,
+    "height": 1080,
+    "documentWidth": 1280,
+    "renderSurfaces": [],
+    "visibleElements": 30,
+    "issues": [],
+    "fontSizes": ["14px", "69.12px", "24px"],
+    "chips": []
+  },
+  {
+    "screen": "landing",
+    "phase": "local",
+    "width": 1440,
+    "height": 1080,
+    "documentWidth": 1440,
+    "renderSurfaces": [],
+    "visibleElements": 30,
+    "issues": [],
+    "fontSizes": ["14px", "72px", "24px"],
+    "chips": []
+  },
+  {
+    "screen": "landing",
+    "phase": "local",
+    "width": 1920,
+    "height": 1080,
+    "documentWidth": 1920,
+    "renderSurfaces": [],
+    "visibleElements": 30,
+    "issues": [],
+    "fontSizes": ["14px", "72px", "24px"],
+    "chips": []
+  },
+  {
+    "screen": "landing",
+    "phase": "local",
+    "width": 390,
+    "height": 844,
+    "documentWidth": 481,
+    "renderSurfaces": [],
+    "visibleElements": 30,
+    "issues": [],
+    "fontSizes": ["14px", "48px", "24px"],
+    "chips": []
+  },
+  {
+    "screen": "parcel-finale",
+    "phase": "local",
+    "width": 1280,
+    "height": 1080,
+    "documentWidth": 1280,
+    "renderSurfaces": [
+      {
+        "tag": "CANVAS",
+        "width": 670,
+        "right": 935
+      }
+    ],
+    "visibleElements": 60,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote", "On stage"]
+  },
+  {
+    "screen": "parcel-finale",
+    "phase": "local",
+    "width": 1440,
+    "height": 1080,
+    "documentWidth": 1440,
+    "renderSurfaces": [
+      {
+        "tag": "CANVAS",
+        "width": 830,
+        "right": 1095
+      }
+    ],
+    "visibleElements": 60,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote", "On stage"]
+  },
+  {
+    "screen": "parcel-finale",
+    "phase": "local",
+    "width": 1920,
+    "height": 1080,
+    "documentWidth": 1920,
+    "renderSurfaces": [
+      {
+        "tag": "CANVAS",
+        "width": 1158,
+        "right": 1499
+      }
+    ],
+    "visibleElements": 60,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote", "On stage"]
+  },
+  {
+    "screen": "parcel-finale",
+    "phase": "local",
+    "width": 390,
+    "height": 844,
+    "documentWidth": 390,
+    "renderSurfaces": [
+      {
+        "tag": "CANVAS",
+        "width": 356,
+        "right": 373
+      }
+    ],
+    "visibleElements": 60,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote", "On stage"]
+  },
+  {
+    "screen": "parcel-ended",
+    "phase": "local",
+    "width": 1280,
+    "height": 1080,
+    "documentWidth": 1280,
+    "renderSurfaces": [
+      {
+        "tag": "CANVAS",
+        "width": 670,
+        "right": 935
+      }
+    ],
+    "visibleElements": 58,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote", "On stage"]
+  },
+  {
+    "screen": "parcel-ended",
+    "phase": "local",
+    "width": 1440,
+    "height": 1080,
+    "documentWidth": 1440,
+    "renderSurfaces": [
+      {
+        "tag": "CANVAS",
+        "width": 830,
+        "right": 1095
+      }
+    ],
+    "visibleElements": 58,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote", "On stage"]
+  },
+  {
+    "screen": "parcel-ended",
+    "phase": "local",
+    "width": 1920,
+    "height": 1080,
+    "documentWidth": 1920,
+    "renderSurfaces": [
+      {
+        "tag": "CANVAS",
+        "width": 1158,
+        "right": 1499
+      }
+    ],
+    "visibleElements": 58,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote", "On stage"]
+  },
+  {
+    "screen": "parcel-ended",
+    "phase": "local",
+    "width": 390,
+    "height": 844,
+    "documentWidth": 390,
+    "renderSurfaces": [
+      {
+        "tag": "CANVAS",
+        "width": 356,
+        "right": 373
+      }
+    ],
+    "visibleElements": 58,
+    "issues": [],
+    "fontSizes": ["14px", "32px", "20px"],
+    "chips": ["Test vote", "On stage"]
+  }
+]
