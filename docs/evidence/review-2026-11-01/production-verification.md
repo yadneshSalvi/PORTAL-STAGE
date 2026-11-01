@@ -12,7 +12,7 @@ After deployment and reconnection, actual `!rain`, `!thunder`, and `!cheer` comm
 
 One initial acceptance was cancelled safely during a real LiveKit signal interruption. Browser logs show ping timeouts at 21:42:34/38 UTC, then signal/peer-connection retries, followed by recovery at 21:43:03. A separate receive-only SDK participant stayed connected. The application stopped camera/microphone, withdrew readiness/admission, and cancelled the offer. Camera enable, Ready, and explicit admission restored the performer before the successful new acceptance. The Program can continue publishing a safe curtain with devices off. There is no evidence that the 120-second initial join JWT caused this interruption. [Sanitized reconnect logs](production-reconnect-logs.json) preserve the actual failure; regression tests independently distinguish join-token expiry from the 20-minute solo deadline.
 
-Eight public commands were sent during this review, plus four previously authorized test commands: the 12-message authorization budget is exhausted. All commands were sent by the existing host account, so this proves actual Twitch transport and single-account decisions, not independent audience engagement or a second-account test.
+Eight public commands were sent during this story review, plus four previously authorized test commands, using the original 12-message authorization. All commands were sent by the existing host account, so this proves actual Twitch transport and single-account decisions, not independent audience engagement or second-account message delivery. The later account-eligibility appendix below sent no additional public messages.
 
 ## Signed-out production and local camera
 
@@ -41,3 +41,11 @@ The complete path was Garden → stamp → offer → Wait → fresh offer → Ac
 ## Remaining boundaries
 
 Two consenting humans on separate devices/networks, physical microphone/echo behavior, real gesture accuracy, and an actual OBS broadcast remain unverified. Native tab switching in this automation environment did not expose a reliable hidden-page transition; hidden-window rendering and warning behavior are therefore not reported as an observed browser pass. Server, state-machine, and synthetic tests do not replace those physical checks.
+
+## Appendix: ordinary second-account OAuth and solo End
+
+On 1 November, fresh production OAuth as `yadneshsalvi96` switched the Twitch identity in the existing application browser session. The lobby showed **3 of 3** solo starts and **Create a solo Twitch show**, while the duet entry showed **Invited duet host sign-in**. The configured local host allowlist excluded the account. No production `/api/session` response was captured; the allowlist boolean in the observer must not be represented as an observed production API flag.
+
+Show `ps_3f611bff54420820` was created successfully with a twenty-minute immutable deadline, confirmed Workflow receipt and active quota. At `03:53:28.407Z`, the read-only durable snapshot showed one daily start, zero issued grants, all performer media/readiness/admission flags false, and the `twitch.connected` event. The reviewer independently observed **Listening** in this browser. No camera, microphone, media connection, public message, vote or presence effect was used.
+
+One End confirmation closed the show and removed active quota. At `03:53:55.102Z`, the follow-up snapshot showed `ended` / `closed`, zero issued grants, the same deadline, and the daily count still one. The production lobby subsequently showed **2 of 3** starts and allowed another solo creation. This is ordinary-account eligibility, subscription setup and unissued early cleanup acceptance, not another physical-media or audience-engagement run. [Account acceptance](second-account-acceptance.md) and [sanitized observations](second-account-acceptance.json) preserve the evidence; source `96fea878`, runtime `16b1100` and deployment `dpl_mUKo1r1j3ojraoWWmKWgToPeGCp5` are unchanged.

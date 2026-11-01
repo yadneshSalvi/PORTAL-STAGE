@@ -40,7 +40,11 @@ Workflow is pinned to 5.2.3. Compatible overrides patch the installed Zod and Un
 
 ## Acceptance boundaries after release
 
-Both complete authored episodes, explicit empty-ballot attribution, physical Chrome camera initialization/end cleanup, actual host-account solo issuance, and actual deployed expiry with refreshed-token rejection are now recorded. The expiry browser remained open; it is not an isolated browser-absent observation. Solo Parcel's initial early closure was incomplete and succeeded after one visible Retry; its cause was not identified. Worker-inclusive traffic capture, physical hand accuracy, ordinary non-allowlisted OAuth, and genuine second-account Twitch choices/effects remain separate checks. A second account controlled by the same user is not a second remote performer.
+Both complete authored episodes, explicit empty-ballot attribution, physical Chrome camera initialization/end cleanup, actual host-account solo issuance, and actual deployed expiry with refreshed-token rejection are now recorded. The expiry browser remained open; it is not an isolated browser-absent observation. Solo Parcel's initial early closure was incomplete and succeeded after one visible Retry; its cause was not identified.
+
+Fresh production OAuth as `yadneshsalvi96` also passed ordinary-account solo creation, Twitch subscription setup, and early End: 3 of 3 starts became 2 of 3, one daily start remained charged, and active quota released with zero media grants. The configured local host allowlist excluded the account; production corroborated this through **Invited duet host sign-in**, not a captured `/api/session` response. The existing application browser session switched Twitch identity. No camera, microphone, public message or live scene was used. [Second-account evidence](review-2026-11-01/second-account-acceptance.md).
+
+Worker-inclusive traffic capture, physical hand accuracy, and genuine second-account Twitch choices/effects remain separate checks. A second account controlled by the same user is not a second remote performer.
 
 S8 still requires two consenting humans on separate networks, microphones/echo checks, and an authorized actual OBS broadcast. Preserve that gap explicitly. No private footage, consent receipts, raw tokens, or fabricated observations belong in tracked evidence.
 

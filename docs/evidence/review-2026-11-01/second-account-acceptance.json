@@ -1,0 +1,189 @@
+{
+  "format": "portal-stage.second-account-acceptance/v1",
+  "date": "2026-11-01",
+  "sourceCommit": "96fea8781dd86bf23a95126247b1e703b8babde9",
+  "runtimeCommit": "16b11003dd066424f30e93dc2c04dfaccb3e072e",
+  "deployment": {
+    "id": "dpl_mUKo1r1j3ojraoWWmKWgToPeGCp5",
+    "url": "https://portal-stage-eight.vercel.app"
+  },
+  "showId": "ps_3f611bff54420820",
+  "accountLogin": "yadneshsalvi96",
+  "conditions": {
+    "browserReviewer": "root Codex browser/release reviewer",
+    "freshProductionOAuth": true,
+    "existingApplicationBrowserSessionSwitchedTwitchIdentity": true,
+    "independentBrowserSession": false,
+    "secondRemoteHuman": false,
+    "cameraUsed": false,
+    "microphoneUsed": false,
+    "mediaJoined": false,
+    "publicMessagesSent": 0,
+    "completeLiveScene": false,
+    "productionApiSessionCaptured": false
+  },
+  "browserObservationsReportedByRoot": {
+    "beforeCreate": {
+      "soloStartsRemaining": 3,
+      "soloDailyLimit": 3,
+      "soloCreateAvailable": true,
+      "duetControlText": "Invited duet host sign-in"
+    },
+    "afterCreate": {
+      "chatStatus": "Listening",
+      "subscriptionSetupObserved": true
+    },
+    "end": {
+      "confirmationAcceptedOnce": true,
+      "cleanupRetryNeeded": false
+    },
+    "afterEndLobby": {
+      "soloStartsRemaining": 2,
+      "soloDailyLimit": 3,
+      "soloCreateAvailable": true,
+      "confirmedByRoot": true
+    }
+  },
+  "checks": {
+    "ordinaryAccountOAuthAndSoloEntry": "passed",
+    "allowlistEvidence": "Local configured allowlist false, corroborated by production Invited duet host sign-in UI; no production /api/session flag capture.",
+    "closureSchedulingReceipt": "passed",
+    "oneDailyStartCharged": "passed",
+    "twitchSubscriptionSetup": "passed; browser Listening and durable twitch.connected event",
+    "earlyEndAndActiveQuotaRelease": "passed without issued media grants",
+    "dailyChargeRetainedAfterEnd": "passed",
+    "immutableDeadlinePreserved": "passed",
+    "secondAccountMessageDelivery": "not tested",
+    "independentAudienceParticipation": "not tested",
+    "physicalMediaOrRemoteHumanAcceptance": "not tested in this run"
+  },
+  "observations": {
+    "initial": {
+      "schema": "portal-stage.second-account-observation/v1",
+      "observedAt": "2026-11-01T03:53:28.407Z",
+      "databaseNowMs": 1793505208295,
+      "label": "second-account-initial",
+      "showId": "ps_3f611bff54420820",
+      "mode": "solo",
+      "phase": "backstage",
+      "revision": 28,
+      "sequence": 3,
+      "account": {
+        "channelLogin": "yadneshsalvi96",
+        "actorLogin": "yadneshsalvi96",
+        "authenticated": true,
+        "hostAllowedFromConfiguredAllowlist": false,
+        "allowlistSource": "Local .env then .env.local; corroborate production /api/session."
+      },
+      "reservation": {
+        "status": "scheduled",
+        "createdAtMs": 1793505120980,
+        "expiresAtMs": 1793506320980,
+        "publicDeadlineMs": 1793506320980,
+        "closedAtMs": null,
+        "hasWorkflowReceipt": true,
+        "issuedCount": 0,
+        "quotaActive": true,
+        "quotaConfirmed": true,
+        "accountDailyStarts": 1
+      },
+      "performerA": {
+        "connected": false,
+        "camera": false,
+        "microphone": false,
+        "ready": false,
+        "admitted": false
+      },
+      "twitch": {
+        "persistedConnected": true,
+        "lastEventAtMs": null,
+        "lastHeartbeatAtMs": 1793505205063,
+        "caveat": "Persisted state does not prove the current browser subscription; corroborate the UI."
+      },
+      "currentRound": null,
+      "recentEventSummaries": [
+        {
+          "sequence": 3,
+          "atMs": 1793505145301,
+          "type": "twitch.connected",
+          "actorRole": "director"
+        }
+      ],
+      "redactions": "No owner/session/account IDs, reservation/run/notification/subscription IDs, grants, consent events, participant names, contributor names, raw chat, or free-text event summaries are selected or saved. Show ID and the explicitly requested channel login are retained.",
+      "method": "One SELECT in a read-only database transaction; no app request, provider call, or synthetic mutation."
+    },
+    "ended": {
+      "schema": "portal-stage.second-account-observation/v1",
+      "observedAt": "2026-11-01T03:53:55.102Z",
+      "databaseNowMs": 1793505234983,
+      "label": "second-account-ended",
+      "showId": "ps_3f611bff54420820",
+      "mode": "solo",
+      "phase": "ended",
+      "revision": 33,
+      "sequence": 4,
+      "account": {
+        "channelLogin": "yadneshsalvi96",
+        "actorLogin": "yadneshsalvi96",
+        "authenticated": true,
+        "hostAllowedFromConfiguredAllowlist": false,
+        "allowlistSource": "Local .env then .env.local; corroborate production /api/session."
+      },
+      "reservation": {
+        "status": "closed",
+        "createdAtMs": 1793505120980,
+        "expiresAtMs": 1793506320980,
+        "publicDeadlineMs": 1793506320980,
+        "closedAtMs": 1793505221699,
+        "hasWorkflowReceipt": true,
+        "issuedCount": 0,
+        "quotaActive": false,
+        "quotaConfirmed": false,
+        "accountDailyStarts": 1
+      },
+      "performerA": {
+        "connected": false,
+        "camera": false,
+        "microphone": false,
+        "ready": false,
+        "admitted": false
+      },
+      "twitch": {
+        "persistedConnected": false,
+        "lastEventAtMs": null,
+        "lastHeartbeatAtMs": 1793505205063,
+        "caveat": "Persisted state does not prove the current browser subscription; corroborate the UI."
+      },
+      "currentRound": null,
+      "recentEventSummaries": [
+        {
+          "sequence": 3,
+          "atMs": 1793505145301,
+          "type": "twitch.connected",
+          "actorRole": "director"
+        },
+        {
+          "sequence": 4,
+          "atMs": 1793505221667,
+          "type": "action.end",
+          "actorRole": "director"
+        }
+      ],
+      "redactions": "No owner/session/account IDs, reservation/run/notification/subscription IDs, grants, consent events, participant names, contributor names, raw chat, or free-text event summaries are selected or saved. Show ID and the explicitly requested channel login are retained.",
+      "method": "One SELECT in a read-only database transaction; no app request, provider call, or synthetic mutation."
+    }
+  },
+  "privateSourceHashes": [
+    {
+      "path": ".local/review-browser/second-account-initial.json",
+      "sha256": "52d45afd63a30e155a11198438ff15b4aed42fe80fd1a916062f78e2d8fc575f"
+    },
+    {
+      "path": ".local/review-browser/second-account-ended.json",
+      "sha256": "b85eb72e2a5e15eb4ddb6b73e7426eef628d07421218047775fccecf73324d58"
+    }
+  ],
+  "method": "Each database observation was one SELECT in a read-only transaction. UI OAuth, solo creation, Twitch connection and End were performed by the root reviewer. The observer did not invoke app actions, send chat, issue grants or call provider cleanup.",
+  "redactions": "No owner/session/account IDs, reservation/run/notification/subscription IDs, grants, consent events, participant names, contributor names, raw chat, or free-text event summaries are selected or saved. Show ID and the explicitly requested channel login are retained.",
+  "scope": "Fresh ordinary-account eligibility, subscription setup, quota reservation and unissued early cleanup only. Earlier physical camera, complete-story and natural twenty-minute expiry evidence retains its own source and conditions."
+}

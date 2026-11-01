@@ -1,6 +1,6 @@
 {
   "format": "portal-stage.release-evidence/v2",
-  "evidenceAsOf": "2026-10-31T22:00:16.431176+00:00",
+  "evidenceAsOf": "2026-11-01T03:55:59.782717+00:00",
   "repository": "https://github.com/yadneshSalvi/PORTAL-STAGE",
   "sourceCommit": "96fea8781dd86bf23a95126247b1e703b8babde9",
   "runtimeCommit": "16b11003dd066424f30e93dc2c04dfaccb3e072e",
@@ -63,13 +63,34 @@
     },
     "signedOutParcel": "Stars/deliver complete story;explicitly labeled rehearsal test ballots.",
     "localChromeCamera": "Physical1280x720 muted preview, hand worker active/no hand detected, zero video elements on End. Tab network only; no gesture accuracy claim.",
-    "finalSignedOutLandingAndHowBuilt": "passed"
+    "finalSignedOutLandingAndHowBuilt": "passed",
+    "secondAccount": {
+      "login": "yadneshsalvi96",
+      "showId": "ps_3f611bff54420820",
+      "freshOAuthAndOrdinarySoloEntry": "passed",
+      "existingBrowserSessionSwitchedTwitchIdentity": true,
+      "allowlistEvidence": "Configured local allowlist false; production duet UI showed Invited duet host sign-in. No production /api/session flag capture.",
+      "twitchSubscriptionSetup": "Listening observed; no public messages sent",
+      "soloStartsBefore": 3,
+      "soloStartsAfter": 2,
+      "soloDailyLimit": 3,
+      "workflowReceiptConfirmed": true,
+      "issuedMediaGrants": 0,
+      "reservationClosed": true,
+      "quotaActiveAfterEnd": false,
+      "dailyStartsAfterEnd": 1,
+      "soloCreateAvailableAfterEnd": true,
+      "cameraOrMicrophoneUsed": false,
+      "publicMessagesSent": 0,
+      "independentHumanOrAudienceClaim": false,
+      "artifact": "review-2026-11-01/second-account-acceptance.json"
+    }
   },
   "pending": [
     "Two remote consenting humans on separate devices/networks",
     "Physical microphones, audible echo/synchronization and actual OBS broadcast",
     "Gesture accuracy/alignment and measured input-to-stream delay",
-    "Second-account renewed Twitch login and ordinary non-allowlisted OAuth acceptance",
+    "Second-account delivered messages/moderator behavior and independent audience participation",
     "Reliable native hidden-document browser acceptance",
     "Organizer source access and project-level licensing"
   ],
@@ -89,7 +110,7 @@
     },
     {
       "path": "release.md",
-      "sha256": "6ddb59a518832b4e3520abba32fd500b2c38385aaa65555f5893e6b978316b2f"
+      "sha256": "d837d6e068ff9ae25b70104c1e2c7c48d806ecb3a53019f47a39d4607db5ad56"
     },
     {
       "path": "review-2026-11-01/README.md",
@@ -321,11 +342,19 @@
     },
     {
       "path": "review-2026-11-01/production-verification.md",
-      "sha256": "18bde296eb132452de04d600e8164f12ede000bb6be482a50880e8f201c13fbb"
+      "sha256": "becc9147baab04f4fe0e77ff0ede6c6c2086a2dcdaeb3feb77c9050af74d4d81"
     },
     {
       "path": "review-implementation.md",
-      "sha256": "3529817def84b952e78d759a668bd744fb38e0327ccefc338e639dca051de0c1"
+      "sha256": "09468f21ab3e08c67b0ed962c7c69b4823f5d01264962605a30fb2b9879dbd5d"
+    },
+    {
+      "path": "review-2026-11-01/second-account-acceptance.json",
+      "sha256": "e573925f990557ef8585d1cc967c2bf9f6e4972ffd2bba0014587c468da7e1a6"
+    },
+    {
+      "path": "review-2026-11-01/second-account-acceptance.md",
+      "sha256": "2b9ee372a952b9da8e84f2ce82bb244fbf78d4d5c16a65353e570de62cb9fce4"
     }
   ]
 }
