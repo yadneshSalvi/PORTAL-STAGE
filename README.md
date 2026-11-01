@@ -4,13 +4,13 @@
 
 PORTAL STAGE is a small live theater: people improvise, chat makes authored choices, and the same virtual prop travels between rooms. Play with a consenting guest, or perform solo opposite an illustrated **Audience Room**. The software handles stagecraft; no runtime language model controls the performance.
 
-![An illustrated Borrowed Weather rehearsal, with the patched umbrella and its small visitor](docs/evidence/browser/local-rehearsal-shelter.jpg)
+![Borrowed Weather with an on-stage tally and the repaired camera control](docs/evidence/review-round2-2026-11-01/local-weather-tally-stage.jpg)
 
-_Illustrated rehearsal, not camera footage or evidence of remote performers._
+_Current illustrated rehearsal with one labeled test ballot. Cropped to the stage; no live camera or real audience is shown._
 
 **[Open the live site](https://portal-stage-eight.vercel.app)** · [How it works](docs/architecture.md) · [Verification record](docs/evidence/README.md)
 
-The deployed review release adds expanded audience choices, a local camera trial, capped solo sessions, and Midnight Parcel. [Production verification](docs/evidence/review-2026-11-01/production-verification.md) records actual host-account Twitch handoffs, signed-out rehearsal, physical Chrome camera initialization, and the remaining remote-human checks.
+The round-2 release strengthens busy-chat voting, refunds failed starts before media access, and makes interrupted solo cleanup recoverable. It passed **435 ordinary tests and seven actual Neon checks**, plus optimized local walkthroughs of both stories. [Implementation and regressions](docs/evidence/round-2-implementation.md) · [Local browser evidence](docs/evidence/review-round2-2026-11-01/local-browser.md) · [Current release](docs/evidence/release.md).
 
 ## Try it in 60 seconds
 
@@ -21,7 +21,11 @@ The deployed review release adds expanded audience choices, a local camera trial
 
 Try **Midnight Parcel** for a different story: choose a pocket of stars or a midnight garden, stamp a tagged parcel, send it across, and change the receiving room. Its tag and handling marks survive the return; the final choice decides which room keeps the gift.
 
-**Try a local camera & hand cues** is optional inside ordinary rehearsal. Give local preview consent, enable the camera, confirm framing, enable hand cues, and arm them. Your camera and landmarks stay in that browser; rehearsal requests no microphone or media room. Offer/Accept buttons remain available. Framing and dwell have automated tests; physical hand accuracy is still an acceptance task.
+![Midnight Parcel leaves its constellation in the receiving room](docs/evidence/review-round2-2026-11-01/local-parcel-delivered-stage.jpg)
+
+_The illustrated parcel came home with the same tag and handling marks; a labeled test choice left its stars in room B._
+
+**Try camera & hand cues** is optional inside ordinary rehearsal. Give local preview consent, enable the camera, confirm framing, enable hand cues, and arm them. Your camera and landmarks stay in that browser; rehearsal requests no microphone or media room. Offer/Accept buttons remain available. Framing and dwell have automated tests; physical hand accuracy is still an acceptance task.
 
 ## With real Twitch chat
 
@@ -43,7 +47,7 @@ npm run setup
 npm run dev
 ```
 
-Open [localhost:3200](http://localhost:3200). Rehearsal works with the local atomic file store. Real solo requires PostgreSQL, Twitch, LiveKit, and a confirmed durable expiry workflow. Default solo limits are three starts per account per UTC day, thirty globally, five concurrent reservations, and twenty minutes per session. Failed uncertain scheduling retains its daily charge and issues no media access. Local camera rehearsal does not consume a solo media allowance.
+Open [localhost:3200](http://localhost:3200). Rehearsal works with the local atomic file store. Real solo requires PostgreSQL, Twitch, LiveKit, and a confirmed durable expiry workflow. Default solo limits are three starts per account per UTC day, thirty globally, five concurrent reservations, and twenty minutes per session. A failed start returns its daily allowance when no media access has been claimed. Once media access has been claimed, the reservation closes through the media service; an ordinary early End still counts as a used session. Local camera rehearsal does not consume a solo media allowance.
 
 ```sh
 npm run typecheck
@@ -56,6 +60,8 @@ Stop the dev server before building, or use an isolated copy with its own `.next
 
 ## Built with Codex
 
-Codex helped implement and review the ownership protocol, exact-page fencing, private media routing, first-frame recovery, local camera cancellation, audience grammar, and durable solo closure. The [development record](docs/evidence/codex.md) links concrete source and tests. Main development conversation: **01a190da-3cee-7a10-b7c1-e0cdbb379510**; implementation lead: **01a191d6-551a-7cd2-9cd8-30611a7ee60b**.
+Codex helped implement and review the ownership protocol, exact-page fencing, private media routing, first-frame recovery, local camera cancellation, audience grammar, and durable solo closure. The [development record](docs/evidence/codex.md) links concrete source and tests. Project implementation session: **01a191d6-551a-7cd2-9cd8-30611a7ee60b**. The Codex app thread reader confirmed this real implementation history on 1 November 2026. The coordinating conversation **01a190da-3cee-7a10-b7c1-e0cdbb379510** is recorded separately.
 
 The [evidence ledger](docs/evidence/README.md) preserves source, conditions, actual counts, and pending checks. Private plans, credentials, consent receipts, and camera recordings stay out of Git. The repository contains the operating documentation and permitted assets needed for a fresh clone.
+
+[MIT license](LICENSE) · [Asset and dependency rights](docs/rights.md)

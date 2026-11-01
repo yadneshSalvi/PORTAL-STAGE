@@ -1,0 +1,26 @@
+{
+  "recordedAt": "2026-11-01T06:33:28.101Z",
+  "sourceCommit": "36d31829b5f3b2e368ec96b6c54ab548884b776f",
+  "buildId": "-iU6lkbQ7bzzuyamjWIuN",
+  "ordinary": {
+    "passed": 435,
+    "skipped": 7,
+    "filesPassed": 36,
+    "filesSkipped": 2,
+    "reportedSeconds": 1.58
+  },
+  "typecheck": "passed",
+  "format": "passed",
+  "build": "passed",
+  "diffCheck": "passed",
+  "nextEnvironmentDeclarationDrift": false,
+  "actualNeon": {
+    "passed": 7,
+    "failed": 0,
+    "skipped": 0,
+    "capturedFiles": 12,
+    "hashesMatchFinalSource": true,
+    "artifact": "neon-checks.json"
+  },
+  "browser": "local-browser.md"
+}

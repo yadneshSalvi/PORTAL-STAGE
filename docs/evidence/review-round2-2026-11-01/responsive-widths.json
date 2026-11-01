@@ -1,0 +1,44 @@
+{
+  "observedAt": "2026-11-01T06:27:00.577Z",
+  "source": "1c8cdd44630b39e3e34ac68766d088cee9807e87",
+  "show": "ps_e3e037dcac8089cd",
+  "episode": "Borrowed Weather",
+  "measurements": [
+    {
+      "buttonClientWidth": 180,
+      "buttonScrollWidth": 180,
+      "documentWidth": 1280,
+      "iconInside": true,
+      "label": "Try camera & hand cues",
+      "labelInside": true,
+      "width": 1280
+    },
+    {
+      "buttonClientWidth": 180,
+      "buttonScrollWidth": 180,
+      "documentWidth": 1440,
+      "iconInside": true,
+      "label": "Try camera & hand cues",
+      "labelInside": true,
+      "width": 1440
+    },
+    {
+      "buttonClientWidth": 202,
+      "buttonScrollWidth": 202,
+      "documentWidth": 1920,
+      "iconInside": true,
+      "label": "Try camera & hand cues",
+      "labelInside": true,
+      "width": 1920
+    },
+    {
+      "buttonClientWidth": 316,
+      "buttonScrollWidth": 316,
+      "documentWidth": 390,
+      "iconInside": true,
+      "label": "Try camera & hand cues",
+      "labelInside": true,
+      "width": 390
+    }
+  ]
+}

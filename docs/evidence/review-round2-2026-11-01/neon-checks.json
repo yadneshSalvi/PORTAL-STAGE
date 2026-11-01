@@ -1,0 +1,74 @@
+{
+  "method": "Actual configured project Neon; labeled random fixture rows only, removed by test cleanup. No viewer or media claim.",
+  "startedAt": "2026-11-01T06:25:34.313Z",
+  "completedAt": "2026-11-01T06:25:51.045Z",
+  "passed": 7,
+  "failed": 0,
+  "skipped": 0,
+  "success": true,
+  "sourceHashes": {
+    "startedAt": "2026-11-01T06:25:34.313Z",
+    "completedAt": "2026-11-01T06:25:51.045Z",
+    "method": "Actual configured project Neon; labeled random fixture rows only, removed by test cleanup. No viewer or media claim.",
+    "before": {
+      "src/server/store.ts": "4b23d917e2577628905c035609052f00463667107e61ae7ea84b843f1b3dfd52",
+      "src/server/solo-policy.ts": "d312d6e5bbc50d88d30a39c9968dacff126df4daf05e404836c49826f2b67f50",
+      "src/server/solo-quota.ts": "99e684db0a02a631bd803c4f80fac60af9a9540d3f5f3ab46f9467fc87195413",
+      "src/server/solo-closure.ts": "02dc18bd77d0d2eed1896a9f4307ac69d9ba6bcea6eb47ff3c9691006309dfdb",
+      "src/server/audience.ts": "59c851c6e5750a9fe6d3e8b15052a8e1fcc07b28a65892692f0eb5e63d920f2c",
+      "src/server/twitch.ts": "1af4711686a57369752a719abe66476d62eb5d958245703261c60e49f0a75103",
+      "src/server/core.ts": "9f04dd47caa2956da7aa51ced29c0ed071765e5d1297f1e1f51a27b58c633bc9",
+      "src/server/media.ts": "480ae058c58fcb788cdfc825ff2434beaf62abbc739479df59314c0cbcf00daf",
+      "src/server/records.ts": "bd799f2b537188be7e7b1a2a70a8b66240902fae343ecc4114a5bcdabfcdba0d",
+      "src/workflows/solo-expiry.ts": "f0f79b40414e5c1b40182f2f1a8c33040e610933c95c1186c845ccc20e8d6b26",
+      "tests/postgres-lease.test.ts": "59bf30ed5e5bb6750b53a3ed7c7535ae81f95246db1052317a17a01e75a57782",
+      "tests/postgres-audience-solo.test.ts": "1f17b7e4eb12c48f9bed2cd8d05a2b3f41620c63c3eebb160fb6e0f2336494d9"
+    },
+    "after": {
+      "src/server/store.ts": "4b23d917e2577628905c035609052f00463667107e61ae7ea84b843f1b3dfd52",
+      "src/server/solo-policy.ts": "d312d6e5bbc50d88d30a39c9968dacff126df4daf05e404836c49826f2b67f50",
+      "src/server/solo-quota.ts": "99e684db0a02a631bd803c4f80fac60af9a9540d3f5f3ab46f9467fc87195413",
+      "src/server/solo-closure.ts": "02dc18bd77d0d2eed1896a9f4307ac69d9ba6bcea6eb47ff3c9691006309dfdb",
+      "src/server/audience.ts": "59c851c6e5750a9fe6d3e8b15052a8e1fcc07b28a65892692f0eb5e63d920f2c",
+      "src/server/twitch.ts": "1af4711686a57369752a719abe66476d62eb5d958245703261c60e49f0a75103",
+      "src/server/core.ts": "9f04dd47caa2956da7aa51ced29c0ed071765e5d1297f1e1f51a27b58c633bc9",
+      "src/server/media.ts": "480ae058c58fcb788cdfc825ff2434beaf62abbc739479df59314c0cbcf00daf",
+      "src/server/records.ts": "bd799f2b537188be7e7b1a2a70a8b66240902fae343ecc4114a5bcdabfcdba0d",
+      "src/workflows/solo-expiry.ts": "f0f79b40414e5c1b40182f2f1a8c33040e610933c95c1186c845ccc20e8d6b26",
+      "tests/postgres-lease.test.ts": "59bf30ed5e5bb6750b53a3ed7c7535ae81f95246db1052317a17a01e75a57782",
+      "tests/postgres-audience-solo.test.ts": "1f17b7e4eb12c48f9bed2cd8d05a2b3f41620c63c3eebb160fb6e0f2336494d9"
+    },
+    "unchanged": true,
+    "exitCode": 0
+  },
+  "tests": [
+    {
+      "title": "Postgres solo caps and synthetic audience batching atomically bounds simultaneous reservations from different accounts at the global concurrency cap",
+      "status": "passed"
+    },
+    {
+      "title": "Postgres solo caps and synthetic audience batching shares one account's reservation cap across simultaneous browser sessions",
+      "status": "passed"
+    },
+    {
+      "title": "Postgres solo caps and synthetic audience batching persists a synthetic100-choice burst with five batched mutations and deduplicates redelivery",
+      "status": "passed"
+    },
+    {
+      "title": "Postgres renderer lease integration renews while a concurrent state mutation preserves both results",
+      "status": "passed"
+    },
+    {
+      "title": "Postgres renderer lease integration refuses wrong owner, renderer, stale epoch, expired lease, and ended show",
+      "status": "passed"
+    },
+    {
+      "title": "Postgres renderer lease integration enforces the rate limit and does not write an unchanged snapshot",
+      "status": "passed"
+    },
+    {
+      "title": "Postgres renderer lease integration fences old mount renewals and released mounts without changing the new epoch",
+      "status": "passed"
+    }
+  ]
+}

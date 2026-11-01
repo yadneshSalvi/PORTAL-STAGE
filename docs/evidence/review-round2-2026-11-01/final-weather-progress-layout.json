@@ -1,0 +1,42 @@
+{
+  "observedAt": "2026-11-01T06:33:03.791Z",
+  "source": "36d3182",
+  "measurements": [
+    {
+      "documentWidth": 1280,
+      "lastLabel": "Ending",
+      "lastLabelInside": true,
+      "lastLabelWidth": 70.015625,
+      "progressClientWidth": 689,
+      "progressScrollWidth": 689,
+      "width": 1280
+    },
+    {
+      "documentWidth": 1440,
+      "lastLabel": "Ending",
+      "lastLabelInside": true,
+      "lastLabelWidth": 70.015625,
+      "progressClientWidth": 849,
+      "progressScrollWidth": 849,
+      "width": 1440
+    },
+    {
+      "documentWidth": 1920,
+      "lastLabel": "Ending",
+      "lastLabelInside": true,
+      "lastLabelWidth": 70.015625,
+      "progressClientWidth": 1052,
+      "progressScrollWidth": 1052,
+      "width": 1920
+    },
+    {
+      "documentWidth": 390,
+      "lastLabel": "Ending",
+      "lastLabelInside": true,
+      "lastLabelWidth": 70.40625,
+      "progressClientWidth": 360,
+      "progressScrollWidth": 360,
+      "width": 390
+    }
+  ]
+}

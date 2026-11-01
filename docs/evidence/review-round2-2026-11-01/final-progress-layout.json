@@ -1,0 +1,51 @@
+{
+  "observedAt": "2026-11-01T06:32:38.294Z",
+  "source": "36d3182",
+  "build": "-iU6lkbQ7bzzuyamjWIuN",
+  "measurements": [
+    {
+      "cameraButtonClientWidth": 180,
+      "cameraButtonScrollWidth": 180,
+      "documentWidth": 1280,
+      "lastLabel": "Gift",
+      "lastLabelInside": true,
+      "lastLabelWidth": 50.828125,
+      "progressClientWidth": 689,
+      "progressScrollWidth": 689,
+      "width": 1280
+    },
+    {
+      "cameraButtonClientWidth": 180,
+      "cameraButtonScrollWidth": 180,
+      "documentWidth": 1440,
+      "lastLabel": "Gift",
+      "lastLabelInside": true,
+      "lastLabelWidth": 50.828125,
+      "progressClientWidth": 849,
+      "progressScrollWidth": 849,
+      "width": 1440
+    },
+    {
+      "cameraButtonClientWidth": 202,
+      "cameraButtonScrollWidth": 202,
+      "documentWidth": 1920,
+      "lastLabel": "Gift",
+      "lastLabelInside": true,
+      "lastLabelWidth": 50.828125,
+      "progressClientWidth": 1052,
+      "progressScrollWidth": 1052,
+      "width": 1920
+    },
+    {
+      "cameraButtonClientWidth": 316,
+      "cameraButtonScrollWidth": 316,
+      "documentWidth": 390,
+      "lastLabel": "Gift",
+      "lastLabelInside": true,
+      "lastLabelWidth": 70.40625,
+      "progressClientWidth": 360,
+      "progressScrollWidth": 360,
+      "width": 390
+    }
+  ]
+}
