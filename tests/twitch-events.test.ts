@@ -140,7 +140,7 @@ describe("Twitch notification boundary", () => {
           epoch: 1,
           envelopes,
         }),
-      ).toEqual({ counted: 20, ignored: 0 });
+      ).toEqual({ counted: 20, rateLimited: 0, ignored: 0 });
     }
     expect(writes.count).toBe(5);
     expect(show().state.round).toMatchObject({
@@ -160,7 +160,11 @@ describe("Twitch notification boundary", () => {
       envelopes: [event().envelope, wrong.envelope],
     });
     expect(response.status).toBe(200);
-    expect(await response.json()).toEqual({ counted: 1, ignored: 1 });
+    expect(await response.json()).toEqual({
+      counted: 1,
+      rateLimited: 0,
+      ignored: 1,
+    });
     expect(writes.count).toBe(1);
     expect(show().state.round?.uniqueVoters).toBe(1);
   });
@@ -193,7 +197,11 @@ describe("Twitch notification boundary", () => {
     };
     const response = await post(body);
     expect(response.status).toBe(200);
-    expect(await response.json()).toEqual({ counted: 19, ignored: 1 });
+    expect(await response.json()).toEqual({
+      counted: 19,
+      rateLimited: 0,
+      ignored: 1,
+    });
     expect(writes.count).toBe(1);
     expect(show().state.round).toMatchObject({
       uniqueVoters: 19,
@@ -201,7 +209,11 @@ describe("Twitch notification boundary", () => {
     });
     const replay = await post(body);
     expect(replay.status).toBe(200);
-    expect(await replay.json()).toEqual({ counted: 0, ignored: 20 });
+    expect(await replay.json()).toEqual({
+      counted: 0,
+      rateLimited: 0,
+      ignored: 20,
+    });
     expect(
       show().state.events.filter((item) => item.type === "round.vote"),
     ).toHaveLength(19);
@@ -215,7 +227,11 @@ describe("Twitch notification boundary", () => {
       envelopes: [old, event().envelope],
     });
     expect(response.status).toBe(200);
-    expect(await response.json()).toEqual({ counted: 1, ignored: 1 });
+    expect(await response.json()).toEqual({
+      counted: 1,
+      rateLimited: 0,
+      ignored: 1,
+    });
     expect(show().state.round).toMatchObject({
       uniqueVoters: 1,
       tallies: { gentle: 1, wild: 0 },
@@ -238,7 +254,11 @@ describe("Twitch notification boundary", () => {
       ],
     });
     expect(response.status).toBe(200);
-    expect(await response.json()).toEqual({ counted: 1, ignored: 6 });
+    expect(await response.json()).toEqual({
+      counted: 1,
+      rateLimited: 0,
+      ignored: 6,
+    });
     expect(show().state.round?.uniqueVoters).toBe(1);
   });
   it("keeps fractional Twitch timestamp ordering after ignoring an invalid envelope", async () => {
@@ -252,7 +272,11 @@ describe("Twitch notification boundary", () => {
       envelopes: [newer, null, older],
     });
     expect(response.status).toBe(200);
-    expect(await response.json()).toEqual({ counted: 2, ignored: 1 });
+    expect(await response.json()).toEqual({
+      counted: 2,
+      rateLimited: 0,
+      ignored: 1,
+    });
     expect(show().state.round).toMatchObject({
       uniqueVoters: 1,
       tallies: { gentle: 0, wild: 1 },
@@ -272,7 +296,11 @@ describe("Twitch notification boundary", () => {
       ],
     });
     expect(response.status).toBe(200);
-    expect(await response.json()).toEqual({ counted: 1, ignored: 1 });
+    expect(await response.json()).toEqual({
+      counted: 1,
+      rateLimited: 0,
+      ignored: 1,
+    });
     expect(show().state.round?.uniqueVoters).toBe(0);
     expect(show().state.presenceEffects).toHaveLength(1);
     expect(show().messageIds).toHaveLength(5000);
@@ -297,7 +325,11 @@ describe("Twitch notification boundary", () => {
       ],
     });
     expect(response.status).toBe(200);
-    expect(await response.json()).toEqual({ counted: 1, ignored: 1 });
+    expect(await response.json()).toEqual({
+      counted: 1,
+      rateLimited: 0,
+      ignored: 1,
+    });
     expect(show().state.round).toMatchObject({
       uniqueVoters: 2000,
       tallies: { gentle: 1999, wild: 1 },
@@ -317,6 +349,7 @@ describe("Twitch notification boundary", () => {
     await ingestChat(showId, request(), body); // The simulated caller never receives this successful response.
     expect(await ingestChat(showId, request(), body)).toEqual({
       counted: 0,
+      rateLimited: 0,
       ignored: 2,
     });
     expect(show().state.round).toMatchObject({
@@ -345,7 +378,7 @@ describe("Twitch notification boundary", () => {
         epoch: 1,
         envelopes: [outside.envelope, late.envelope, event("!share").envelope],
       }),
-    ).toEqual({ counted: 1, ignored: 2 });
+    ).toEqual({ counted: 1, rateLimited: 0, ignored: 2 });
     expect(show().state.round).toMatchObject({
       uniqueVoters: 1,
       tallies: { wild: 1 },
@@ -487,12 +520,17 @@ describe("Twitch notification boundary", () => {
       rendererId: "test-renderer",
       epoch: 1,
       envelopes: [
+        null,
         event("!gentle", "123", "rate-first").envelope,
         event("!wild", "124", "rate-second").envelope,
       ],
     });
     expect(response.status).toBe(200);
-    expect(await response.json()).toEqual({ counted: 1, ignored: 1 });
+    expect(await response.json()).toEqual({
+      counted: 1,
+      rateLimited: 1,
+      ignored: 1,
+    });
     expect(show().state.round).toMatchObject({
       uniqueVoters: 1,
       tallies: { gentle: 1, wild: 0 },

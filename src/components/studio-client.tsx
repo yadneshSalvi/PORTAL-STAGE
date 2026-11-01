@@ -70,6 +70,7 @@ import { useNow, useShowController } from "./use-show-controller";
 import {
   StudioAuthorityNotice,
   StudioChatStatus,
+  StudioChatWarning,
   StudioVisibilityNotice,
 } from "./studio-notices";
 import { canIssueDirectorAction } from "./studio-controls";
@@ -854,7 +855,8 @@ function StudioWorkspace({
                     onClick={() => setPanel("devices")}
                     disabled={show.phase === "ended"}
                   >
-                    <Camera size={15} /> Your camera & consent
+                    <Camera size={15} aria-hidden="true" />
+                    <span>Your camera & consent</span>
                   </button>
                   {(!isRehearsal || localTest) &&
                   show.participants.A.connected &&
@@ -871,7 +873,8 @@ function StudioWorkspace({
                         void run({ type: "ready", ready: true, slot: "A" })
                       }
                     >
-                      Mark yourself ready <Check size={15} />
+                      <span>Mark yourself ready</span>
+                      <Check size={15} aria-hidden="true" />
                     </button>
                   ) : null}
                 </>
@@ -926,9 +929,13 @@ function StudioWorkspace({
                     onClick={() => setChatEnabled((v) => !v)}
                   >
                     <Radio size={15} />
-                    {chatEnabled ? "Disconnect chat" : "Connect Twitch chat"}
+                    <span>
+                      {chatEnabled ? "Disconnect chat" : "Connect Twitch chat"}
+                    </span>
                   </button>
-                  {chatMessage ? (
+                  {chatMessage.includes("commands may not have reached") ? (
+                    <StudioChatWarning message={chatMessage} />
+                  ) : chatMessage ? (
                     <p className="panel-footnote" role="status">
                       {chatMessage}
                     </p>

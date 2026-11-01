@@ -5,6 +5,21 @@ import type { ClientState as TwitchClientState } from "@/lib/twitch-client";
 type LeaseStatus =
   "loading" | "acquiring" | "active" | "lost" | "ended" | "unavailable";
 
+export function StudioChatWarning({ message }: { message: string }) {
+  if (!message.includes("commands may not have reached")) return null;
+  return (
+    <span
+      className="status-pill status-gold"
+      role="status"
+      title={message}
+      aria-label={message}
+    >
+      <span className="status-dot" aria-hidden="true" />
+      Commands dropped
+    </span>
+  );
+}
+
 export function StudioChatStatus({
   show,
   enabled,

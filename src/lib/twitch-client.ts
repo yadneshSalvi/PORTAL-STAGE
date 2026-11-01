@@ -53,11 +53,17 @@ export class TwitchConnector {
     this.stopped = false;
     this.intakeWarning = "";
     this.batcher = new TwitchEventBatcher(
-      (envelopes) =>
-        api(`/api/shows/${this.showId}/twitch/events`, {
-          envelopes,
-          ...this.authority(),
-        }),
+      async (envelopes) => {
+        const result = await api<{ rateLimited: number }>(
+          `/api/shows/${this.showId}/twitch/events`,
+          { envelopes, ...this.authority() },
+        );
+        if (!this.stopped && result.rateLimited > 0) {
+          this.intakeWarning =
+            "Chat is connected, but some commands may not have reached the stage. Audience intake was rate limited.";
+          this.onState("connected", this.intakeWarning);
+        }
+      },
       (error) => {
         this.intakeWarning = `Chat is connected, but some commands may not have reached the stage. ${errorMessage(error)}`;
         this.onState("connected", this.intakeWarning);

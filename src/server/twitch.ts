@@ -433,7 +433,7 @@ export async function ingestChat(
   const now = Date.now();
   const result = await getStore().update<
     ShowRecord,
-    { counted: number; ignored: number; related: boolean }
+    { counted: number; ignored: number; rateLimited: number; related: boolean }
   >(showKey(id), (value) => {
     requireSoloAccess(value);
     requireLease(
@@ -452,7 +452,8 @@ export async function ingestChat(
       "The chat connection changed before these messages arrived.",
     );
     let counted = 0,
-      ignored = 0;
+      ignored = 0,
+      rateLimited = 0;
     const parsed: NonNullable<ReturnType<typeof parseChatEvent>>[] = [];
     for (const input of inputs) {
       try {
@@ -502,17 +503,23 @@ export async function ingestChat(
           error.code === "rate_limit";
         if (!batched || (!ignorableChatEventError(error) && !chatRateLimited))
           throw error;
-        ignored += 1;
+        if (chatRateLimited) rateLimited += 1;
+        else ignored += 1;
       }
     }
     return {
       counted,
       ignored,
+      rateLimited,
       related: parsed.length > 0,
     };
   });
   return batched
-    ? { counted: result.counted, ignored: result.ignored }
+    ? {
+        counted: result.counted,
+        ignored: result.ignored,
+        rateLimited: result.rateLimited,
+      }
     : result.related
       ? { counted: result.counted > 0 }
       : { counted: false, reason: "unrelated" };

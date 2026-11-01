@@ -89,6 +89,7 @@ import type { SessionRecord, ShowRecord } from "@/server/records";
 import { sign } from "@/server/security";
 import { finishOAuth, startOAuth } from "@/server/twitch";
 import { TokenVerifier } from "livekit-server-sdk";
+import { GET as getSession } from "@/app/api/session/route";
 import { POST } from "@/app/api/shows/[showId]/[...action]/route";
 
 const owner = "123e4567-e89b-12d3-a456-426614174099";
@@ -618,6 +619,25 @@ describe("missed solo expiry recovery", () => {
     expect(quota().active).toEqual({});
   });
 
+  it("a signed-out session request does not sweep overdue media reservations", async () => {
+    const record = await reserved();
+    await mintMediaToken(record.state.id, request(), {
+      purpose: "output-view",
+    });
+    vi.setSystemTime(record.soloReservation!.expiresAt + 180_000);
+    mocks.removeParticipant.mockClear();
+    mocks.deleteRoom.mockClear();
+    const response = await getSession(
+      new Request("http://localhost:3200/api/session"),
+    );
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({ authenticated: false });
+    expect(mocks.removeParticipant).not.toHaveBeenCalled();
+    expect(mocks.deleteRoom).not.toHaveBeenCalled();
+    expect(quota().active[record.soloReservation!.id]).toBeDefined();
+    expect(read(record.state.id).soloReservation?.status).toBe("scheduled");
+  });
+
   it("the next solo start reclaims a confirmed stage three minutes past expiry and revokes its identity", async () => {
     vi.stubEnv("PORTAL_SOLO_GLOBAL_CONCURRENT", "1");
     const record = await reserved(),
@@ -647,7 +667,7 @@ describe("missed solo expiry recovery", () => {
         delete record.soloReservation!.runId;
       }
       vi.setSystemTime(reservation.expiresAt + 120_000);
-      await soloUsage(null);
+      await soloUsage(records.get(`session:${owner}`) as SessionRecord);
       expect(quota().active).toEqual({});
       expect(read(id).soloReservation?.status).toBe("closed");
       expect(Object.values(quota().days)[0].total).toBe(1);

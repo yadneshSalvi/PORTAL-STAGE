@@ -418,7 +418,10 @@ export async function soloUsage(
 ): Promise<NonNullable<SessionInfo["soloUsage"]>> {
   const limits = soloLimits(),
     configured = publicSoloConfigured();
-  const recovery = configured ? await recoverSoloReservations(now) : null;
+  const recovery =
+    configured && auth?.credentialId
+      ? await recoverSoloReservations(now)
+      : null;
   const quota = configured
     ? await getStore().get<SoloQuota>(SOLO_QUOTA_KEY)
     : null;

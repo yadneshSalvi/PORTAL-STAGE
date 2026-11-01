@@ -7,12 +7,25 @@ import { GuestEnded } from "./guest-ended";
 import {
   StudioAuthorityNotice,
   StudioChatStatus,
+  StudioChatWarning,
   StudioVisibilityNotice,
 } from "./studio-notices";
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
 
 describe("studio reliability states", () => {
+  it("keeps dropped chat commands visible as one compact warning", () => {
+    const message =
+      "Chat is connected, but some commands may not have reached the stage. 2 messages were rate limited.";
+    const html = renderToStaticMarkup(<StudioChatWarning message={message} />);
+    expect(html).toContain('role="status"');
+    expect(html).toContain(`title="${message}"`);
+    expect(html).toContain("Commands dropped</span>");
+    expect(html).not.toContain(`<p>${message}</p>`);
+    expect(
+      renderToStaticMarkup(<StudioChatWarning message="Listening" />),
+    ).toBe("");
+  });
   it("requires this browser's subscribed connector before showing Twitch Listening after reload", () => {
     const show = createRecord("ps_chat_reload", "director", "solo", 1000).state;
     show.phase = "live";
