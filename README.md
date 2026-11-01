@@ -33,7 +33,7 @@ Sign in with Twitch and create a **solo Twitch show**, subject to the displayed 
 
 ![The production solo studio before enabling the private camera](docs/evidence/review-round2-2026-11-01/production-solo-backstage.jpg)
 
-_Actual solo setup for an owned Twitch account, before camera activation. The subsequent private test used two real accounts operated by one person; it is not independent audience or two-person performance evidence._
+_Actual solo setup for an owned Twitch account, before camera activation. The subsequent private test used two real accounts controlled by one test operator; it is not independent audience or two-person performance evidence._
 
 Both modes offer weather (`!gentle`/`!wild`), a fixed visitor name (`!pip1`/`!pip2`/`!pip3`), mood (`!curious`/`!shy`), and ending (`!share`/`!chase`) choices. Parcel uses `!stars`/`!garden` and `!deliver`/`!keep`. Bounded `!rain`, `!thunder`, and `!cheer` effects let chat stay present. Each account has one replaceable ballot per window. Empty or tied results wait for an explicit, labeled Director's choice.
 

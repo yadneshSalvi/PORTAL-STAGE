@@ -1,9 +1,10 @@
 {
-  "observedAt": "2026-11-01T06:34:37.791Z",
-  "method": "Anonymous raw GitHub requests for all relative README file/image targets and all ten How-built source/test targets. Localhost setup URLs excluded.",
+  "observedAt": "2026-11-01T06:48:33.137316+00:00",
+  "commit": "1e144b9a2dd3e00ca6d23e124a86b93e51bc52fa",
+  "method": "Anonymous raw GitHub requests without authentication for all current relative README file/image targets and all ten How-built source/test targets. Localhost setup URLs excluded.",
   "checks": [
     {
-      "path": "docs/evidence/review-round2-2026-11-01/local-weather-tally-stage.jpg",
+      "path": "LICENSE",
       "existsLocally": true,
       "anonymousHttpStatus": 200
     },
@@ -18,12 +19,7 @@
       "anonymousHttpStatus": 200
     },
     {
-      "path": "docs/evidence/round-2-implementation.md",
-      "existsLocally": true,
-      "anonymousHttpStatus": 200
-    },
-    {
-      "path": "docs/evidence/review-round2-2026-11-01/local-browser.md",
+      "path": "docs/evidence/codex.md",
       "existsLocally": true,
       "anonymousHttpStatus": 200
     },
@@ -33,22 +29,42 @@
       "anonymousHttpStatus": 200
     },
     {
+      "path": "docs/evidence/review-round2-2026-11-01/local-browser.md",
+      "existsLocally": true,
+      "anonymousHttpStatus": 200
+    },
+    {
       "path": "docs/evidence/review-round2-2026-11-01/local-parcel-delivered-stage.jpg",
       "existsLocally": true,
       "anonymousHttpStatus": 200
     },
     {
-      "path": "docs/setup.md",
+      "path": "docs/evidence/review-round2-2026-11-01/local-weather-tally-stage.jpg",
       "existsLocally": true,
       "anonymousHttpStatus": 200
     },
     {
-      "path": "docs/media.md",
+      "path": "docs/evidence/review-round2-2026-11-01/production-browser.md",
+      "existsLocally": true,
+      "anonymousHttpStatus": 200
+    },
+    {
+      "path": "docs/evidence/review-round2-2026-11-01/production-solo-backstage.jpg",
+      "existsLocally": true,
+      "anonymousHttpStatus": 200
+    },
+    {
+      "path": "docs/evidence/round-2-implementation.md",
       "existsLocally": true,
       "anonymousHttpStatus": 200
     },
     {
       "path": "docs/gestures.md",
+      "existsLocally": true,
+      "anonymousHttpStatus": 200
+    },
+    {
+      "path": "docs/media.md",
       "existsLocally": true,
       "anonymousHttpStatus": 200
     },
@@ -63,37 +79,7 @@
       "anonymousHttpStatus": 200
     },
     {
-      "path": "docs/evidence/codex.md",
-      "existsLocally": true,
-      "anonymousHttpStatus": 200
-    },
-    {
-      "path": "LICENSE",
-      "existsLocally": true,
-      "anonymousHttpStatus": 200
-    },
-    {
-      "path": "src/server/core.ts",
-      "existsLocally": true,
-      "anonymousHttpStatus": 200
-    },
-    {
-      "path": "tests/stage-core.test.ts",
-      "existsLocally": true,
-      "anonymousHttpStatus": 200
-    },
-    {
-      "path": "src/media/room-controller.ts",
-      "existsLocally": true,
-      "anonymousHttpStatus": 200
-    },
-    {
-      "path": "tests/media-decoder.test.ts",
-      "existsLocally": true,
-      "anonymousHttpStatus": 200
-    },
-    {
-      "path": "src/lib/show-grammar.ts",
+      "path": "docs/setup.md",
       "existsLocally": true,
       "anonymousHttpStatus": 200
     },
@@ -103,7 +89,27 @@
       "anonymousHttpStatus": 200
     },
     {
+      "path": "src/lib/show-grammar.ts",
+      "existsLocally": true,
+      "anonymousHttpStatus": 200
+    },
+    {
       "path": "src/media/local-rehearsal-camera.ts",
+      "existsLocally": true,
+      "anonymousHttpStatus": 200
+    },
+    {
+      "path": "src/media/room-controller.ts",
+      "existsLocally": true,
+      "anonymousHttpStatus": 200
+    },
+    {
+      "path": "src/server/core.ts",
+      "existsLocally": true,
+      "anonymousHttpStatus": 200
+    },
+    {
+      "path": "tests/media-decoder.test.ts",
       "existsLocally": true,
       "anonymousHttpStatus": 200
     },
@@ -111,7 +117,11 @@
       "path": "tests/media-local-rehearsal-camera.test.ts",
       "existsLocally": true,
       "anonymousHttpStatus": 200
+    },
+    {
+      "path": "tests/stage-core.test.ts",
+      "existsLocally": true,
+      "anonymousHttpStatus": 200
     }
-  ],
-  "passed": true
+  ]
 }
