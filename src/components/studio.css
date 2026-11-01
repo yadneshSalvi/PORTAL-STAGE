@@ -426,7 +426,7 @@
   font-size: 12px;
 }
 .story-progress > div:last-child {
-  flex: 0;
+  flex: 0 0 auto;
 }
 .story-step-icon {
   border: 1px solid #ffffff14;
