@@ -1,20 +1,25 @@
-import { sleep } from "workflow";
+import { FatalError, sleep } from "workflow";
 import { closeSoloReservation } from "@/server/solo-closure";
 
-async function closeRooms(
+export async function closeRooms(
   showId: string,
   reservationId: string,
   generation: number,
 ) {
   "use step";
   try {
-    await closeSoloReservation(showId, reservationId, generation);
-    return true;
+    const result = await closeSoloReservation(
+      showId,
+      reservationId,
+      generation,
+    );
+    return result.stale ? "stale" : result.closed ? "closed" : "retry";
   } catch {
-    // Keep retrying durable, idempotent cleanup without publishing provider errors or credentials.
-    return false;
+    // The bounded workflow and lazy quota sweep repeat the same idempotent closure.
+    return "retry";
   }
 }
+closeRooms.maxRetries = 0;
 
 export async function expireSoloSession(
   showId: string,
@@ -24,7 +29,18 @@ export async function expireSoloSession(
 ) {
   "use workflow";
   await sleep(new Date(expiresAt));
-  while (!(await closeRooms(showId, reservationId, generation)))
-    await sleep("30s");
-  return { closed: true };
+  for (let attempt = 1; attempt <= 5; attempt++) {
+    const result = await closeRooms(showId, reservationId, generation);
+    if (result !== "retry")
+      return { closed: result === "closed", stale: result === "stale" };
+    if (attempt < 5) await sleep("30s");
+  }
+  console.warn("portal.solo.expiry cleanup attempts exhausted", {
+    showId,
+    reservationId,
+    generation,
+  });
+  throw new FatalError(
+    "Solo media closure retries exhausted. Capacity stays reserved until lazy recovery or a director retry succeeds.",
+  );
 }

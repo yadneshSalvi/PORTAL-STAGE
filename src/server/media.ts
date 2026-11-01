@@ -14,7 +14,7 @@ import { rate, recordEvent, requireDirector, requireLease } from "./core";
 import { actorFor, loadRecord, showKey } from "./shows";
 import { getStore } from "./store";
 import type { ShowRecord } from "./records";
-import { requireSoloAccess } from "./solo-policy";
+import { claimSoloMedia, requireSoloAccess } from "./solo-policy";
 import { closeSoloReservation } from "./solo-closure";
 export const mediaRoom = (id: string, output = false) =>
   `portal-${id}-${output ? "program" : "backstage"}`;
@@ -217,6 +217,7 @@ export async function mintMediaToken(
   // that was reserved but has not connected to LiveKit yet.
   const signedToken = await token.toJwt();
   if (record.state.mode === "solo") {
+    await claimSoloMedia(id, record.soloReservation!);
     await getStore().update<ShowRecord, void>(showKey(id), (value) => {
       requireSoloAccess(value);
       assert(

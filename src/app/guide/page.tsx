@@ -81,8 +81,8 @@ export default function GuidePage() {
               <h2>Put yourself in the rehearsal.</h2>
               <p>
                 In a public rehearsal, choose{" "}
-                <strong>Try a local camera &amp; hand cues</strong>. Check the
-                local preview permission, then select{" "}
+                <strong>Try camera &amp; hand cues</strong>. Check the local
+                preview permission, then select{" "}
                 <strong>Enable local camera</strong>. No microphone is requested
                 and no media room is joined.
               </p>

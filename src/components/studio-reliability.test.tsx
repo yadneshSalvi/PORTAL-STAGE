@@ -99,6 +99,37 @@ describe("studio reliability states", () => {
       ),
     ).not.toContain("Retry media closure");
   });
+  it("shows the failed solo closure step and disables retry while cleanup is running", () => {
+    const show = createRecord(
+      "ps_closure_feedback",
+      "director",
+      "solo",
+      1000,
+    ).state;
+    show.phase = "ended";
+    show.solo = {
+      endsAt: 1000,
+      status: "closing",
+      closureError: "Deleting the Program room failed after two attempts.",
+    };
+    const render = (busy = false) =>
+      renderToStaticMarkup(
+        <CueDeck show={show} busy={busy} run={vi.fn()} locked />,
+      );
+    const failed = render();
+    expect(failed).toContain(show.solo.closureError);
+    expect(failed).toContain("Retry media closure");
+    expect(failed).not.toContain('disabled=""');
+    const retrying = render(true);
+    expect(retrying).toContain('aria-busy="true"');
+    expect(retrying).toMatch(/<button[^>]*disabled=""[^>]*>/);
+    expect(retrying).toContain("Closing media…");
+    expect(retrying).not.toContain(show.solo.closureError);
+    show.solo.status = "closed";
+    const closed = render();
+    expect(closed).not.toContain(show.solo.closureError);
+    expect(closed).not.toContain("Retry media closure");
+  });
   it("replaces ended guest setup with exits and an ending explanation", () => {
     const html = renderToStaticMarkup(<GuestEnded episode="midnight-parcel" />);
     expect(html).toContain("Show ended");

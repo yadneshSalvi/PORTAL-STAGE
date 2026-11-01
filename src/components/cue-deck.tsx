@@ -37,16 +37,24 @@ export function CueDeck({
           </p>
           {show.mode === "solo" && show.solo?.status === "closing" ? (
             <>
-              <p className="field-help" role="status">
-                The show has ended. Media-service closure is still pending.
-                Retry to finish closing its rooms.
+              <p className="field-help" role="status" aria-busy={busy}>
+                {busy
+                  ? "Closing the media rooms…"
+                  : "The show has ended. Media-service closure is still pending."}{" "}
+                {!busy && show.solo.closureError
+                  ? `${show.solo.closureError} `
+                  : ""}
+                {!busy ? "Retry to finish closing its rooms." : ""}
               </p>
               <button
                 className="button button-dark"
                 disabled={busy}
                 onClick={() => void run({ type: "end" })}
               >
-                Retry media closure
+                {busy ? (
+                  <LoaderCircle size={16} className="spin" aria-hidden="true" />
+                ) : null}
+                {busy ? "Closing media…" : "Retry media closure"}
               </button>
             </>
           ) : null}

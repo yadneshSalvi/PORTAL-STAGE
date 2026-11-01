@@ -12,7 +12,12 @@ import {
   expireState,
   needsExpiry,
 } from "@/server/core";
-import { castVote, eventOrder, presenceEffect } from "@/server/audience";
+import {
+  castVote,
+  eventOrder,
+  openRound,
+  presenceEffect,
+} from "@/server/audience";
 import { parseAction } from "@/server/schema";
 import type { Actor, ShowRecord } from "@/server/records";
 import {
@@ -371,6 +376,190 @@ describe("authored audience decisions", () => {
         false,
       ),
     ).toThrow();
+  });
+});
+
+describe("separate bounded audience delivery identities", () => {
+  it("accepts 6,000 rate-allowed fixture effects and still counts the next vote", () => {
+    const startedAt = Date.UTC(2026, 10, 1, 12);
+    const record = createRecord(
+      "ps_busy_chat_fixture",
+      host.id,
+      "live",
+      startedAt,
+      "fixture-channel",
+    );
+    record.state.phase = "live";
+    record.state.twitch.connected = true;
+    for (let index = 0; index < 6000; index++) {
+      const at = startedAt + index * 200;
+      expect(
+        presenceEffect(
+          record,
+          `fixture-person-${index % 15}`,
+          `fixture-effect-${index}`,
+          "cheer",
+          at,
+          at,
+          false,
+        ),
+      ).toBe(true);
+    }
+    expect(record.messageIds).toEqual([]);
+    expect(record.effectMessageIds).toHaveLength(500);
+    expect(record.effectMessageIds?.[0]).toBe("fixture-effect-5500");
+    expect(record.effectMessageIds?.at(-1)).toBe("fixture-effect-5999");
+
+    const now = startedAt + 1200_000;
+    openRound(record, "weather", now);
+    expect(
+      castVote(
+        record,
+        "fixture-voter",
+        "fixture-vote-after-effects",
+        "wild",
+        now,
+        now,
+        false,
+      ),
+    ).toBe(true);
+    expect(record.state.round).toMatchObject({
+      uniqueVoters: 1,
+      tallies: { gentle: 0, wild: 1 },
+    });
+    expect(record.messageIds).toEqual(["fixture-vote-after-effects"]);
+    expect(
+      presenceEffect(
+        record,
+        "fixture-person-14",
+        "fixture-effect-5999",
+        "cheer",
+        now + 3000,
+        now + 3000,
+        false,
+      ),
+    ).toBe(false);
+    expect(record.effectMessageIds).toHaveLength(500);
+  });
+  it("resets a full vote budget per round while fencing old timestamps and preserving effect dedupe", () => {
+    const scene = new Scene("solo");
+    scene.run({ type: "open-round" });
+    const sentAt = scene.now;
+    castVote(scene.record, "one", "round-one", "wild", sentAt, sentAt, false);
+    presenceEffect(
+      scene.record,
+      "one",
+      "effect-before-next-round",
+      "cheer",
+      sentAt,
+      sentAt,
+      false,
+    );
+    scene.record.messageIds = Array.from(
+      { length: 5000 },
+      (_, index) => `fixture-full-vote-budget-${index}`,
+    );
+    scene.close();
+    scene.run({ type: "open-round" });
+    expect(scene.record.messageIds).toEqual([]);
+    expect(scene.record.effectMessageIds).toEqual(["effect-before-next-round"]);
+    expect(() =>
+      castVote(
+        scene.record,
+        "one",
+        "round-one",
+        "wild",
+        sentAt,
+        scene.now,
+        false,
+      ),
+    ).toThrow(expect.objectContaining({ code: "vote_window" }));
+    expect(
+      castVote(
+        scene.record,
+        "one",
+        "round-two",
+        "gentle",
+        scene.now,
+        scene.now,
+        false,
+      ),
+    ).toBe(true);
+    expect(
+      castVote(
+        scene.record,
+        "one",
+        "round-two",
+        "wild",
+        scene.now + 1,
+        scene.now + 1,
+        false,
+      ),
+    ).toBe(false);
+    expect(
+      presenceEffect(
+        scene.record,
+        "one",
+        "effect-before-next-round",
+        "cheer",
+        scene.now,
+        scene.now,
+        false,
+      ),
+    ).toBe(false);
+    expect(scene.show.round).toMatchObject({
+      uniqueVoters: 1,
+      tallies: { gentle: 1, wild: 0 },
+    });
+  });
+  it("keeps recent legacy deliveries deduplicated when an older record lacks the effect ring", () => {
+    const scene = new Scene("solo");
+    scene.run({ type: "open-round" });
+    delete scene.record.effectMessageIds;
+    scene.record.messageIds = ["legacy-vote", "legacy-effect"];
+    expect(
+      presenceEffect(
+        scene.record,
+        "one",
+        "legacy-effect",
+        "cheer",
+        scene.now,
+        scene.now,
+        false,
+      ),
+    ).toBe(false);
+    expect(
+      castVote(
+        scene.record,
+        "one",
+        "legacy-vote",
+        "wild",
+        scene.now,
+        scene.now,
+        false,
+      ),
+    ).toBe(false);
+    expect(
+      presenceEffect(
+        scene.record,
+        "one",
+        "new-effect",
+        "cheer",
+        scene.now,
+        scene.now,
+        false,
+      ),
+    ).toBe(true);
+    expect(scene.record.effectMessageIds).toEqual([
+      "legacy-vote",
+      "legacy-effect",
+      "new-effect",
+    ]);
+    expect(scene.record.messageIds).toEqual(["legacy-vote", "legacy-effect"]);
+    scene.close();
+    scene.run({ type: "open-round" });
+    expect(scene.record.messageIds).toEqual([]);
+    expect(scene.record.effectMessageIds).toContain("legacy-effect");
   });
 });
 

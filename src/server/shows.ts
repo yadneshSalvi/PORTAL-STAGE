@@ -41,6 +41,7 @@ import { getStore } from "./store";
 import { ensureOAuthGrant } from "./twitch-grants";
 import {
   publicSoloConfigured,
+  refundFailedSoloStart,
   reserveSolo,
   requireSoloAccess,
   soloEligible,
@@ -266,19 +267,38 @@ export async function createShow(
       status: "reserved",
     };
   }
-  await getStore().create(showKey(id), record);
-  await getStore().update<SessionRecord, void>(sessionKey(ownerId), (value) => {
-    value.currentShowId = id;
-  });
-  if (record.soloReservation) {
-    await scheduleSolo(id, record.soloReservation);
-    return envelope((await getStore().get<ShowRecord>(showKey(id)))!, {
-      id: ownerId,
-      role: "director",
-      slot: "A",
-    });
+  try {
+    await getStore().create(showKey(id), record);
+    await getStore().update<SessionRecord, void>(
+      sessionKey(ownerId),
+      (value) => {
+        value.currentShowId = id;
+      },
+    );
+    if (record.soloReservation) {
+      await scheduleSolo(id, record.soloReservation);
+      return envelope((await getStore().get<ShowRecord>(showKey(id)))!, {
+        id: ownerId,
+        role: "director",
+        slot: "A",
+      });
+    }
+    return envelope(record, { id: ownerId, role: "director", slot: "A" });
+  } catch (error) {
+    if (record.soloReservation)
+      await refundFailedSoloStart(id, record.soloReservation).catch(() => {
+        console.warn(
+          "portal.solo.quota " +
+            JSON.stringify({
+              showId: id,
+              reservationId: record.soloReservation!.id,
+              step: "refund-failed-start",
+              outcome: "cleanup-pending",
+            }),
+        );
+      });
+    throw error;
   }
-  return envelope(record, { id: ownerId, role: "director", slot: "A" });
 }
 export async function command(
   id: string,

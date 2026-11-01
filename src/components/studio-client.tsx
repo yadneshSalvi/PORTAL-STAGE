@@ -835,14 +835,16 @@ function StudioWorkspace({
                       : "Original illustrated rooms let you rehearse the whole story. A local camera is optional."}
                   </p>
                   <button
-                    className="button button-dark button-small full-width"
+                    className="button button-dark button-small full-width local-camera-button"
                     disabled={show.phase === "ended"}
                     onClick={() => setPanel("rehearsal-camera")}
                   >
-                    <Camera size={15} />
-                    {localCamera.enabled
-                      ? "Local camera & hand cues"
-                      : "Try a local camera & hand cues"}
+                    <Camera size={15} aria-hidden="true" />
+                    <span>
+                      {localCamera.enabled
+                        ? "Camera & hand cues"
+                        : "Try camera & hand cues"}
+                    </span>
                   </button>
                 </>
               ) : (

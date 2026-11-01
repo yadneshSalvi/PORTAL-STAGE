@@ -431,14 +431,9 @@ export async function ingestChat(
     "Send one to twenty bounded Twitch notifications per batch.",
   );
   const now = Date.now();
-  const parsed = inputs.map((input) => parseChatEvent(record, id, input, now));
-  if (parsed.every((item) => !item))
-    return batched
-      ? { counted: 0, ignored: inputs.length }
-      : { counted: false, reason: "unrelated" };
   const result = await getStore().update<
     ShowRecord,
-    { counted: number; ignored: number }
+    { counted: number; ignored: number; related: boolean }
   >(showKey(id), (value) => {
     requireSoloAccess(value);
     requireLease(
@@ -458,12 +453,21 @@ export async function ingestChat(
     );
     let counted = 0,
       ignored = 0;
-    const sorted = parsed
-      .filter((item): item is NonNullable<typeof item> => Boolean(item))
-      .sort((a, b) => a.order.localeCompare(b.order));
-    for (const item of sorted) {
-      rate(value.rates, "chat-events", 3000, 60_000);
+    const parsed: NonNullable<ReturnType<typeof parseChatEvent>>[] = [];
+    for (const input of inputs) {
       try {
+        const item = parseChatEvent(value, id, input, now);
+        if (item) parsed.push(item);
+        else ignored += 1;
+      } catch (error) {
+        if (!batched || !ignorableChatEventError(error)) throw error;
+        ignored += 1;
+      }
+    }
+    const sorted = parsed.sort((a, b) => a.order.localeCompare(b.order));
+    for (const item of sorted) {
+      try {
+        rate(value.rates, "chat-events", 3000, 60_000);
         const accepted = PRESENCE_EFFECTS.includes(
           item.choice as PresenceEffect,
         )
@@ -492,26 +496,45 @@ export async function ingestChat(
         if (accepted) counted += 1;
         else ignored += 1;
       } catch (error) {
-        if (
-          !batched ||
-          !(error instanceof HttpError) ||
-          ![
-            "vote_window",
-            "choice_inactive",
-            "stage_held",
-            "effect_source",
-          ].includes(error.code)
-        )
+        const chatRateLimited =
+          error instanceof HttpError &&
+          error.status === 429 &&
+          error.code === "rate_limit";
+        if (!batched || (!ignorableChatEventError(error) && !chatRateLimited))
           throw error;
         ignored += 1;
       }
     }
     return {
       counted,
-      ignored: ignored + parsed.filter((item) => !item).length,
+      ignored,
+      related: parsed.length > 0,
     };
   });
-  return batched ? result : { counted: result.counted > 0 };
+  return batched
+    ? { counted: result.counted, ignored: result.ignored }
+    : result.related
+      ? { counted: result.counted > 0 }
+      : { counted: false, reason: "unrelated" };
+}
+function ignorableChatEventError(error: unknown) {
+  return (
+    error instanceof HttpError &&
+    [
+      "twitch_event",
+      "twitch_subscription",
+      "twitch_channel",
+      "twitch_timestamp",
+      "twitch_identity",
+      "twitch_message",
+      "vote_window",
+      "choice_inactive",
+      "stage_held",
+      "effect_source",
+      "vote_capacity",
+      "round_capacity",
+    ].includes(error.code)
+  );
 }
 function parseChatEvent(
   record: ShowRecord,

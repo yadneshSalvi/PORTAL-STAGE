@@ -35,6 +35,9 @@ export type ShowRecord = {
   >;
   presenceRates?: Record<string, number>;
   presenceOrder?: string;
+  /** Latest presence deliveries; optional for records saved before separation. */
+  effectMessageIds?: string[];
+  /** Accepted vote deliveries for the current round. */
   messageIds: string[];
   idempotency: Record<string, { hash: string; sequence: number; at: number }>;
   rates: Record<string, RateBucket>;
@@ -56,6 +59,15 @@ export type SoloReservation = {
   status: "pending" | "uncertain" | "scheduled" | "closing" | "closed";
   runId?: string;
   closedAt?: number;
+  /** A failed startup fences the show before its quota refund can race a late grant. */
+  startFailedAt?: number;
+  /** Distinguishes a completed concurrent cleanup from a legacy closed record awaiting quota release. */
+  closureReceipt?: string;
+  /** Resumable, monotonic cleanup after issuance is fenced and the identity ledger is fixed. */
+  closureProgress?: {
+    phase: "before-delete" | "delete-rooms" | "after-delete" | "complete";
+    nextIdentity: number;
+  };
   issued: {
     room: string;
     identity: string;

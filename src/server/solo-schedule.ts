@@ -35,7 +35,7 @@ export async function scheduleSolo(
     throw new HttpError(
       503,
       "solo_schedule",
-      "The solo closure schedule could not be confirmed. No media access was issued. This reservation still counts toward today's allowance; open the reserved show to end it safely.",
+      "The solo closure schedule could not be confirmed. No media access was issued. Refresh your allowance before trying a new solo stage.",
     );
   }
   await confirmSoloQuota(showId, reservation, runId);

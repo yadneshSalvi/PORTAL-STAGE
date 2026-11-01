@@ -160,6 +160,7 @@ export type ShowState = {
   solo: {
     endsAt: number;
     status: "reserved" | "scheduled" | "closing" | "closed";
+    closureError?: string;
   } | null;
   weather: Weather | null;
   rainStartedAt: number | null;

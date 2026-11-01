@@ -55,6 +55,7 @@ export async function POST(request: Request, context: Context) {
               Date.now(),
               true,
             ).catch(() => undefined);
+          return jsonResponse(await currentShow(showId, request));
         } else await closeMedia(showId).catch(() => undefined);
       }
       if (

@@ -13,6 +13,8 @@ import { assert } from "./errors";
 import type { ShowRecord } from "./records";
 import { recordEvent } from "./protocol-events";
 
+const EFFECT_MESSAGE_LIMIT = 500;
+
 export function safeContributor(value: unknown): string | null {
   if (typeof value !== "string") return null;
   const name = value
@@ -97,6 +99,8 @@ export function openRound(record: ShowRecord, kind: RoundKind, now: number) {
     boundTransferId: s.umbrella.transfer?.id ?? null,
   };
   record.ballots = {};
+  record.effectMessageIds ??= record.messageIds.slice(-EFFECT_MESSAGE_LIMIT);
+  record.messageIds = [];
   recordEvent(
     record,
     "round.opened",
@@ -288,7 +292,7 @@ export function castVote(
     record.messageIds.length < 5000,
     409,
     "vote_capacity",
-    "This show's audience event budget is full. Start a fresh show.",
+    "This round's audience event budget is full. Open a new choice window.",
   );
   assert(
     record.ballots[voter] || Object.keys(record.ballots).length < 2000,
@@ -364,10 +368,12 @@ export function presenceEffect(
     "effect_source",
     "Audience presence is paused outside a live scene.",
   );
+  const effectIds =
+    record.effectMessageIds ?? record.messageIds.slice(-EFFECT_MESSAGE_LIMIT);
   if (
     now - sentAt > 5000 ||
     sentAt > now + 1000 ||
-    record.messageIds.includes(messageId) ||
+    effectIds.includes(messageId) ||
     (record.presenceOrder && order <= record.presenceOrder)
   )
     return false;
@@ -380,13 +386,14 @@ export function presenceEffect(
   if (
     buckets[voter] ||
     Object.keys(buckets).length >= 15 ||
-    s.presenceEffects.filter((entry) => now - entry.at < 1000).length >= 5 ||
-    record.messageIds.length >= 5000
+    s.presenceEffects.filter((entry) => now - entry.at < 1000).length >= 5
   )
     return false;
   buckets[voter] = now;
   record.presenceOrder = order;
-  record.messageIds.push(messageId);
+  record.effectMessageIds = [...effectIds, messageId].slice(
+    -EFFECT_MESSAGE_LIMIT,
+  );
   s.presenceEffects.push({
     id: messageId.slice(0, 24),
     effect,
