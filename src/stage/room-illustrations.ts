@@ -126,18 +126,6 @@ function illustratedRoom(
     ctx.closePath();
     ctx.fill();
   }
-  ctx.fillStyle = PAPER;
-  ctx.font = "15px Inter, Arial";
-  ctx.textAlign = "center";
-  ctx.fillText(
-    parcel
-      ? slot === "A"
-        ? "MIDNIGHT POST · DISPATCH"
-        : "THE RECEIVING ROOM"
-      : "THE AUDIENCE ROOM · ILLUSTRATED",
-    r.x + r.w / 2,
-    r.y + r.h - 22,
-  );
   ctx.restore();
 }
 function roomMagic(

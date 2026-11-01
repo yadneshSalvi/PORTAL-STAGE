@@ -2204,10 +2204,14 @@ summary:focus-visible {
 }
 /* Public chrome shares the 14px label scale. */
 .site-header .wordmark,
-.site-footer .wordmark {
+.site-footer .wordmark,
+.public-error .wordmark {
   font-size: 14px;
 }
 /* Guest routes retain the 28 / 18 / 14 scale inside shared device controls. */
+.guest-invitation-card > p:not(.eyebrow) {
+  font-size: 14px;
+}
 .guest-shell .camera-placeholder > span {
   font-size: 18px;
 }

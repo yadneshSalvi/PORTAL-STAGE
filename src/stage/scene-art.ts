@@ -168,14 +168,6 @@ export function makeScenery() {
       ctx.lineTo(px - 24, y + h - 129);
       ctx.stroke();
     }
-    text(
-      ctx,
-      slot === "A" ? "Moon Garden" : "Rooftop at Dusk",
-      x + w / 2,
-      y + h - 48,
-      24,
-      "#E0DAD0A0",
-    );
     ctx.restore();
     for (const pad of [0, 12, 24]) {
       archPath(ctx, x - pad, y - pad, w + pad * 2, h + pad);

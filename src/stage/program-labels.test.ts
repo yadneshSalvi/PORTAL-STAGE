@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { createRecord } from "@/server/core";
-import { drawProgramText } from "./scene-art";
+import { drawProgramText, makeScenery } from "./scene-art";
+import { makeRoomIllustrations } from "./room-illustrations";
 import { decisionCredit, stageStoryCaption } from "./program-caption";
 
 function canvas() {
@@ -11,6 +12,7 @@ function canvas() {
       fillText: (value: string) => labels.push(value),
       measureText: (value: string) => ({ width: value.length * 12 }),
       createLinearGradient: () => ({ addColorStop: vi.fn() }),
+      createRadialGradient: () => ({ addColorStop: vi.fn() }),
     } as unknown as CanvasRenderingContext2D,
     {
       get(target, key) {
@@ -27,6 +29,51 @@ function canvas() {
 }
 
 describe("truthful stage camera labels", () => {
+  it.each([
+    {
+      mode: "rehearsal",
+      episode: "borrowed-weather",
+      names: ["Moon Garden", "Rooftop at Dusk"],
+    },
+    {
+      mode: "rehearsal",
+      episode: "midnight-parcel",
+      names: ["Midnight Post", "Receiving Room"],
+    },
+    { mode: "solo", episode: "borrowed-weather", names: ["Audience Room"] },
+    { mode: "solo", episode: "midnight-parcel", names: ["Audience Room"] },
+  ] as const)(
+    "uses only the canonical room labels across all $mode $episode artwork layers",
+    ({ mode, episode, names }) => {
+      const show = createRecord(
+        "ps_composed_room_labels",
+        "director",
+        mode,
+        1000,
+        null,
+        episode,
+      ).state;
+      show.phase = "live";
+      const picture = canvas();
+      vi.stubGlobal("document", {
+        createElement: () => ({ getContext: () => picture.context }),
+      });
+      try {
+        makeScenery();
+        makeRoomIllustrations().update(show, 1100, 1000, true);
+        drawProgramText(picture.context, show, 1100);
+        expect(
+          picture.labels.filter((label) =>
+            /^(?:the )?(?:moon garden|rooftop at dusk|midnight post|receiving room|audience room)/i.test(
+              label,
+            ),
+          ),
+        ).toEqual(names);
+      } finally {
+        vi.unstubAllGlobals();
+      }
+    },
+  );
   it.each([
     {
       episode: "borrowed-weather",

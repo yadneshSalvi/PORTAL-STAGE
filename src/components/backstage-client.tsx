@@ -606,13 +606,12 @@ function GuestWorkspace({
                   {gesture.enabled ? "Local tracking" : "Optional"}
                 </StatusPill>
               </summary>
-              <p>
-                Buttons always work. Hand cues use on-device landmarks with a
-                deliberate open-palm hold in the marked region.
-              </p>
+              <p>Hand cues use on-device landmarks.</p>
               <div className="guest-gesture-actions">
                 <button
                   className="button button-dark"
+                  title="Buttons always work. Hold an open palm in the marked region to cue."
+                  aria-description="Buttons always work. Hold an open palm in the marked region to cue."
                   disabled={!calibration || !media.localPreview}
                   onClick={() => {
                     if (gesture.enabled) {
@@ -624,9 +623,13 @@ function GuestWorkspace({
                   {gesture.enabled ? "Turn hand cues off" : "Enable hand cues"}
                 </button>
                 {gesture.enabled ? (
-                  <label className="checkbox-label">
+                  <label
+                    className="checkbox-label"
+                    title="Lower your hand once after arming. Then hold an open palm for about one second."
+                  >
                     <input
                       type="checkbox"
+                      aria-description="Lower your hand once after arming. Then hold an open palm for about one second."
                       checked={armed}
                       onChange={(e) => setArmed(e.target.checked)}
                     />
@@ -656,10 +659,6 @@ function GuestWorkspace({
                   >
                     {armed ? "Armed" : "Hand cues on"}
                   </StatusPill>
-                  <p className="field-help">
-                    Lower your hand once after arming. Then hold an open palm
-                    for about one second.
-                  </p>
                 </>
               ) : null}
               {gesture.error ? (
