@@ -54,9 +54,9 @@ describe("authored audience choice cards", () => {
         serverOffset={0}
       />,
     );
-    expect(html).toContain("CANCELLED");
-    expect(html).toContain("This choice was cancelled");
-    expect(html).toContain("Follow the next cue to ask again");
+    expect(html).toContain("Cancelled");
+    expect(html).toContain("Choice cancelled");
+    expect(html).toContain("Ask again with the next cue");
     expect(html).not.toContain('class="choice-result"');
     expect(html).not.toContain("Chosen result");
     expect(html).not.toContain("TestVoice");
@@ -78,8 +78,9 @@ describe("authored audience choice cards", () => {
       />,
     );
     for (const option of ROUND_DEFINITIONS[kind].options)
-      expect(html).toContain(`Test ${option.command}`);
-    expect(html).toContain("They are not audience input");
+      expect(html).toContain(option.command);
+    expect(html.match(/>Test vote</g)).toHaveLength(1);
+    expect(html).not.toContain("They are not audience input");
     expect(html).not.toContain("NaN");
   });
   it("keeps an empty solo acceptance visibly unresolved", () => {
@@ -94,7 +95,7 @@ describe("authored audience choice cards", () => {
     expect(html).toContain("No ballots arrived");
     expect(html).toContain("Accept it");
     expect(html).toContain("Wait a moment");
-    expect(html).toContain("credited as Director’s choice");
+    expect(html).toContain("Director’s choice");
     expect(html).not.toContain("Audience choice:");
     expect(html).not.toContain("Test !accept");
   });

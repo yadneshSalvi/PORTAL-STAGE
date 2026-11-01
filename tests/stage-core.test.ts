@@ -775,7 +775,7 @@ describe("fixture recovery and explicit LiveKit rehearsal transport", () => {
     });
     for (const slot of ["A", "B"] as const)
       expect(stage.state.participants[slot]).toMatchObject({
-        name: `Test plate ${slot}`,
+        name: `Room ${slot}`,
         connected: true,
         camera: true,
         microphone: false,
@@ -980,7 +980,7 @@ describe("fixture recovery and explicit LiveKit rehearsal transport", () => {
     expect(stage.record.inviteGeneration).toBe(generation + 1);
     for (const slot of ["A", "B"] as const)
       expect(stage.state.participants[slot]).toMatchObject({
-        name: `Test plate ${slot}`,
+        name: `Room ${slot}`,
         ready: true,
         admitted: true,
         camera: true,

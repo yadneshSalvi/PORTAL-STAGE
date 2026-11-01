@@ -18,8 +18,6 @@ import {
   EyeOff,
   Hand,
   Headphones,
-  Link2,
-  Mic,
   Monitor,
   Pause,
   Package,
@@ -32,7 +30,6 @@ import {
   Square,
   Umbrella,
   Users,
-  WandSparkles,
 } from "lucide-react";
 import type {
   EpisodeId,
@@ -104,165 +101,150 @@ function StudioLobby() {
   useEffect(() => {
     let active = true;
     void getSession()
-      .then((s) => {
-        if (active) setSession(s);
+      .then((value) => {
+        if (active) setSession(value);
       })
       .catch(() => undefined);
     return () => {
       active = false;
     };
   }, []);
+  const soloReady =
+    session?.soloAllowed &&
+    session.services.mediaConfigured &&
+    session.soloUsage?.available !== false;
+  const duetReady = session?.hostAllowed && session.services.mediaConfigured;
   return (
     <>
       <SiteHeader active="studio" />
       <main className="studio-lobby" id="main-content">
         <div className="lobby-heading">
-          <p className="eyebrow">YOUR OWN LITTLE THEATER</p>
-          <h1>
-            Shall we make
-            <br />
-            <em>something happen?</em>
-          </h1>
-          <p>
-            Rehearse on your own, let chat hold the other portal, or perform
-            with a friend.
-          </p>
+          <h1>Studio</h1>
         </div>
-        <div
-          className="episode-picker"
-          role="group"
-          aria-label="Choose your episode"
-        >
-          <button
-            aria-pressed={episode === "borrowed-weather"}
-            onClick={() => setEpisode("borrowed-weather")}
+        <section className="lobby-episodes" aria-labelledby="episode-heading">
+          <h2 id="episode-heading">Episode</h2>
+          <div
+            className="episode-picker"
+            role="group"
+            aria-label="Choose your episode"
           >
-            <Umbrella size={23} />
-            <span>
-              <strong>Borrowed Weather</strong>
-              <small>A storm, a patched umbrella, a curious visitor.</small>
-            </span>
-          </button>
-          <button
-            aria-pressed={episode === "midnight-parcel"}
-            onClick={() => setEpisode("midnight-parcel")}
-          >
-            <Package size={23} />
-            <span>
-              <strong>The Midnight Parcel</strong>
-              <small>A tagged gift that changes the room it reaches.</small>
-            </span>
-          </button>
-        </div>
-        <div className="lobby-options">
-          <article className="lobby-rehearsal">
-            <div className="lobby-poster">
-              {episode === "midnight-parcel" ? (
-                <ParcelPoster />
-              ) : (
-                <TheaterPoster compact />
-              )}
-            </div>
-            <div className="lobby-option-copy">
-              <span className="eyebrow">EXPLORE AT YOUR OWN PACE</span>
-              <h2>A little dress rehearsal.</h2>
-              <p>
-                {episode === "midnight-parcel"
-                  ? "Choose the contents, stamp a parcel, and let its stars or garden change the other room. Its tag and handling marks stay with it."
-                  : "Try the whole story with illustrated rooms. Choose the weather, name a visitor, and let the room write the ending."}
-              </p>
-              <NewShowButton episode={episode} className="button button-ink">
-                Start a rehearsal
-              </NewShowButton>
-              <span className="lobby-small">
-                Illustrated scenery and labeled test ballots. Optional local
-                camera and hand cues inside. No Twitch sign-in needed.
-              </span>
-            </div>
-          </article>
-          <article className="lobby-live">
-            <div className="live-arch-icon">
-              <Radio size={34} strokeWidth={1.2} />
-              <span aria-hidden="true">✦</span>
-            </div>
-            <span className="eyebrow">YOU, YOUR CHANNEL & THE OTHER SIDE</span>
-            <h2>Let chat hold the portal.</h2>
-            <p>
-              Perform in room A. Your Twitch community runs an original
-              illustrated Audience Room, decides when to receive the prop, and
-              helps send it home.
-            </p>
-            {session?.soloAllowed &&
-            session.services.mediaConfigured &&
-            session.soloUsage?.available !== false ? (
-              <NewShowButton
-                mode="solo"
-                episode={episode}
-                className="button button-gold"
-              >
-                Create a solo Twitch show
-              </NewShowButton>
-            ) : session?.authenticated ? (
-              <p className="lobby-small" role="status">
-                {session.soloUsage?.reason ||
-                  (!session.services.mediaConfigured
-                    ? "Live media is unavailable here. The public rehearsal and its local camera stay open."
-                    : "Solo hosting is unavailable for this account right now. Try the public rehearsal.")}
-              </p>
-            ) : (
-              <a className="button button-dark" href="/api/auth/twitch/login">
-                Sign in with Twitch for solo <ArrowUpRight size={17} />
-              </a>
-            )}
-            {session?.authenticated && session.soloUsage ? (
-              <span className="lobby-small">
-                {session.soloUsage.remaining} of {session.soloUsage.limit} solo
-                starts remaining · up to {session.soloUsage.minutes} minutes of
-                media per show.
-              </span>
-            ) : (
-              <span className="lobby-small">
-                Public solo hosting uses capped media sessions. Your camera and
-                broadcast consent remain separate choices.
-              </span>
-            )}
-            <Link className="text-link" href="/guide#solo">
-              Solo setup & limits <ArrowRight size={15} />
-            </Link>
-          </article>
-        </div>
-        <details className="duet-hosting">
-          <summary>
-            Bring a second performer instead <Users size={17} />
-          </summary>
-          <p>
-            Two consenting performers can share the stage through private
-            backstage media. Duet hosting currently uses invited host access.
-          </p>
-          {session?.hostAllowed && session.services.mediaConfigured ? (
-            <NewShowButton
-              mode="live"
-              episode={episode}
-              className="button button-ink"
+            <button
+              aria-pressed={episode === "borrowed-weather"}
+              onClick={() => setEpisode("borrowed-weather")}
             >
-              Create a duet show
-            </NewShowButton>
-          ) : (
-            <a className="button button-ink" href="/api/auth/twitch/login">
-              Invited duet host sign-in <ArrowUpRight size={16} />
-            </a>
-          )}
-          <Link className="text-link" href="/guide#program">
-            Media and Program setup <ArrowRight size={15} />
-          </Link>
-        </details>
+              <div className="episode-art" aria-hidden="true">
+                <TheaterPoster compact showLabel={false} />
+              </div>
+              <span>
+                <strong>Borrowed Weather</strong>
+                {episode === "borrowed-weather" ? (
+                  <Check size={20} aria-hidden="true" />
+                ) : (
+                  <Umbrella size={20} aria-hidden="true" />
+                )}
+              </span>
+            </button>
+            <button
+              aria-pressed={episode === "midnight-parcel"}
+              onClick={() => setEpisode("midnight-parcel")}
+            >
+              <div className="episode-art" aria-hidden="true">
+                <ParcelPoster />
+              </div>
+              <span>
+                <strong>The Midnight Parcel</strong>
+                {episode === "midnight-parcel" ? (
+                  <Check size={20} aria-hidden="true" />
+                ) : (
+                  <Package size={20} aria-hidden="true" />
+                )}
+              </span>
+            </button>
+          </div>
+        </section>
+        <section className="lobby-modes" aria-labelledby="mode-heading">
+          <h2 id="mode-heading">Mode</h2>
+          <div className="lobby-options">
+            <article className="mode-card">
+              <Clapperboard size={28} strokeWidth={1.4} aria-hidden="true" />
+              <h3>Rehearse</h3>
+              <NewShowButton episode={episode} className="button button-ink">
+                Start rehearsal
+              </NewShowButton>
+            </article>
+            <article className="mode-card">
+              <Radio size={28} strokeWidth={1.4} aria-hidden="true" />
+              <h3>Solo with chat</h3>
+              {soloReady ? (
+                <NewShowButton
+                  mode="solo"
+                  episode={episode}
+                  className="button button-ink"
+                >
+                  Start solo show
+                </NewShowButton>
+              ) : session?.authenticated ? (
+                <button
+                  className="button button-ink"
+                  disabled
+                  title={
+                    session.soloUsage?.reason ||
+                    "Solo hosting is unavailable for this account."
+                  }
+                >
+                  Solo unavailable
+                </button>
+              ) : (
+                <a className="button button-ink" href="/api/auth/twitch/login">
+                  Sign in with Twitch{" "}
+                  <ArrowUpRight size={16} aria-hidden="true" />
+                </a>
+              )}
+              {session?.authenticated && session.soloUsage ? (
+                <StatusPill
+                  title={
+                    session.soloUsage.reason ||
+                    `${session.soloUsage.minutes} minutes per show`
+                  }
+                >
+                  {session.soloUsage.remaining} left today
+                </StatusPill>
+              ) : null}
+            </article>
+            <article className="mode-card">
+              <Users size={28} strokeWidth={1.4} aria-hidden="true" />
+              <h3>Duet</h3>
+              {duetReady ? (
+                <NewShowButton
+                  mode="live"
+                  episode={episode}
+                  className="button button-ink"
+                >
+                  Start duet show
+                </NewShowButton>
+              ) : session?.authenticated ? (
+                <button
+                  className="button button-ink"
+                  disabled
+                  title="Duet hosting requires invited host access and available media."
+                >
+                  Invite required
+                </button>
+              ) : (
+                <a className="button button-ink" href="/api/auth/twitch/login">
+                  Sign in with Twitch{" "}
+                  <ArrowUpRight size={16} aria-hidden="true" />
+                </a>
+              )}
+            </article>
+          </div>
+        </section>
         {session?.currentShowId ? (
           <Link
             href={`/studio?show=${encodeURIComponent(session.currentShowId)}`}
             className="resume-show-link"
           >
-            <RotateCcw size={16} /> Return to your most recent stage{" "}
-            <ArrowRight size={16} />
+            <RotateCcw size={16} /> Resume show <ArrowRight size={16} />
           </Link>
         ) : null}
       </main>
@@ -611,95 +593,63 @@ function StudioWorkspace({
       <header className="studio-header">
         <div className="studio-header-left">
           <Wordmark light />
-          <span className="header-divider" />
-          <Link className="desk-label" href="/studio">
-            THE DIRECTOR’S DESK
+          <Link className="studio-home-link" href="/studio">
+            Studio
           </Link>
         </div>
         <div className="studio-header-right">
-          <StatusPill
-            tone={
-              isRehearsal ? "gold" : show.phase === "live" ? "coral" : "muted"
-            }
-            pulse={show.phase === "live"}
+          <Link
+            href="/guide"
+            className="icon-button"
+            title="Field guide"
+            aria-label="Field guide"
           >
-            {isRehearsal
-              ? show.phase === "ended"
-                ? "Show ended"
-                : "Rehearsal"
-              : show.phase === "live"
-                ? "On stage"
-                : show.phase === "ended"
-                  ? "Show ended"
-                  : "Backstage"}
-          </StatusPill>
-          <Link href="/guide" className="studio-guide-link">
-            <CircleHelp size={17} />
-            <span>Field guide</span>
+            <CircleHelp size={20} />
           </Link>
           <button
             className="icon-button"
             onClick={() => setPanel("preset")}
-            aria-label="Edit your show preset"
+            title="Customize"
+            aria-label="Customize your show"
           >
-            <Settings2 size={18} />
+            <Settings2 size={20} />
           </button>
         </div>
       </header>
       <main id="main-content" className="studio-main">
         <div className="studio-title-row">
-          <div>
-            <div className="show-breadcrumb">
-              <Link href="/studio">YOUR THEATER</Link>
-              <span>/</span>
-              <span>{isParcel ? "EPISODE 002" : "EPISODE 001"}</span>
-            </div>
-            <h1>
-              {show.preset.episodeTitle}
-              <span className="title-spark" aria-hidden="true">
-                ✦
-              </span>
-            </h1>
-            <p>
-              {isRehearsal
-                ? fixtureRehearsal
-                  ? "A private dress rehearsal. Play both illustrated parts, or try a local camera and hand cues."
-                  : "Synthetic media transport test. Each performer controls their own entrance."
-                : isSoloShow
-                  ? "You perform in A. Your community holds the other portal in the illustrated Audience Room."
-                  : "Two rooms. One scene. Leave a little room for the unexpected."}
-            </p>
-          </div>
+          <h1>{show.preset.episodeTitle}</h1>
           <div className="studio-title-actions">
+            {!isRehearsal ? (
+              <StatusPill tone={show.phase === "live" ? "teal" : "muted"}>
+                {show.phase === "ended"
+                  ? "Ended"
+                  : isSoloShow
+                    ? "Solo"
+                    : show.phase === "live"
+                      ? "Live"
+                      : show.phase === "hold"
+                        ? "Held"
+                        : "Backstage"}
+              </StatusPill>
+            ) : null}
+            {isSoloShow && show.solo && show.phase !== "ended" ? (
+              <StatusPill
+                tone={soloRemaining <= 120_000 ? "gold" : "muted"}
+                title="Reserved media time remaining"
+              >{`${Math.floor(soloRemaining / 60_000)}:${String(Math.floor(soloRemaining / 1000) % 60).padStart(2, "0")}`}</StatusPill>
+            ) : null}
             {!isSoloShow && (!isRehearsal || (localHost && localTest)) ? (
               <button
-                className="button button-dark"
-                disabled={
-                  show.phase === "ended" ||
-                  (isRehearsal && !(localHost && localTest))
-                }
-                title={
-                  isRehearsal && !(localHost && localTest)
-                    ? "Create a live show to invite a performer"
-                    : "Invite a performer backstage"
-                }
+                className="icon-button"
+                disabled={show.phase === "ended"}
+                title="Invite a performer"
+                aria-label="Invite a performer"
                 onClick={() => setPanel("invite")}
               >
-                <Users size={16} />
-                <span>Invite a performer</span>
+                <Users size={20} />
               </button>
             ) : null}
-            <button
-              className="button button-gold"
-              onClick={() => setPanel("output")}
-              disabled={show.phase === "ended"}
-            >
-              <Monitor size={16} />
-              <span>
-                {isRehearsal && !localTest ? "Scene preview" : "Program output"}
-              </span>
-              <ExternalLink size={14} />
-            </button>
           </div>
         </div>
         {error ? (
@@ -719,91 +669,71 @@ function StudioWorkspace({
           wasHidden={visibilityReminder}
           onAcknowledge={() => setVisibilityReminder(false)}
         />
-        {isSoloShow && show.solo && show.phase !== "ended" ? (
-          <div className="solo-session-note">
-            <ShieldCheck size={17} aria-hidden="true" />
-            <p>
-              <strong>
-                Solo show · one human camera, an illustrated Audience Room.
-              </strong>
-              <span>
-                {`${Math.floor(soloRemaining / 60_000)}:${String(Math.floor(soloRemaining / 1000) % 60).padStart(2, "0")} reserved media time remaining. No more live access is issued after this deadline; keep this window open to end cleanly.`}
-              </span>
-            </p>
+        {isSoloShow &&
+        show.solo &&
+        show.phase !== "ended" &&
+        soloRemaining <= 120_000 ? (
+          <div className="solo-session-warning" role="alert">
+            <ShieldCheck size={18} aria-hidden="true" />
+            <span>Media time ending</span>
+            <button
+              className="button button-text"
+              onClick={() => setPanel("end")}
+            >
+              End show
+            </button>
           </div>
         ) : null}
         <div className="studio-grid">
           <aside className="studio-sidebar">
-            <section className="cast-panel">
-              <div className="panel-eyebrow">
-                <span>IN THE WINGS</span>
-                <Users size={14} />
-              </div>
+            <section className="cast-panel" aria-label="Performers">
               {(["A", "B"] as Slot[]).map((slot) => {
-                if (isAudienceRoom(show, slot))
-                  return (
-                    <article className="cast-member cast-audience" key={slot}>
-                      <div className="cast-avatar avatar-b">
-                        <Sparkles size={22} aria-hidden="true" />
-                      </div>
-                      <div className="cast-member-info">
-                        <strong>The Audience Room</strong>
-                        <span>
-                          Original illustrated room · controlled by chat
-                        </span>
-                        <small>
-                          {show.umbrella.owner === "B"
-                            ? `Holding the ${propName}`
-                            : "Decides when to receive an offer"}
-                        </small>
-                      </div>
-                    </article>
-                  );
                 const p = show.participants[slot];
+                const audience = isAudienceRoom(show, slot);
+                const name = audience
+                  ? "Audience Room"
+                  : isRehearsal
+                    ? slot === "A" && localCamera.enabled
+                      ? "You"
+                      : isParcel
+                        ? slot === "A"
+                          ? "Midnight Post"
+                          : "Receiving Room"
+                        : slot === "A"
+                          ? "Moon Garden"
+                          : "Rooftop at Dusk"
+                    : p.name || (slot === "A" ? "You" : "Guest");
+                const status = audience
+                  ? "Controlled by chat"
+                  : p.admitted
+                    ? "On stage"
+                    : p.ready
+                      ? "Ready for admission"
+                      : p.joined
+                        ? "Backstage"
+                        : "Not connected";
                 return (
                   <article className="cast-member" key={slot}>
-                    <div className={`cast-avatar avatar-${slot.toLowerCase()}`}>
-                      <span>{slot}</span>
-                      <i className={p.connected ? "connected-dot" : ""} />
+                    <div
+                      className={`cast-avatar avatar-${slot.toLowerCase()}`}
+                      title={status}
+                      aria-label={`${name}: ${status}`}
+                    >
+                      {audience ? (
+                        <Sparkles size={20} aria-hidden="true" />
+                      ) : (
+                        <span>{slot}</span>
+                      )}
+                      <i
+                        className={
+                          p.connected || audience ? "connected-dot" : ""
+                        }
+                      />
                     </div>
                     <div className="cast-member-info">
-                      <strong>
-                        {isRehearsal
-                          ? slot === "A" && localCamera.enabled
-                            ? "You, in this browser"
-                            : `Test performer ${slot}`
-                          : p.name ||
-                            (slot === "A" ? "You, the host" : "Your guest")}
-                      </strong>
-                      <span>
-                        {isRehearsal
-                          ? slot === "A" && localCamera.enabled
-                            ? "Local camera · no media upload"
-                            : "Original illustrated plate"
-                          : p.admitted
-                            ? "Admitted to Program"
-                            : p.ready
-                              ? "Ready · awaiting admission"
-                              : p.joined
-                                ? "Preparing backstage"
-                                : "An empty place, for now"}
-                      </span>
-                      <div className="cast-device-status">
-                        <Camera
-                          size={12}
-                          className={p.camera ? "is-ready" : ""}
-                        />
-                        <Mic
-                          size={12}
-                          className={p.microphone ? "is-ready" : ""}
-                        />
-                        <span>{p.ready ? "Ready" : "Not ready"}</span>
-                        {p.admitted ? (
-                          <Check size={12} className="is-ready" />
-                        ) : null}
-                      </div>
+                      <strong>{name}</strong>
                     </div>
-                    {(!isRehearsal || localTest) && p.ready ? (
+                    {!audience && (!isRehearsal || localTest) && p.ready ? (
                       <button
                         className="icon-button cast-admit"
                         aria-label={
@@ -828,143 +758,142 @@ function StudioWorkspace({
                   </article>
                 );
               })}
-              {isRehearsal && !localTest ? (
-                <>
-                  <p className="panel-footnote">
-                    {localCamera.enabled
-                      ? "Your camera appears only in this browser. Room B and every rehearsal ballot remain illustrated tests."
-                      : "Original illustrated rooms let you rehearse the whole story. A local camera is optional."}
-                  </p>
-                  <button
-                    className="button button-dark button-small full-width local-camera-button"
-                    disabled={show.phase === "ended"}
-                    onClick={() => setPanel("rehearsal-camera")}
-                  >
-                    <Camera size={15} aria-hidden="true" />
-                    <span>
-                      {localCamera.enabled
-                        ? "Camera & hand cues"
-                        : "Try camera & hand cues"}
-                    </span>
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
-                    className="button button-dark button-small full-width"
-                    onClick={() => setPanel("devices")}
-                    disabled={show.phase === "ended"}
-                  >
-                    <Camera size={15} aria-hidden="true" />
-                    <span>Your camera & consent</span>
-                  </button>
-                  {(!isRehearsal || localTest) &&
-                  show.participants.A.connected &&
-                  !show.participants.A.ready ? (
-                    <button
-                      className="button button-teal button-small full-width"
-                      disabled={
-                        busy ||
-                        !leaseValid ||
-                        !show.participants.A.calibrated ||
-                        !show.participants.A.consentBroadcast
-                      }
-                      onClick={() =>
-                        void run({ type: "ready", ready: true, slot: "A" })
-                      }
-                    >
-                      <span>Mark yourself ready</span>
-                      <Check size={15} aria-hidden="true" />
-                    </button>
-                  ) : null}
-                </>
-              )}
-            </section>
-            <section className="connections-panel">
-              <div className="panel-eyebrow">
-                <span>THE STAGE DOOR</span>
-                <Link2 size={14} />
-              </div>
-              <div className="connection-item">
-                <span
-                  className={`connection-indicator ${media.connected ? "connected" : ""}`}
-                />
-                <span>Camera room</span>
-                <strong>
-                  {isRehearsal && !localTest
+              <button
+                className="button button-dark button-small full-width"
+                disabled={show.phase === "ended"}
+                onClick={() =>
+                  setPanel(
+                    fixtureRehearsal && !localTest
+                      ? "rehearsal-camera"
+                      : "devices",
+                  )
+                }
+              >
+                <Camera size={16} aria-hidden="true" />
+                <span>
+                  {fixtureRehearsal && !localTest
                     ? localCamera.enabled
-                      ? "Local camera A"
-                      : "Test plates"
-                    : media.connected
-                      ? media.quality === "poor"
-                        ? "Poor connection"
-                        : "Connected"
-                      : "Not connected"}
-                </strong>
-              </div>
-              <StudioChatStatus
-                show={show}
-                enabled={chatEnabled}
-                leaseValid={leaseValid}
-                connection={chatState}
-              />
-              <div className="connection-item">
-                <span
-                  className={`connection-indicator ${media.programPublishing || isRehearsal ? "connected" : ""}`}
-                />
-                <span>Program</span>
-                <strong>
-                  {isRehearsal && !localTest
-                    ? "Local rehearsal"
-                    : media.programPublishing
-                      ? "Publishing"
-                      : "Not publishing"}
-                </strong>
-              </div>
-              {!isRehearsal ? (
-                <>
-                  <button
-                    className="button button-dark button-small full-width"
-                    disabled={!leaseValid || show.phase === "ended"}
-                    onClick={() => setChatEnabled((v) => !v)}
-                  >
-                    <Radio size={15} />
-                    <span>
-                      {chatEnabled ? "Disconnect chat" : "Connect Twitch chat"}
-                    </span>
-                  </button>
-                  {chatMessage.includes("commands may not have reached") ? (
-                    <StudioChatWarning message={chatMessage} />
-                  ) : chatMessage ? (
-                    <p className="panel-footnote" role="status">
-                      {chatMessage}
-                    </p>
-                  ) : null}
-                </>
+                      ? "Camera & hand cues"
+                      : "Try camera & hand cues"
+                    : "Your camera & consent"}
+                </span>
+              </button>
+              {(!isRehearsal || localTest) &&
+              show.participants.A.connected &&
+              !show.participants.A.ready ? (
+                <button
+                  className="button button-teal button-small full-width"
+                  disabled={
+                    busy ||
+                    !leaseValid ||
+                    !show.participants.A.calibrated ||
+                    !show.participants.A.consentBroadcast
+                  }
+                  onClick={() =>
+                    void run({ type: "ready", ready: true, slot: "A" })
+                  }
+                >
+                  <span>Mark ready</span>
+                  <Check size={16} aria-hidden="true" />
+                </button>
               ) : null}
+              {!isRehearsal ? (
+                <button
+                  className="button button-text button-small full-width"
+                  disabled={!leaseValid || show.phase === "ended"}
+                  title={chatMessage || "Connect this director to Twitch chat"}
+                  onClick={() => setChatEnabled((value) => !value)}
+                >
+                  <Radio size={16} aria-hidden="true" />
+                  <span>
+                    {chatEnabled ? "Disconnect chat" : "Connect Twitch"}
+                  </span>
+                </button>
+              ) : null}
+              <StudioChatWarning message={chatMessage} />
             </section>
-            <div className="sidebar-postcard">
-              <span aria-hidden="true">✦</span>
-              <p>
-                “The best part is
-                <br />
-                what you didn’t plan.”
-              </p>
-              <small>A NOTE FROM THE WINGS</small>
-            </div>
           </aside>
           <section className="stage-workspace" aria-label="The canonical stage">
             <div className="stage-monitor">
               <div className="monitor-topbar">
-                <span>
+                <div
+                  className="stage-connections"
+                  aria-label="Stage connections"
+                >
                   <span
-                    className={`monitor-status-dot ${show.phase === "live" ? "is-live" : ""}`}
+                    className="stage-connection"
+                    role="img"
+                    title={
+                      fixtureRehearsal && !localTest
+                        ? localCamera.enabled
+                          ? "Camera: local preview"
+                          : "Camera: illustrated rooms"
+                        : media.connected
+                          ? `Camera: ${media.quality === "poor" ? "poor connection" : "connected"}`
+                          : "Camera: not connected"
+                    }
+                    aria-label={
+                      fixtureRehearsal && !localTest
+                        ? localCamera.enabled
+                          ? "Local camera preview"
+                          : "Illustrated rooms"
+                        : media.connected
+                          ? "Camera connected"
+                          : "Camera not connected"
+                    }
+                  >
+                    <Camera size={17} />
+                    <span
+                      className={`connection-indicator ${media.connected || localCamera.enabled ? "connected" : ""}`}
+                    />
+                  </span>
+                  <StudioChatStatus
+                    show={show}
+                    enabled={chatEnabled}
+                    leaseValid={leaseValid}
+                    connection={chatState}
                   />
-                  {isRehearsal ? "REHEARSAL STAGE" : "CANONICAL PROGRAM"}
-                </span>
-                <span>
-                  1920 × 1080 <i /> 16:9
-                </span>
+                  <span
+                    className="stage-connection"
+                    role="img"
+                    title={
+                      fixtureRehearsal && !localTest
+                        ? "Program: scene preview"
+                        : media.programPublishing
+                          ? "Program: publishing"
+                          : "Program: not publishing"
+                    }
+                    aria-label={
+                      fixtureRehearsal && !localTest
+                        ? "Scene preview"
+                        : media.programPublishing
+                          ? "Program publishing"
+                          : "Program not publishing"
+                    }
+                  >
+                    <Monitor size={17} />
+                    <span
+                      className={`connection-indicator ${media.programPublishing ? "connected" : ""}`}
+                    />
+                  </span>
+                </div>
+                <button
+                  className="icon-button"
+                  onClick={() => setPanel("output")}
+                  disabled={show.phase === "ended"}
+                  title={
+                    fixtureRehearsal && !localTest
+                      ? "Scene preview"
+                      : "Program output"
+                  }
+                  aria-label={
+                    fixtureRehearsal && !localTest
+                      ? "Scene preview"
+                      : "Program output"
+                  }
+                >
+                  <ExternalLink size={18} />
+                </button>
               </div>
               {leaseValid || show.phase === "ended" ? (
                 <StageCanvas
@@ -993,24 +922,9 @@ function StudioWorkspace({
               ) : (
                 <div className="stage-awaiting-authority">
                   <ShieldCheck size={34} />
-                  <h2>One stage. One director.</h2>
-                  <p>This studio is waiting for its render lease.</p>
+                  <h2>Stage unavailable</h2>
                 </div>
               )}
-              <div className="monitor-bottom">
-                <span>
-                  <Headphones size={13} />
-                  {isRehearsal
-                    ? localCamera.enabled
-                      ? "Local camera A · illustrated room B · test ballots"
-                      : "Synthetic rehearsal · no live cameras or audience"
-                    : "Director preview · headphone monitoring"}
-                </span>
-                <span className={health.fps ? "render-health" : ""}>
-                  {health.fps ? `${health.fps} fps` : "WebGL"}
-                  <span className="render-health-dot" />
-                </span>
-              </div>
             </div>
             <div className="story-progress" aria-label="Story progress">
               {[
@@ -1053,129 +967,93 @@ function StudioWorkspace({
                 </div>
               ))}
             </div>
-            <section className="prop-card">
-              <div className="prop-emblem">
+            <section className="prop-card" aria-label={`${propName} controls`}>
+              <div className="prop-emblem" aria-hidden="true">
                 {isParcel ? (
-                  <Package size={29} strokeWidth={1.3} />
+                  <Package size={28} strokeWidth={1.4} />
                 ) : (
-                  <Umbrella size={29} strokeWidth={1.3} />
+                  <Umbrella size={28} strokeWidth={1.4} />
                 )}
                 <span className="prop-patch" />
               </div>
               <div className="prop-card-copy">
-                <span className="panel-eyebrow">
-                  {isParcel
-                    ? "THE SAME TAGGED PARCEL"
-                    : "THE SAME PATCHED UMBRELLA"}
-                </span>
                 <h3>
-                  {currentOffer
-                    ? `Offered to ${isSoloShow && transfer.to === "B" ? "the Audience Room" : `performer ${transfer.to}`}`
-                    : transfer?.status === "accepted"
-                      ? `The same ${propName} is crossing.`
-                      : isSoloShow && show.umbrella.owner === "B"
-                        ? "In the Audience Room’s care."
-                        : `In performer ${show.umbrella.owner}’s care.`}
+                  With {show.umbrella.owner} ·{" "}
+                  {show.parcel
+                    ? show.parcel.stamped
+                      ? "Stamped"
+                      : "Unstamped"
+                    : `${Math.round(show.umbrella.wetness * 100)}% wet`}
                 </h3>
-                <p>
-                  {show.parcel ? (
-                    <>
-                      <span className="coral-swatch" />
-                      Tag {show.parcel.tag} <span>·</span>{" "}
-                      {show.parcel.stamped
-                        ? "Moon stamp kept"
-                        : "Waiting for its stamp"}{" "}
-                      <span>·</span>{" "}
-                      {show.parcel.damage > 0
-                        ? "Handling marks kept"
-                        : "Uncreased corners"}
-                    </>
-                  ) : (
-                    <>
-                      <span className="coral-swatch" />
-                      Coral repair patch <span>·</span>{" "}
-                      {Math.round(show.umbrella.wetness * 100)}% wet
-                    </>
-                  )}
-                </p>
               </div>
-              <button
-                className="icon-button"
-                onClick={() => setPanel("evidence")}
-                aria-label="Inspect persistent prop state"
-              >
-                <CodeXml size={20} />
-              </button>
-            </section>
-            <div className="performer-button-row">
-              <button
-                className="button button-dark"
-                disabled={busy || !canOffer}
-                onClick={() =>
-                  void run({
-                    type: "offer",
-                    from: fixtureRehearsal ? show.umbrella.owner : "A",
-                  })
-                }
-              >
-                <Hand size={16} /> Offer {propName} <kbd>O</kbd>
-              </button>
-              <button
-                className="button button-dark"
-                disabled={
-                  busy ||
-                  !leaseValid ||
-                  !currentOffer ||
-                  (!fixtureRehearsal && transfer.to !== "A")
-                }
-                onClick={() => {
-                  if (transfer)
-                    void run({
-                      type: "accept",
-                      transferId: transfer.id,
-                      slot: fixtureRehearsal ? transfer.to : "A",
-                    });
-                }}
-              >
-                <Check size={16} /> Accept <kbd>A</kbd>
-              </button>
-              {currentOffer ? (
+              <div className="performer-button-row">
                 <button
-                  className="button button-text"
-                  disabled={busy || !leaseValid}
+                  className="button button-dark"
+                  disabled={busy || !canOffer}
+                  onClick={() =>
+                    void run({
+                      type: "offer",
+                      from: fixtureRehearsal ? show.umbrella.owner : "A",
+                    })
+                  }
+                  title={`Offer the ${propName} (O)`}
+                >
+                  <Hand size={16} aria-hidden="true" />
+                  <span>Offer</span>
+                  <kbd aria-hidden="true">O</kbd>
+                </button>
+                <button
+                  className="button button-dark"
+                  disabled={
+                    busy ||
+                    !leaseValid ||
+                    !currentOffer ||
+                    (!fixtureRehearsal && transfer.to !== "A")
+                  }
                   onClick={() => {
                     if (transfer)
                       void run({
-                        type:
-                          !fixtureRehearsal && transfer.to === "A"
-                            ? "decline"
-                            : "cancel-offer",
+                        type: "accept",
                         transferId: transfer.id,
-                        slot: fixtureRehearsal ? transfer.from : "A",
+                        slot: fixtureRehearsal ? transfer.to : "A",
                       });
                   }}
+                  title="Accept the offer (A)"
                 >
-                  Cancel offer
+                  <Check size={16} aria-hidden="true" />
+                  <span>Accept</span>
+                  <kbd aria-hidden="true">A</kbd>
                 </button>
-              ) : (
-                <button
-                  className="button button-text"
-                  onClick={() => setPanel("preset")}
-                >
-                  <WandSparkles size={15} /> Make it yours
-                </button>
-              )}
-            </div>
-            {isRehearsal ? (
-              <div className="rehearsal-truth">
-                <ShieldCheck size={16} />
-                <p>
-                  {localCamera.enabled
-                    ? "Your camera and hand landmarks stay in this browser. This run uses test ballots; real Twitch participation and broadcast capture need a live show."
-                    : "Practice the mechanics here. Real remote cameras, audience input, and latency need a live run."}
-                </p>
+                {currentOffer ? (
+                  <button
+                    className="button button-text"
+                    disabled={busy || !leaseValid}
+                    onClick={() => {
+                      if (transfer)
+                        void run({
+                          type:
+                            !fixtureRehearsal && transfer.to === "A"
+                              ? "decline"
+                              : "cancel-offer",
+                          transferId: transfer.id,
+                          slot: fixtureRehearsal ? transfer.from : "A",
+                        });
+                    }}
+                  >
+                    Cancel
+                  </button>
+                ) : (
+                  <button
+                    className="icon-button"
+                    onClick={() => setPanel("preset")}
+                    title="Customize"
+                    aria-label="Customize"
+                  >
+                    <Settings2 size={18} />
+                  </button>
+                )}
               </div>
-            ) : null}
+            </section>
           </section>
           <aside className="cue-sidebar">
             <CueDeck
@@ -1204,13 +1082,13 @@ function StudioWorkspace({
               }
             >
               {show.phase === "hold" ? <Play size={16} /> : <Pause size={16} />}{" "}
-              {show.phase === "hold" ? "Resume stage" : "Hold stage"}
+              {show.phase === "hold" ? "Resume" : "Hold"}
             </button>
             <button
               onClick={() => void run({ type: "recall", to: "A" })}
               disabled={busy || !leaseValid || show.phase === "ended"}
             >
-              <RotateCcw size={15} /> Return {propName}
+              <RotateCcw size={15} /> Return
             </button>
             <button
               onClick={() => void run({ type: "hide", slot: "B" })}
@@ -1234,20 +1112,61 @@ function StudioWorkspace({
             >
               <Square size={12} /> End show
             </button>
+            <button
+              className="icon-button"
+              onClick={() => setPanel("evidence")}
+              title="Inspect"
+              aria-label="Inspect the stage record"
+            >
+              <CodeXml size={20} />
+            </button>
           </div>
         </div>
-        <div className="studio-bottom-note">
-          <span>PORTAL STAGE · A LITTLE THEATER BETWEEN ROOMS</span>
-          <button onClick={() => setPanel("evidence")}>
-            Sequence {show.sequence} <span>·</span> Inspect the record{" "}
-            <ArrowUpRight size={13} />
+        {hint && show.phase !== "ended" ? (
+          <div className="media-status-chip">
+            <StatusPill title={hint} ariaLabel={hint}>
+              Media update
+            </StatusPill>
+          </div>
+        ) : null}
+        {show.phase !== "ended" &&
+        (media.audioBlocked || media.videoBlocked) ? (
+          <button
+            className="audio-unlock button button-teal"
+            onClick={() => {
+              void media.startAudio();
+            }}
+          >
+            <Headphones size={17} />{" "}
+            {media.videoBlocked ? "Enable playback" : "Enable room audio"}
           </button>
-        </div>
+        ) : null}
+      </main>
+      <InvitePanel
+        show={show}
+        open={panel === "invite" && show.phase !== "ended"}
+        onClose={() => setPanel(null)}
+        onChanged={() => void refresh()}
+      />
+      <OutputPanel
+        show={show}
+        open={panel === "output" && show.phase !== "ended"}
+        onClose={() => setPanel(null)}
+        publishing={media.programPublishing}
+        transportTesting={localHost && localTest}
+        localCameraActive={localCamera.enabled}
+        onChanged={() => void refresh()}
+      />
+      <EvidencePanel
+        show={show}
+        open={panel === "evidence"}
+        onClose={() => setPanel(null)}
+        renderHealth={health}
+      >
         {localHost && isRehearsal && show.phase !== "ended" ? (
           <details className="transport-test-panel">
             <summary>
-              Local transport testing · synthetic media only{" "}
-              <ChevronDown size={14} />
+              Transport test <ChevronDown size={14} />
             </summary>
             <p>
               This development-only check sends moving test plates through
@@ -1303,57 +1222,13 @@ function StudioWorkspace({
             ) : null}
             {localTest ? (
               <section aria-label="Local transport diagnostic">
-                <p className="field-help">
-                  LOCAL TRANSPORT DIAGNOSTIC · CANONICAL DECODER
-                </p>
+                <h3>Decoder</h3>
                 <LocalVideoDiagnostics video={media.localPreview} />
               </section>
             ) : null}
           </details>
         ) : null}
-        {show.phase === "ended" ? (
-          <p className="media-hint" role="status">
-            This show has ended. Media and chat connections have closed; use the
-            next-cue card to open a fresh theater.
-          </p>
-        ) : hint ? (
-          <p className="media-hint" role="status">
-            {hint}
-          </p>
-        ) : null}
-        {show.phase !== "ended" &&
-        (media.audioBlocked || media.videoBlocked) ? (
-          <button
-            className="audio-unlock button button-teal"
-            onClick={() => {
-              void media.startAudio();
-            }}
-          >
-            <Headphones size={17} />{" "}
-            {media.videoBlocked ? "Enable playback" : "Enable room audio"}
-          </button>
-        ) : null}
-      </main>
-      <InvitePanel
-        show={show}
-        open={panel === "invite" && show.phase !== "ended"}
-        onClose={() => setPanel(null)}
-        onChanged={() => void refresh()}
-      />
-      <OutputPanel
-        show={show}
-        open={panel === "output" && show.phase !== "ended"}
-        onClose={() => setPanel(null)}
-        publishing={media.programPublishing}
-        transportTesting={localHost && localTest}
-        localCameraActive={localCamera.enabled}
-        onChanged={() => void refresh()}
-      />
-      <EvidencePanel
-        show={show}
-        open={panel === "evidence"}
-        onClose={() => setPanel(null)}
-      />
+      </EvidencePanel>
       <PresetPanel
         show={show}
         open={panel === "preset"}
@@ -1369,8 +1244,7 @@ function StudioWorkspace({
           show.phase !== "ended"
         }
         onClose={() => setPanel(null)}
-        title="Your own entrance into the scene."
-        eyebrow="LOCAL CAMERA REHEARSAL · OPTIONAL HAND CUES"
+        title="Camera & hand cues"
       >
         <RehearsalCameraControls
           camera={localCamera}
@@ -1408,8 +1282,7 @@ function StudioWorkspace({
       <Modal
         open={panel === "devices" && show.phase !== "ended"}
         onClose={() => setPanel(null)}
-        title="Find your place in the frame."
-        eyebrow="HOST CAMERA & CONSENT"
+        title="Camera & consent"
       >
         <DeviceSetup
           show={show}
@@ -1425,10 +1298,6 @@ function StudioWorkspace({
             <Hand size={18} />
             <strong>Optional on-device hand cues</strong>
           </div>
-          <p>
-            Open palm to offer or accept after calibration. Every cue also has a
-            button.
-          </p>
           <button
             className="button button-dark full-width"
             disabled={!calibration || !media.localPreview}
@@ -1451,7 +1320,11 @@ function StudioWorkspace({
               <span>Arm deliberate hand cues</span>
             </label>
           ) : null}
-          <span className="field-help">{gesture.status}</span>
+          {gesture.enabled ? (
+            <StatusPill title={gesture.status} ariaLabel={gesture.status}>
+              {gestureArmed ? "Armed" : "Hand cues on"}
+            </StatusPill>
+          ) : null}
           <div className="gesture-progress">
             <span style={{ width: `${gesture.dwellProgress * 100}%` }} />
           </div>
@@ -1463,16 +1336,11 @@ function StudioWorkspace({
       <Modal
         open={panel === "end"}
         onClose={() => setPanel(null)}
-        title="Take a bow?"
-        eyebrow="END THIS SHOW"
+        title="End show?"
       >
-        <p className="dialog-copy">
-          The curtain closes, new cues stop, and Program publishing ends. Your
-          saved version and stage record stay with the show.
-        </p>
         <div className="dialog-actions">
           <button className="button button-dark" onClick={() => setPanel(null)}>
-            Stay on stage
+            Keep show open
           </button>
           <button
             className="button button-gold"

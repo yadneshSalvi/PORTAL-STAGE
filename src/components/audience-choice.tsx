@@ -1,11 +1,5 @@
 "use client";
-import {
-  Check,
-  CloudDrizzle,
-  CloudLightning,
-  Heart,
-  Sparkles,
-} from "lucide-react";
+import { Check, CloudDrizzle, CloudLightning, Sparkles } from "lucide-react";
 import type {
   AudienceChoice as Choice,
   PresenceEffect,
@@ -13,6 +7,7 @@ import type {
   ShowState,
 } from "@/lib/contracts";
 import { ROUND_DEFINITIONS } from "@/lib/show-grammar";
+import { StatusPill } from "./ui";
 import { useNow } from "./use-show-controller";
 
 export function AudienceChoice({
@@ -69,32 +64,28 @@ export function AudienceChoice({
           : "Audience choices"
       }
     >
-      <div className="panel-eyebrow">
-        <span>
-          {show.mode === "rehearsal" ? "REHEARSAL CHOICE" : "AUDIENCE CHOICE"}
-        </span>
-        <span className="round-clock">
-          {round?.status === "open"
-            ? `${seconds}s`
-            : round?.status === "closing"
-              ? "COUNTING"
-              : round?.status === "applied"
-                ? "ON STAGE"
-                : round?.status === "closed"
-                  ? "CLOSED"
-                  : cancelled
-                    ? "CANCELLED"
-                    : "UP NEXT"}
-        </span>
-      </div>
       <h3>{definition.question}</h3>
-      <p role={cancelled ? "status" : undefined}>
-        {cancelled
-          ? "This choice was cancelled. Follow the next cue to ask again."
-          : show.mode === "rehearsal"
-            ? "Labeled test ballots demonstrate this choice. They are not audience input."
-            : "One replaceable choice per Twitch account in this window. A later valid command replaces it."}
-      </p>
+      <div className="choice-status-row">
+        {show.mode === "rehearsal" ? (
+          <StatusPill tone="gold">Test vote</StatusPill>
+        ) : null}
+        {round ? (
+          <StatusPill>
+            {round.status === "open"
+              ? `${seconds}s`
+              : round.status === "closing"
+                ? `Counting · ${seconds}s`
+                : cancelled
+                  ? "Cancelled"
+                  : round.status === "applied"
+                    ? "On stage"
+                    : "Closed"}
+          </StatusPill>
+        ) : null}
+      </div>
+      {cancelled ? (
+        <p role="status">Choice cancelled. Ask again with the next cue.</p>
+      ) : null}
       <div className="audience-options">
         {definition.options.map((option) => {
           const count = round?.tallies[option.value] || 0;
@@ -129,12 +120,6 @@ export function AudienceChoice({
           );
         })}
       </div>
-      {round?.status === "closing" ? (
-        <p className="choice-status" role="status">
-          Counting in-window messages for up to {seconds}s. New votes are
-          closed.
-        </p>
-      ) : null}
       {show.mode === "rehearsal" && round?.status === "open" ? (
         <div className="test-vote-actions">
           {definition.options.map((option) => (
@@ -143,7 +128,7 @@ export function AudienceChoice({
               disabled={busy || locked}
               onClick={() => void testVote(option.value)}
             >
-              Test {option.command}
+              {option.command}
             </button>
           ))}
         </div>
@@ -154,7 +139,7 @@ export function AudienceChoice({
             {total ? "This choice tied." : "No ballots arrived."} Director,
             choose:
           </strong>
-          <p>This will be credited as Director’s choice.</p>
+          <span className="choice-credit">Director’s choice</span>
           <div>
             {definition.options.map((option) => (
               <button
@@ -184,7 +169,7 @@ export function AudienceChoice({
             {round?.source === "audience"
               ? "Audience choice"
               : round?.source === "rehearsal"
-                ? "Rehearsal test choice"
+                ? "Choice"
                 : "Director’s choice"}
             : {result.label}
           </span>
@@ -199,34 +184,28 @@ export function AudienceChoice({
         </p>
       ) : null}
       {show.phase !== "ended" ? (
-        <div className="presence-cues">
-          <div>
-            <Heart size={14} aria-hidden="true" />
-            <strong>A little presence between choices.</strong>
-          </div>
-          {show.mode === "rehearsal" ? (
-            <>
-              <p>Labeled test effects. No viewers are simulated.</p>
-              <div className="test-vote-actions">
-                {effects.map((effect) => (
-                  <button
-                    key={effect}
-                    disabled={busy || locked || show.phase !== "live"}
-                    onClick={() =>
-                      void run({ type: "rehearsal-effect", effect })
-                    }
-                  >
-                    Test !{effect}
-                  </button>
-                ))}
-              </div>
-            </>
-          ) : (
-            <p>
-              !rain · !thunder · !cheer
-              <br />
-              Gentle effects on stage, bounded per account.
-            </p>
+        <div
+          className="effect-chips"
+          aria-label={
+            show.mode === "rehearsal" ? "Test effects" : "Audience effects"
+          }
+        >
+          {effects.map((effect) =>
+            show.mode === "rehearsal" ? (
+              <button
+                key={effect}
+                className="chip"
+                aria-label={`Test !${effect}`}
+                disabled={busy || locked || show.phase !== "live"}
+                onClick={() => void run({ type: "rehearsal-effect", effect })}
+              >
+                !{effect}
+              </button>
+            ) : (
+              <span className="chip" key={effect}>
+                !{effect}
+              </span>
+            ),
           )}
         </div>
       ) : null}

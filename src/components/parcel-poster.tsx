@@ -121,17 +121,6 @@ export function ParcelPoster() {
       >
         The Midnight Parcel
       </text>
-      <text
-        x="720"
-        y="735"
-        textAnchor="middle"
-        fontFamily="Inter, Arial"
-        fontSize="18"
-        letterSpacing="2"
-        fill="#d5c6b3"
-      >
-        ONE TAG. TWO ROOMS. SOMETHING IMPOSSIBLE INSIDE.
-      </text>
     </svg>
   );
 }

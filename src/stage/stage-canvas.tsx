@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { TheaterPoster } from "@/components/theater-poster";
+import { ParcelPoster } from "@/components/parcel-poster";
+import { StatusPill } from "@/components/ui";
 import { createTheaterRenderer, type RenderInput } from "./renderer";
 import { propLabel } from "@/lib/show-grammar";
 export type StageCanvasProps = RenderInput;
@@ -33,10 +35,22 @@ export default function StageCanvas(props: StageCanvasProps) {
   if (failed)
     return (
       <div className="stage-fallback">
-        <TheaterPoster compact />
+        {props.show.episode === "midnight-parcel" ? (
+          <ParcelPoster />
+        ) : (
+          <TheaterPoster compact showLabel={false} />
+        )}
         <div className="stage-fallback-label" role="alert">
-          WebGL is unavailable. This illustration is not live Program. Enable
-          hardware acceleration and reopen the studio.
+          {props.show.mode === "rehearsal" ? (
+            <StatusPill tone="gold">Rehearsal</StatusPill>
+          ) : null}
+          <p>Stage unavailable. Enable hardware acceleration.</p>
+          <button
+            className="button button-dark"
+            onClick={() => window.location.reload()}
+          >
+            Reload stage
+          </button>
         </div>
       </div>
     );

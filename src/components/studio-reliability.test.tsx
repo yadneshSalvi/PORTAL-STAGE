@@ -103,7 +103,7 @@ describe("studio reliability states", () => {
       <CueDeck show={show} busy={false} run={vi.fn()} locked />,
     );
     expect(html).toContain("Retry media closure");
-    expect(html).toContain("Media-service closure is still pending");
+    expect(html).toContain("Media closure pending");
     expect(html).not.toContain('disabled=""');
     show.solo.status = "closed";
     expect(

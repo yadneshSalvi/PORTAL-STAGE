@@ -51,13 +51,21 @@ export function StatusPill({
   children,
   tone = "muted",
   pulse = false,
+  title,
+  ariaLabel,
 }: {
   children: ReactNode;
   tone?: "muted" | "teal" | "gold" | "coral";
   pulse?: boolean;
+  title?: string;
+  ariaLabel?: string;
 }) {
   return (
-    <span className={`status-pill status-${tone}`}>
+    <span
+      className={`chip status-pill status-${tone}`}
+      title={title}
+      aria-label={ariaLabel}
+    >
       <span
         className={pulse ? "status-dot pulse" : "status-dot"}
         aria-hidden="true"

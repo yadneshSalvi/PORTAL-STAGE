@@ -12,12 +12,12 @@ import {
   rejectedProgramGrant,
 } from "@/media/program-status";
 import { PortalMark } from "./brand";
-import { Spinner } from "./ui";
+import { Spinner, StatusPill } from "./ui";
 const RehearsalCanvas = dynamic(() => import("@/stage/stage-canvas"), {
   ssr: false,
   loading: () => (
     <div className="program-holding">
-      <Spinner label="Preparing the illustrated rehearsal…" />
+      <Spinner label="Preparing rehearsal…" />
     </div>
   ),
 });
@@ -131,13 +131,7 @@ export function ProgramClient({
       <main className="program-page program-pair-page" id="main-content">
         <div className="program-pair-card">
           <PortalMark />
-          <p className="eyebrow">A CLEAN VIEW OF THE MAGIC</p>
-          <h1>Pair your Program.</h1>
-          <p>
-            The director creates a one-time pairing code in{" "}
-            <strong>Program output</strong>. This screen receives their single
-            composed stream.
-          </p>
+          <h1>Pair Program</h1>
           <form
             className="program-pair-form"
             onSubmit={(e) => {
@@ -194,9 +188,6 @@ export function ProgramClient({
       <div className="program-frame">
         <RehearsalCanvas show={envelope.show} serverOffset={clockOffset} />
       </div>
-      <span className="program-rehearsal-label">
-        SYNTHETIC REHEARSAL · LOCAL SCENE PREVIEW · NO LIVE CAMERAS OR AUDIENCE
-      </span>
       {error || authorityIssue ? (
         <p className="program-transport-label" role="alert">
           {error || authorityIssue}
@@ -246,10 +237,6 @@ function LiveProgram({
         <p className="program-transport-label" role="alert">
           Program state could not refresh. {controlError}
         </p>
-      ) : syntheticTransport ? (
-        <span className="program-transport-label">
-          SYNTHETIC MEDIA · LOCAL WEBRTC TRANSPORT TEST · NO REAL PERFORMERS
-        </span>
       ) : null}
       {media.programVideo && !ended && !authorityIssue ? (
         <div className="program-frame">
@@ -261,24 +248,20 @@ function LiveProgram({
         </div>
       ) : (
         <div className="program-holding">
+          {show.mode === "rehearsal" ? (
+            <StatusPill tone="gold">Rehearsal</StatusPill>
+          ) : null}
           <span className="program-holding-spark" aria-hidden="true">
             ✦
           </span>
           <h1>
             {ended
-              ? "Until the next impossible thing."
+              ? "Show ended"
               : authorityIssue
                 ? "Program is on hold."
-                : "A moment in the wings."}
+                : "Waiting for Program"}
           </h1>
-          <p>
-            {ended
-              ? "Thank you for sharing the stage."
-              : authorityIssue
-                ? authorityIssue
-                : "Waiting for the director’s Program stream."}
-          </p>
-          <span>PORTAL STAGE</span>
+          {authorityIssue ? <p role="status">{authorityIssue}</p> : null}
           {media.error ? (
             <p className="program-connection-note" role="status">
               {media.error.message}

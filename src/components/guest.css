@@ -831,3 +831,198 @@
     padding: 11px 10px;
   }
 }
+
+/* Round 3 guest UI: 28 / 18 / 14 type scale and explicit permission steps. */
+.guest-shell .wordmark,
+.guest-invitation-page .wordmark {
+  font-size: 18px;
+}
+.guest-invitation-card h1,
+.guest-title-row h1,
+.guest-ended h1 {
+  font-size: 28px;
+  margin-block: 16px;
+}
+.guest-shell h2,
+.guest-shell h3,
+.guest-invitation-details > strong,
+.guest-gesture-heading {
+  font-size: 18px;
+}
+.guest-shell p,
+.guest-shell small,
+.guest-shell label,
+.guest-shell select,
+.guest-shell .button,
+.guest-shell .field-help,
+.guest-shell .status-pill,
+.guest-shell .monitor-topbar,
+.guest-invitation-card p,
+.guest-invitation-card span,
+.guest-invitation-card .field-label,
+.guest-invitation-card input,
+.guest-invitation-card .button,
+.guest-invitation-card .text-link,
+.guest-invitation-details > span {
+  font-size: 14px;
+}
+.guest-invitation-card {
+  margin: 32px auto;
+}
+.guest-invitation-card > form {
+  padding: 0;
+  margin-top: 24px;
+}
+.guest-invitation-details {
+  padding: 16px 24px;
+  gap: 8px;
+  margin-top: 24px;
+}
+.invitation-privacy-note {
+  color: #b2c1cf;
+  font-size: 14px;
+  margin-top: 24px;
+  gap: 8px;
+}
+.guest-title-row p:last-child,
+.guest-ready-step p,
+.guest-gesture-card > p,
+.guest-gesture-actions > span,
+.guest-shell .field-help {
+  color: #b2c1cf;
+}
+.guest-main {
+  padding: 32px;
+}
+.guest-title-row {
+  gap: 24px;
+  margin-bottom: 24px;
+}
+.guest-grid {
+  gap: 24px;
+}
+.guest-return-monitor .monitor-topbar {
+  padding: 16px;
+}
+.return-waiting {
+  gap: 16px;
+  padding: 24px;
+}
+.return-waiting > p {
+  font-size: 14px;
+  color: #b2c1cf;
+}
+.guest-action-card,
+.guest-gesture-card {
+  margin-top: 24px;
+  padding: 24px;
+}
+.guest-gesture-heading {
+  cursor: pointer;
+  gap: 16px;
+}
+.guest-gesture-card[open] .guest-gesture-heading {
+  margin-bottom: 16px;
+}
+.guest-setup-panel {
+  padding: 24px;
+}
+.private-preview-label {
+  margin-bottom: 16px;
+  gap: 16px;
+}
+.private-preview-label h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.guest-shell .device-setup .consent-block {
+  gap: 16px;
+  padding-block: 24px;
+}
+.guest-shell .device-setup .consent-block h3 {
+  margin: 0;
+}
+.guest-shell .device-setup .checkbox-label {
+  gap: 8px;
+}
+.guest-ready-step {
+  padding-block: 24px;
+  gap: 16px;
+}
+.guest-ready-step h3 {
+  margin-top: 0;
+}
+.guest-shell .button {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.guest-shell .guest-preparation .button > svg,
+.guest-invitation-card .button > svg {
+  flex-shrink: 0;
+}
+.guest-shell .guest-gesture-card .field-help {
+  margin-top: 16px;
+}
+.guest-shell .guest-gesture-card .gesture-progress {
+  margin-block: 16px;
+}
+.guest-shell .guest-gesture-card summary:focus-visible {
+  outline: 2px solid #64d8c8;
+  outline-offset: 4px;
+}
+.guest-ended > div {
+  gap: 16px;
+}
+@media (max-width: 740px) {
+  .guest-invitation-page {
+    padding: 24px;
+  }
+  .guest-main {
+    padding: 24px 16px;
+  }
+  .guest-title-row {
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .guest-title-row .button {
+    flex-shrink: 1;
+  }
+  .guest-action-card,
+  .guest-gesture-card,
+  .guest-setup-panel {
+    padding: 16px;
+  }
+  .guest-grid {
+    gap: 24px;
+  }
+  .guest-gesture-actions {
+    gap: 16px;
+  }
+  .guest-shell .guest-title-row h1 {
+    font-size: 28px;
+  }
+  .guest-shell h2,
+  .guest-shell h3 {
+    font-size: 18px;
+  }
+  .guest-shell .studio-header {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .guest-shell .studio-header-right {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .guest-shell *,
+  .guest-invitation-page * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

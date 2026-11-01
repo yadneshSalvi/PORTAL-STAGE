@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import {
   Check,
   CheckCheck,
@@ -9,7 +9,6 @@ import {
   Link2,
   RefreshCw,
   Save,
-  ShieldCheck,
   Sparkles,
 } from "lucide-react";
 import { api, invite } from "@/lib/client";
@@ -20,7 +19,7 @@ import type {
   ShowPreset,
   ShowState,
 } from "@/lib/contracts";
-import { Modal, Spinner } from "./ui";
+import { Modal, Spinner, StatusPill } from "./ui";
 type Run = (action: ShowAction) => Promise<ShowEnvelope | null>;
 
 export function InvitePanel({
@@ -88,19 +87,12 @@ export function InvitePanel({
         : invitation.url
     : "";
   return (
-    <Modal
-      open={open}
-      onClose={onClose}
-      title="Save a place for a friend."
-      eyebrow="A PRIVATE BACKSTAGE INVITATION"
-    >
+    <Modal open={open} onClose={onClose} title="Invite a performer">
       <p className="dialog-copy">
-        Your guest previews their camera, chooses their permissions, and gets
-        ready backstage. You decide when to admit them to Program.
+        Your guest chooses camera and broadcast permissions before you admit
+        them to Program.
       </p>
       <div className="invitation-preview">
-        <span className="invite-preview-star">✦</span>
-        <span className="eyebrow">ADMIT ONE TO</span>
         <h3>{show.preset.episodeTitle}</h3>
         <span>
           Performer B ·{" "}
@@ -129,17 +121,15 @@ export function InvitePanel({
               {copied ? <CheckCheck size={18} /> : <Copy size={18} />}
             </button>
           </div>
-          <p className="field-help">
-            {copied
-              ? "Copied. Share this privately with your guest."
-              : "Joining does not place a guest on air."}{" "}
-            Expires{" "}
-            {new Date(invitation.expiresAt).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-            .
-          </p>
+          <div className="panel-status-row">
+            <StatusPill title="Invitation expiry">
+              {new Date(invitation.expiresAt).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </StatusPill>
+            {copied ? <StatusPill tone="teal">Copied</StatusPill> : null}
+          </div>
           <div className="dialog-actions">
             <a
               className="button button-dark"
@@ -153,13 +143,11 @@ export function InvitePanel({
               className="button button-dark"
               disabled={busy}
               onClick={() => void create()}
+              title="Invalidate the previous unused invitation and create a new one"
             >
               <RefreshCw size={15} /> Replace invitation
             </button>
           </div>
-          <p className="field-help">
-            Replacing this invitation invalidates the previous unused code.
-          </p>
         </>
       ) : (
         <button
@@ -178,23 +166,22 @@ export function InvitePanel({
       )}
       {show.participants.B.joined ? (
         <div className="guest-replacement">
-          <p className="field-help">
-            Lost the guest window? Replace performer B to close their old access
-            and issue a fresh invitation. Existing Program outputs stay paired.
-          </p>
           <button
             className="button button-dark full-width"
             disabled={busy || show.phase === "ended"}
             onClick={() => void replaceGuest()}
+            title="Close the current guest's access and issue a new private invitation"
           >
             <RefreshCw size={16} /> Replace guest and re-invite
           </button>
         </div>
       ) : null}
       {notice ? (
-        <p className="field-help" role="status">
-          {notice}
-        </p>
+        <div className="panel-status-row" role="status">
+          <StatusPill tone="teal" title={notice} ariaLabel={notice}>
+            Guest replaced
+          </StatusPill>
+        </div>
       ) : null}
       {error ? (
         <p className="panel-error" role="alert">
@@ -275,40 +262,31 @@ export function OutputPanel({
     <Modal
       open={open}
       onClose={onClose}
-      title="One clean view of the magic."
-      eyebrow={
+      title={
         show.mode === "rehearsal" && !transportTesting
-          ? "REHEARSAL SCENE PREVIEW"
-          : "PROGRAM OUTPUT"
+          ? "Scene preview"
+          : "Program output"
       }
     >
-      <div className="output-format">
-        <span>16:9</span>
-        <div>
-          <strong>1920 × 1080</strong>
-          <small>Canonical director composition · video + admitted audio</small>
-        </div>
-        <span className={`output-light ${publishing ? "is-on" : ""}`} />
+      <div className="panel-status-row">
+        <StatusPill
+          tone={
+            show.mode === "rehearsal" ? "gold" : publishing ? "teal" : "muted"
+          }
+        >
+          {show.mode === "rehearsal"
+            ? "Rehearsal"
+            : publishing
+              ? "Publishing"
+              : "Not publishing"}
+        </StatusPill>
       </div>
-      <p className="dialog-copy">
-        {show.mode === "rehearsal" && localCameraActive
-          ? "The camera is private to the director’s current browser. A scene preview in another window uses the illustrated test plates; it does not receive this local camera."
-          : show.mode === "rehearsal" && !transportTesting
-            ? "This is a labeled local scene preview. Live Program receives the director’s published media stream."
-            : transportTesting
-              ? "This local synthetic transport test receives the director’s actual published WebRTC stream. It contains no real performers."
-              : publishing
-                ? "The director is publishing one Program stream. The output page receives that stream without rendering a second stage."
-                : "Connect the media room in your camera setup to publish the canonical stage. A receive-only output page can then subscribe."}
-      </p>
-      <ol className="setup-list">
-        <li>Open Program in the browser you will capture.</li>
-        <li>In OBS, capture that window or use a verified Browser Source.</li>
-        <li>
-          Check 1920 × 1080 framing and the single audio route before
-          broadcasting.
-        </li>
-      </ol>
+      {show.mode === "rehearsal" && localCameraActive ? (
+        <p className="dialog-copy">
+          Your camera stays in this browser. The scene preview uses illustrated
+          rooms.
+        </p>
+      ) : null}
       {show.mode === "rehearsal" && !transportTesting ? (
         <a
           className="button button-gold full-width"
@@ -316,23 +294,18 @@ export function OutputPanel({
           target="_blank"
           rel="noreferrer"
         >
-          {transportTesting
-            ? "Open synthetic transport Program"
-            : "Open rehearsal scene preview"}{" "}
-          <ExternalLink size={17} />
+          Open scene preview <ExternalLink size={17} />
         </a>
       ) : grant ? (
         <div className="program-pairing">
-          <span className="eyebrow">ONE-TIME OUTPUT PAIRING CODE</span>
-          <strong>{grant.code}</strong>
-          <span>
-            Enter this on the Program page. It expires{" "}
+          <span>Private output code</span>
+          <strong id="program-code">{grant.code}</strong>
+          <StatusPill title="Pairing code expiry">
             {new Date(grant.expiresAt).toLocaleTimeString([], {
               hour: "2-digit",
               minute: "2-digit",
             })}
-            .
-          </span>
+          </StatusPill>
           <a
             className="button button-gold"
             href={`/program?show=${encodeURIComponent(show.id)}${transportTesting ? "&transport=1" : ""}`}
@@ -347,12 +320,8 @@ export function OutputPanel({
             onClick={() => void prepare()}
           >
             <RefreshCw size={16} />
-            {busy ? "Preparing access…" : "Generate another pairing code"}
+            {busy ? "Preparing access…" : "Replace pairing code"}
           </button>
-          <p className="field-help">
-            A fresh code leaves existing Program outputs paired. Use Unpair
-            separately to close their access.
-          </p>
         </div>
       ) : (
         <button
@@ -360,7 +329,7 @@ export function OutputPanel({
           onClick={() => void prepare()}
           disabled={busy}
         >
-          {busy ? "Preparing access…" : "Prepare Program access"}
+          {busy ? "Preparing access…" : "Create pairing code"}
           <ExternalLink size={17} />
         </button>
       )}
@@ -373,16 +342,14 @@ export function OutputPanel({
           >
             Unpair all Program outputs
           </button>
-          <p className="field-help">
-            This closes every existing output pairing. Guest invitations are
-            separate.
-          </p>
         </div>
       ) : null}
       {notice ? (
-        <p className="field-help" role="status">
-          {notice}
-        </p>
+        <div className="panel-status-row" role="status">
+          <StatusPill tone="teal" title={notice} ariaLabel={notice}>
+            Outputs unpaired
+          </StatusPill>
+        </div>
       ) : null}
       {error ? (
         <p role="alert" className="panel-error">
@@ -390,8 +357,8 @@ export function OutputPanel({
         </p>
       ) : null}
       <p className="field-help">
-        The pairing code is exchanged for read-only access. Keep private
-        invitations and host credentials out of OBS source URLs.
+        Pairing grants read-only access. Keep invitations and host credentials
+        private.
       </p>
     </Modal>
   );
@@ -400,10 +367,14 @@ export function EvidencePanel({
   show,
   open,
   onClose,
+  renderHealth,
+  children,
 }: {
   show: ShowState;
   open: boolean;
   onClose: () => void;
+  renderHealth?: { fps: number; width: number; height: number; webgl: boolean };
+  children?: ReactNode;
 }) {
   function download() {
     const blob = new Blob(
@@ -439,19 +410,30 @@ export function EvidencePanel({
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
   return (
-    <Modal
-      open={open}
-      onClose={onClose}
-      title="The prop remembers."
-      eyebrow="INSPECT THE STAGE RECORD"
-      wide
-    >
-      <p className="dialog-copy">
-        These are this show’s actual server events and current state. A
-        rehearsal tests the protocol with synthetic plates and test ballots; it
-        does not establish real remote media, Twitch participation, or measured
-        latency.
-      </p>
+    <Modal open={open} onClose={onClose} title="Inspect" wide>
+      {show.mode === "rehearsal" ? (
+        <div className="panel-status-row">
+          <StatusPill tone="gold">Rehearsal</StatusPill>
+        </div>
+      ) : null}
+      {renderHealth ? (
+        <dl className="evidence-identities">
+          <div>
+            <dt>Resolution</dt>
+            <dd>
+              {renderHealth.width} × {renderHealth.height}
+            </dd>
+          </div>
+          <div>
+            <dt>Frame rate</dt>
+            <dd>{renderHealth.fps} fps</dd>
+          </div>
+          <div>
+            <dt>Renderer</dt>
+            <dd>{renderHealth.webgl ? "WebGL" : "Unavailable"}</dd>
+          </div>
+        </dl>
+      ) : null}
       <div className="evidence-metrics">
         <div>
           <span>SEQUENCE</span>
@@ -534,10 +516,9 @@ export function EvidencePanel({
         <button className="button button-gold" onClick={download}>
           <Download size={17} /> Export current record
         </button>
-        <span className="field-help">
-          Recent event window · {show.events.length} events shown
-        </span>
+        <span className="field-help">{show.events.length} events</span>
       </div>
+      {children}
     </Modal>
   );
 }
@@ -576,21 +557,7 @@ export function PresetPanel({
     if (result) setSaved(true);
   }
   return (
-    <Modal
-      open={open}
-      onClose={onClose}
-      title="Make the story your own."
-      eyebrow={
-        show.episode === "midnight-parcel"
-          ? "YOUR VERSION OF THE MIDNIGHT PARCEL"
-          : "YOUR VERSION OF BORROWED WEATHER"
-      }
-      wide
-    >
-      <p className="dialog-copy">
-        Save a version, then load it onto this episode. Title, pacing, and
-        motion stay with the version. Audience choices still shape each run.
-      </p>
+    <Modal open={open} onClose={onClose} title="Customize" wide>
       <div className="preset-layout">
         <form
           onSubmit={(e) => {
@@ -620,7 +587,7 @@ export function PresetPanel({
             </label>
             {show.episode !== "midnight-parcel" ? (
               <label className="field-label">
-                Little creature’s name
+                Visitor name
                 <input
                   value={draft.creatureName}
                   maxLength={24}
@@ -633,7 +600,7 @@ export function PresetPanel({
           {show.episode !== "midnight-parcel" ? (
             <div className="field-two-columns">
               <label className="field-label">
-                Weather preference · audience may change it
+                Weather preference
                 <select
                   value={draft.defaultWeather}
                   onChange={(e) =>
@@ -643,12 +610,12 @@ export function PresetPanel({
                     )
                   }
                 >
-                  <option value="gentle">Gentle · shy shelter-seeker</option>
-                  <option value="wild">Wild · a bouncing mischief-maker</option>
+                  <option value="gentle">Gentle</option>
+                  <option value="wild">Wild</option>
                 </select>
               </label>
               <label className="field-label">
-                Ending preference · audience may change it
+                Ending preference
                 <select
                   value={draft.ending}
                   onChange={(e) =>
@@ -726,9 +693,7 @@ export function PresetPanel({
               checked={draft.reducedMotion}
               onChange={(e) => update("reducedMotion", e.target.checked)}
             />
-            <span>
-              Gentler motion · keep the story, quiet the ambient effects
-            </span>
+            <span>Reduced motion</span>
           </label>
           <button
             className="button button-gold full-width"
@@ -736,11 +701,11 @@ export function PresetPanel({
             type="submit"
           >
             {saved ? <Check size={17} /> : <Save size={17} />}{" "}
-            {saved ? "Version saved — load it below" : "Save this version"}
+            {saved ? "Saved" : "Save version"}
           </button>
         </form>
         <div className="saved-versions">
-          <span className="panel-eyebrow">YOUR SAVED VERSIONS</span>
+          <h3>Saved versions</h3>
           {show.savedPresets.map((preset) => (
             <div className="saved-version" key={preset.id}>
               <Sparkles size={18} />
@@ -771,25 +736,15 @@ export function PresetPanel({
             </div>
           ))}
           {!show.savedPresets.length ? (
-            <p className="field-help">
-              Save your first version here. It stays with this show when you
-              return.
-            </p>
+            <p className="field-help">No saved versions.</p>
           ) : null}
-          <div className="preset-tip">
-            <ShieldCheck size={20} />
-            <p>
-              Hold the stage before restarting with a saved version. Restarting
-              begins a fresh scene and keeps this show’s saved versions.
-            </p>
-          </div>
           <button
             className="button button-dark full-width"
             disabled={busy || show.phase !== "hold"}
             onClick={() => void run({ type: "reset" })}
           >
             <RefreshCw size={16} />
-            Restart the held scene
+            {show.phase === "hold" ? "Restart scene" : "Hold stage to restart"}
           </button>
         </div>
       </div>

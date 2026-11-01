@@ -20,6 +20,7 @@ import {
   type GestureCalibration,
 } from "@/vision/calibration";
 import { CameraPermissionNotice } from "./camera-permission-notice";
+import { StatusPill } from "./ui";
 
 type CameraState = {
   preview: HTMLVideoElement | null;
@@ -152,10 +153,7 @@ export function RehearsalCameraControls({
         ) : (
           <div className="camera-placeholder">
             <Camera size={32} strokeWidth={1.3} />
-            <span>Your entrance starts with you.</span>
-            <small>
-              The illustrated room stays on stage until you enable a camera.
-            </small>
+            <span>Camera off</span>
           </div>
         )}
         {camera.preview ? (
@@ -204,8 +202,11 @@ export function RehearsalCameraControls({
             </button>
           </>
         ) : null}
-        <span className="preview-mirror-label">
-          MIRRORED PREVIEW · STAGE IS NOT MIRRORED
+        <span
+          className="preview-mirror-label"
+          title="Mirrored preview; the stage is not mirrored"
+        >
+          Mirrored
         </span>
       </div>
       <CameraPermissionNotice pending={camera.pending} onCancel={stop} />
@@ -260,16 +261,12 @@ export function RehearsalCameraControls({
           className="button button-dark"
           disabled={!camera.preview || locked}
           onClick={confirmFraming}
+          title="Position the anchor, then confirm your framing. Use the marked palm area for hand cues."
         >
           {calibrated ? <Check size={16} /> : <Move size={16} />}
           {calibrated ? "Framing confirmed" : "Confirm camera framing"}
         </button>
       </div>
-      <p className="field-help">
-        Move the anchor with a pointer or arrow keys. Confirm the visible crop,
-        then use the marked palm area. Hand recognition depends on your camera,
-        lighting, and framing; buttons remain available.
-      </p>
       {framingError ? (
         <p className="panel-error" role="alert">
           {framingError}
@@ -315,18 +312,16 @@ export function RehearsalCameraControls({
             </div>
           </>
         ) : null}
-        <p className="field-help" role="status">
-          {gesture.status}
-        </p>
+        {gesture.enabled ? (
+          <StatusPill title={gesture.status} ariaLabel={gesture.status}>
+            {armed ? "Armed" : "Hand cues on"}
+          </StatusPill>
+        ) : null}
         {gesture.error ? (
           <p className="panel-error" role="alert">
             {gesture.error}
           </p>
         ) : null}
-        <p className="field-help">
-          The hand model downloads from this site when enabled. It runs in an
-          isolated worker in this browser.
-        </p>
       </div>
       <div className="local-camera-actions">
         <button

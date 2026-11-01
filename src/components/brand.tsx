@@ -66,20 +66,8 @@ export function SiteHeader({ active }: { active?: "guide" | "studio" }) {
 export function SiteFooter() {
   return (
     <footer className="site-footer">
-      <div>
-        <Wordmark />
-        <p>A little stage. A little weather. A lot of possibility.</p>
-      </div>
-      <div className="footer-links">
-        <Link href="/guide">Performer’s field guide</Link>
-        <Link href="/how-built">How this was built</Link>
-        <Link href="/studio">Open the studio ↗</Link>
-        <span>Made for a more playful internet.</span>
-      </div>
-      <div className="footer-bottom">
-        <span>© 2026 PORTAL STAGE</span>
-        <span>Original stagecraft. Room for human reactions.</span>
-      </div>
+      <Wordmark />
+      <Link href="/how-built">How it&apos;s built ↗</Link>
     </footer>
   );
 }

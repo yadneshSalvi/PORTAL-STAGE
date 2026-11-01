@@ -5,18 +5,13 @@ function line(
   ctx: CanvasRenderingContext2D,
   value: string,
   y: number,
-  size = 27,
+  size = 36,
   color = "#f3ebdc",
   family = "Fraunces",
 ) {
   ctx.textAlign = "center";
   ctx.fillStyle = color;
-  let fontSize = size;
-  ctx.font = `${fontSize}px ${family}, ${family === "Fraunces" ? "Georgia" : "Arial"}`;
-  while (ctx.measureText(value).width > 1180 && fontSize > 18) {
-    fontSize -= 1;
-    ctx.font = `${fontSize}px ${family}, Arial`;
-  }
+  ctx.font = `${size}px ${family}, ${family === "Fraunces" ? "Georgia" : "Arial"}`;
   ctx.fillText(value, 960, y, 1180);
 }
 export function decisionCredit(
@@ -27,8 +22,7 @@ export function decisionCredit(
     ROUND_DEFINITIONS[kind].options.find(
       (option) => option.value === decision.choice,
     )?.label || decision.choice;
-  if (decision.source === "rehearsal")
-    return `REHEARSAL TEST CHOICE · ${label}`;
+  if (decision.source === "rehearsal") return label;
   if (decision.source === "director") return `DIRECTOR’S CHOICE · ${label}`;
   const names = decision.contributors.slice(0, 3).join(" · ");
   return `${decision.voters} ${decision.voters === 1 ? "voice chose" : "voices chose"} ${label.toLowerCase()}${names ? ` · ${names}` : ""}`;
@@ -41,7 +35,7 @@ export function stageStoryCaption(show: ShowState): {
     transfer = show.umbrella.transfer;
   if (transfer?.status === "offered")
     return {
-      title: `${transfer.to === "B" && show.mode === "solo" ? "Audience Room" : show.mode === "rehearsal" ? `Illustrated part ${transfer.to}` : show.participants[transfer.to].name || `Performer ${transfer.to}`}, could you hold this?`,
+      title: `${transfer.to === "B" && show.mode === "solo" ? "Audience Room" : show.mode === "rehearsal" ? `Room ${transfer.to}` : show.participants[transfer.to].name || `Performer ${transfer.to}`}, could you hold this?`,
       sub: "AN OFFER IS WAITING · THE RECEIVER CHOOSES WHEN TO ACCEPT",
     };
   if (transfer?.status === "accepted")
@@ -112,7 +106,7 @@ export function drawStageCaption(
   if (active && round) {
     const kind = round.kind ?? "weather",
       definition = ROUND_DEFINITIONS[kind];
-    line(ctx, definition.question, 944, 30);
+    line(ctx, definition.question, 944, 36);
     const total = definition.options.reduce(
       (sum, option) => sum + (round.tallies[option.value] || 0),
       0,
@@ -123,7 +117,7 @@ export function drawStageCaption(
         width = column - 28,
         count = round.tallies[option.value] || 0;
       ctx.textAlign = "left";
-      ctx.font = "18px Inter, Arial";
+      ctx.font = "24px Inter, Arial";
       ctx.fillStyle = round.result === option.value ? "#f2bc62" : "#d8d8cd";
       ctx.fillText(`${option.command} · ${option.label}`, x, 982, width - 30);
       ctx.textAlign = "right";
@@ -134,20 +128,18 @@ export function drawStageCaption(
       ctx.fillRect(x, 996, total ? (width * count) / total : 0, 7);
     });
     const seconds = Math.max(0, Math.ceil((round.closesAt - now) / 1000));
-    let footer = round.needsDirectorChoice
-      ? "NO UNIQUE WINNER · EXPLICIT DIRECTOR CHOICE REQUIRED"
+    const footer = round.needsDirectorChoice
+      ? "Director’s choice required"
       : round.status === "closing"
-        ? "COUNTING BALLOTS SENT INSIDE THE WINDOW"
+        ? "Counting"
         : round.status === "open"
-          ? `${seconds}s · ONE REPLACEABLE CHOICE PER ACCOUNT`
-          : "CHOICE CLOSED · THE DIRECTOR WILL BRING IT ON STAGE";
-    if (show.mode === "rehearsal") footer = `LABELED TEST BALLOTS · ${footer}`;
-    line(ctx, footer, 1035, 14, "#cbbda9", "Inter");
+          ? `${seconds}s`
+          : "Choice closed";
+    line(ctx, footer, 1035, 24, "#cbbda9", "Inter");
     return;
   }
   const caption = stageStoryCaption(show);
-  line(ctx, caption.title, 952, 34);
-  line(ctx, caption.sub, 990, 15, "#cbbda9", "Inter");
+  line(ctx, caption.title, 952, 36);
   const decision = (
     Object.entries(show.decisions || {}) as [RoundKind, AppliedDecision][]
   ).sort((a, b) => b[1].at - a[1].at)[0];
@@ -156,17 +148,10 @@ export function drawStageCaption(
       ctx,
       decisionCredit(decision[0], decision[1]),
       1031,
-      16,
+      24,
       "#aee0c8",
       "Inter",
     );
   else if (show.mode !== "rehearsal" && show.twitch.connected)
-    line(
-      ctx,
-      "A LITTLE PRESENCE: !rain · !thunder · !cheer",
-      1031,
-      14,
-      "#a9bdb8",
-      "Inter",
-    );
+    line(ctx, "!rain · !thunder · !cheer", 1031, 24, "#a9bdb8", "Inter");
 }

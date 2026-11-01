@@ -170,10 +170,10 @@ export function makeScenery() {
     }
     text(
       ctx,
-      slot === "A" ? "MOON GARDEN" : "ROOFTOP AT DUSK",
+      slot === "A" ? "Moon Garden" : "Rooftop at Dusk",
       x + w / 2,
       y + h - 48,
-      17,
+      24,
       "#E0DAD0A0",
     );
     ctx.restore();
@@ -258,55 +258,30 @@ export function drawProgramText(
   options: { localCameraA?: boolean } = {},
 ) {
   ctx.clearRect(0, 0, 1920, 1080);
-  text(ctx, show.preset.episodeTitle, 960, 151, 50, PAPER, "Fraunces");
-  text(
-    ctx,
-    "PORTAL STAGE  /  A LITTLE THEATER BETWEEN ROOMS",
-    960,
-    101,
-    17,
-    "#CFB18C",
-  );
-  if (show.mode === "rehearsal") {
-    ctx.fillStyle = "#111827CC";
-    ctx.roundRect(510, 174, 900, 40, 5);
-    ctx.fill();
-    text(
-      ctx,
-      options.localCameraA
-        ? "LOCAL CAMERA REHEARSAL · ILLUSTRATED ROOM B · TEST BALLOTS"
-        : "SYNTHETIC REHEARSAL · NO LIVE CAMERAS OR AUDIENCE",
-      960,
-      201,
-      17,
-      GOLD,
-    );
-  } else {
-    text(ctx, "LIVE PERFORMANCE", 1700, 144, 15, CORAL);
-  }
+  text(ctx, show.preset.episodeTitle, 960, 151, 64, PAPER, "Fraunces");
   for (const slot of ["A", "B"] as Slot[]) {
     const p = show.participants[slot],
       room = ROOMS[slot];
     const rehearsalRoom =
       show.episode === "midnight-parcel"
         ? slot === "A"
-          ? "MIDNIGHT POST"
-          : "RECEIVING ROOM"
+          ? "Midnight Post"
+          : "Receiving Room"
         : slot === "A"
-          ? "MOON GARDEN"
-          : "ROOFTOP AT DUSK";
+          ? "Moon Garden"
+          : "Rooftop at Dusk";
     text(
       ctx,
       show.mode === "rehearsal"
         ? options.localCameraA && slot === "A"
-          ? "LOCAL CAMERA A · THIS BROWSER ONLY"
-          : `TEST PLATE ${slot} · ${rehearsalRoom}`
+          ? "You"
+          : rehearsalRoom
         : show.mode === "solo" && slot === "B"
-          ? "THE AUDIENCE ROOM · ILLUSTRATED"
+          ? "Audience Room"
           : p.name,
       room.x + room.w / 2,
       855,
-      23,
+      24,
       show.umbrella.owner === slot ? GOLD : "#D5D0CC",
     );
     if (
@@ -331,23 +306,15 @@ export function drawProgramText(
         ctx.fillStyle = i % 2 === 0 ? "#11182722" : "#FFFFFF03";
         ctx.fillRect(room.x + i * 55, room.y, 28, room.h);
       }
-      text(ctx, "✦", room.x + room.w / 2, 505, 45, GOLD);
+      text(ctx, "✦", room.x + room.w / 2, 505, 64, GOLD);
       text(
         ctx,
         p.admitted ? "Back shortly" : "Waiting in the wings",
         room.x + room.w / 2,
         563,
-        37,
+        36,
         PAPER,
         "Fraunces",
-      );
-      text(
-        ctx,
-        p.admitted ? "THE STORY WILL WAIT" : "THE DIRECTOR WILL OPEN THIS ROOM",
-        room.x + room.w / 2,
-        603,
-        15,
-        "#B8AAB5",
       );
       ctx.restore();
     }
@@ -356,10 +323,10 @@ export function drawProgramText(
   if (show.phase !== "live") {
     const title =
       show.phase === "ended"
-        ? "Until the next impossible thing."
+        ? "Show ended"
         : show.phase === "hold"
-          ? "A moment in the wings."
-          : "The story is about to begin.";
+          ? "On hold"
+          : "Ready when you are";
     ctx.fillStyle = "#1C1929F2";
     ctx.fillRect(0, 0, 1920, 1080);
     const g = ctx.createLinearGradient(0, 0, 1920, 0);
@@ -372,31 +339,33 @@ export function drawProgramText(
       ctx.fillStyle = i % 2 === 0 ? "#11182722" : "#FFFFFF03";
       ctx.fillRect(i * 70, 0, 35, 1080);
     }
-    text(ctx, "✦", 960, 392, 70, GOLD);
-    text(ctx, title, 960, 521, 67, PAPER, "Fraunces");
-    text(
-      ctx,
-      show.phase === "ended"
-        ? "THANK YOU FOR SHARING THE STAGE"
-        : show.phase === "hold"
-          ? "YOUR DIRECTOR HAS PAUSED THE SCENE"
-          : show.preset.episodeTitle.toUpperCase(),
-      960,
-      588,
-      22,
-      "#CEB59A",
+    text(ctx, "✦", 960, 392, 64, GOLD);
+    text(ctx, title, 960, 521, 64, PAPER, "Fraunces");
+    text(ctx, show.preset.episodeTitle, 960, 588, 36, "#CEB59A");
+  }
+  if (show.mode === "rehearsal") {
+    ctx.fillStyle = "#111827ed";
+    ctx.beginPath();
+    ctx.roundRect(70, 52, 176, 44, 22);
+    ctx.fill();
+    text(ctx, "Rehearsal", 158, 82, 24, GOLD);
+    const fixtureDecision = Object.values(show.decisions || {}).some(
+      (decision) =>
+        decision.source === "rehearsal" &&
+        now >= decision.at &&
+        now - decision.at < 10_000,
     );
-    text(ctx, "PORTAL STAGE", 960, 901, 19, "#A98B7F");
-    if (show.mode === "rehearsal")
-      text(
-        ctx,
-        options.localCameraA
-          ? "LOCAL CAMERA REHEARSAL · NO MEDIA UPLOAD · TEST BALLOTS"
-          : "SYNTHETIC REHEARSAL · NO LIVE CAMERAS OR AUDIENCE",
-        960,
-        954,
-        17,
-        GOLD,
-      );
+    if (
+      show.phase === "live" &&
+      ((show.round &&
+        ["open", "closing", "closed"].includes(show.round.status)) ||
+        fixtureDecision)
+    ) {
+      ctx.fillStyle = "#111827ed";
+      ctx.beginPath();
+      ctx.roundRect(258, 52, 164, 44, 22);
+      ctx.fill();
+      text(ctx, "Test vote", 340, 82, 24, GOLD);
+    }
   }
 }

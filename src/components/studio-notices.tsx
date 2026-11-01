@@ -1,4 +1,4 @@
-import { EyeOff, ShieldCheck } from "lucide-react";
+import { EyeOff, Radio, ShieldCheck } from "lucide-react";
 import type { ShowPhase, ShowState } from "@/lib/contracts";
 import type { ClientState as TwitchClientState } from "@/lib/twitch-client";
 
@@ -9,7 +9,7 @@ export function StudioChatWarning({ message }: { message: string }) {
   if (!message.includes("commands may not have reached")) return null;
   return (
     <span
-      className="status-pill status-gold"
+      className="chip status-pill status-gold"
       role="status"
       title={message}
       aria-label={message}
@@ -44,13 +44,17 @@ export function StudioChatStatus({
           ? "Reconnect required"
           : "Not connected";
   return (
-    <div className="connection-item">
+    <span
+      className="stage-connection"
+      role="img"
+      title={`Twitch chat: ${label}`}
+      aria-label={`Twitch chat: ${label}`}
+    >
+      <Radio size={17} aria-hidden="true" />
       <span
         className={`connection-indicator ${listening ? "connected" : ""}`}
       />
-      <span>Twitch chat</span>
-      <strong>{label}</strong>
-    </div>
+    </span>
   );
 }
 

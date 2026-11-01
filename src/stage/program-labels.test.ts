@@ -5,6 +5,7 @@ import { decisionCredit, stageStoryCaption } from "./program-caption";
 
 function canvas() {
   const labels: string[] = [];
+  const fontSizes = new Set<number>();
   const context = new Proxy(
     {
       fillText: (value: string) => labels.push(value),
@@ -16,25 +17,26 @@ function canvas() {
         return key in target ? Reflect.get(target, key) : vi.fn();
       },
       set(target, key, value) {
+        if (key === "font") fontSizes.add(Number.parseInt(String(value), 10));
         Reflect.set(target, key, value);
         return true;
       },
     },
   );
-  return { context, labels };
+  return { context, labels, fontSizes };
 }
 
 describe("truthful stage camera labels", () => {
   it.each([
     {
       episode: "borrowed-weather",
-      roomA: "MOON GARDEN",
-      roomB: "ROOFTOP AT DUSK",
+      roomA: "Moon Garden",
+      roomB: "Rooftop at Dusk",
     },
     {
       episode: "midnight-parcel",
-      roomA: "MIDNIGHT POST",
-      roomB: "RECEIVING ROOM",
+      roomA: "Midnight Post",
+      roomB: "Receiving Room",
     },
   ] as const)(
     "labels the $episode rehearsal scenery without mislabeling local cameras or the audience room",
@@ -50,8 +52,8 @@ describe("truthful stage camera labels", () => {
       show.phase = "live";
       const illustrated = canvas();
       drawProgramText(illustrated.context, show, 1100);
-      expect(illustrated.labels).toContain(`TEST PLATE A · ${roomA}`);
-      expect(illustrated.labels).toContain(`TEST PLATE B · ${roomB}`);
+      expect(illustrated.labels).toContain(roomA);
+      expect(illustrated.labels).toContain(roomB);
 
       const camera = canvas();
       drawProgramText(
@@ -61,18 +63,46 @@ describe("truthful stage camera labels", () => {
         { A: true, B: false },
         { localCameraA: true },
       );
-      expect(camera.labels).toContain("LOCAL CAMERA A · THIS BROWSER ONLY");
-      expect(camera.labels).not.toContain(`TEST PLATE A · ${roomA}`);
-      expect(camera.labels).toContain(`TEST PLATE B · ${roomB}`);
+      expect(camera.labels).toContain("You");
+      expect(camera.labels).not.toContain(roomA);
+      expect(camera.labels).toContain(roomB);
 
       show.mode = "solo";
       const solo = canvas();
       drawProgramText(solo.context, show, 1100);
       expect(solo.labels).toContain(show.participants.A.name);
-      expect(solo.labels).toContain("THE AUDIENCE ROOM · ILLUSTRATED");
+      expect(solo.labels).toContain("Audience Room");
       expect(solo.labels.some((label) => label.startsWith("TEST PLATE"))).toBe(
         false,
       );
+    },
+  );
+  it.each(["backstage", "live", "hold", "ended"] as const)(
+    "keeps exactly one rehearsal chip through the %s curtain state and none for live Program",
+    (phase) => {
+      const show = createRecord(
+        "ps_phase_labels",
+        "director",
+        "rehearsal",
+        1000,
+      ).state;
+      show.phase = phase;
+      const rehearsal = canvas();
+      drawProgramText(rehearsal.context, show, 1100);
+      expect(
+        rehearsal.labels.filter((label) => label === "Rehearsal"),
+      ).toHaveLength(1);
+      expect(rehearsal.labels.join(" ")).not.toContain("TEST PLATE");
+      expect(
+        [...rehearsal.fontSizes].every((size) => [24, 36, 64].includes(size)),
+      ).toBe(true);
+      expect(rehearsal.fontSizes.size).toBeLessThanOrEqual(3);
+      show.mode = "live";
+      const live = canvas();
+      drawProgramText(live.context, show, 1100);
+      expect(live.labels).not.toContain("Rehearsal");
+      expect(live.labels).not.toContain("Test vote");
+      expect(live.labels).not.toContain("LIVE PERFORMANCE");
     },
   );
   it("puts the current safe options and actual tallies inside the Program picture", () => {
@@ -102,7 +132,10 @@ describe("truthful stage camera labels", () => {
     expect(picture.labels.join(" ")).toContain("!pip2 · Sprig");
     expect(picture.labels).toContain("2");
     expect(picture.labels).toContain("1");
-    expect(picture.labels.join(" ")).toContain("LABELED TEST BALLOTS");
+    expect(
+      picture.labels.filter((label) => label === "Test vote"),
+    ).toHaveLength(1);
+    expect(picture.labels).toContain("29s");
   });
   it("keeps Director and rehearsal credits distinct from audience authors", () => {
     const decision = {
@@ -156,13 +189,18 @@ describe("truthful stage camera labels", () => {
       { A: true, B: false },
       { localCameraA: true },
     );
-    expect(local.labels.join(" ")).toContain(
-      "LOCAL CAMERA A · THIS BROWSER ONLY",
+    expect(local.labels.join(" ")).toContain("You");
+    expect(local.labels.filter((label) => label === "Rehearsal")).toHaveLength(
+      1,
     );
-    expect(local.labels.join(" ")).toContain("TEST BALLOTS");
     expect(local.labels.join(" ")).not.toContain("NO LIVE CAMERAS");
     const synthetic = canvas();
     drawProgramText(synthetic.context, show, 1100);
-    expect(synthetic.labels.join(" ")).toContain("NO LIVE CAMERAS OR AUDIENCE");
+    expect(
+      synthetic.labels.filter((label) => label === "Rehearsal"),
+    ).toHaveLength(1);
+    expect(synthetic.labels.join(" ")).not.toContain(
+      "NO LIVE CAMERAS OR AUDIENCE",
+    );
   });
 });

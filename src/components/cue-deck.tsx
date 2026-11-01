@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { ArrowRight, Check, LoaderCircle } from "lucide-react";
+import { ArrowRight, LoaderCircle } from "lucide-react";
 import type { ShowAction, ShowState } from "@/lib/contracts";
 import { NewShowButton } from "./new-show-button";
 
@@ -21,30 +21,23 @@ export function CueDeck({
   const cue = nextCue(show);
   return (
     <section className="cue-deck" aria-labelledby="next-cue-title">
-      <div className="panel-eyebrow">
-        <span>YOUR NEXT CUE</span>
-        <span className="cue-number">{cue.number}</span>
-      </div>
-      <span className="cue-spark" aria-hidden="true">
-        ✦
+      <span className="cue-step" aria-label="Story step">
+        {/^[0-9]+$/.test(cue.number) ? `${Number(cue.number)}/8` : cue.number}
       </span>
-      <h2 id="next-cue-title">{cue.title}</h2>
-      <p>{cue.description}</p>
+      <h2 id="next-cue-title">
+        {show.phase === "ended" ? "Show ended" : cue.title}
+      </h2>
+      {show.umbrella.acceptedTransfers === null ? (
+        <p>The current prop is intact. Use manual controls or reset.</p>
+      ) : null}
       {show.phase === "ended" ? (
         <div className="ended-show-actions">
-          <p className="ended-show-status">
-            <Check size={16} aria-hidden="true" /> Show ended
-          </p>
           {show.mode === "solo" && show.solo?.status === "closing" ? (
             <>
               <p className="field-help" role="status" aria-busy={busy}>
                 {busy
-                  ? "Closing the media rooms…"
-                  : "The show has ended. Media-service closure is still pending."}{" "}
-                {!busy && show.solo.closureError
-                  ? `${show.solo.closureError} `
-                  : ""}
-                {!busy ? "Retry to finish closing its rooms." : ""}
+                  ? "Closing media…"
+                  : show.solo.closureError || "Media closure pending."}
               </p>
               <button
                 className="button button-dark"
@@ -61,7 +54,7 @@ export function CueDeck({
           <NewShowButton episode={show.episode} className="button button-gold">
             New rehearsal
           </NewShowButton>
-          <Link href="/studio" className="button button-dark">
+          <Link href="/studio" className="button button-text">
             New show <ArrowRight size={16} aria-hidden="true" />
           </Link>
         </div>
@@ -87,7 +80,7 @@ export function CueDeck({
           <NewShowButton episode={show.episode} className="button button-gold">
             New rehearsal
           </NewShowButton>
-          <Link href="/studio" className="button button-dark">
+          <Link href="/studio" className="button button-text">
             Start a new episode <ArrowRight size={16} aria-hidden="true" />
           </Link>
         </div>
@@ -103,22 +96,12 @@ export function CueDeck({
             {busy || cue.waiting ? (
               <LoaderCircle size={17} className="spin" aria-hidden="true" />
             ) : null}
-            {cue.label}
+            <span>{cue.label}</span>
+            {cue.act && !cue.waiting ? <kbd aria-label="Space">␣</kbd> : null}
             {!busy && !cue.waiting && cue.act ? (
               <ArrowRight size={16} aria-hidden="true" />
             ) : null}
           </button>
-          <span className="cue-key-hint">
-            {cue.waiting ? (
-              "The stage will update as the story moves."
-            ) : cue.act ? (
-              <>
-                Keyboard: <kbd>Space</kbd> for this cue
-              </>
-            ) : (
-              "Choose deliberately in the choice card."
-            )}
-          </span>
         </>
       )}
     </section>

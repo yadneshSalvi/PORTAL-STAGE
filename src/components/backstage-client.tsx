@@ -118,19 +118,14 @@ export function BackstageClient({
         <div className="invitation-arch">
           <span aria-hidden="true">✦</span>
         </div>
-        <p className="eyebrow">SOMEONE SAVED YOU A PLACE</p>
-        <h1>
-          A little wonder
-          <br />
-          is waiting <em>in the wings.</em>
-        </h1>
+        <h1>Join backstage</h1>
         <p>
           You enter a private backstage first. Preview your camera, find your
           framing, and choose when you’re ready.
         </p>
         {details ? (
           <div className="guest-invitation-details">
-            <span>YOUR HOST IS {details.hostName}</span>
+            <span>Host: {details.hostName}</span>
             <strong>{details.title}</strong>
             <p>
               {details.channel ? (
@@ -138,9 +133,9 @@ export function BackstageClient({
                   Broadcast destination:{" "}
                   <strong>twitch.tv/{details.channel}</strong>
                 </>
-              ) : (
-                "A labeled rehearsal stage"
-              )}
+              ) : details.mode === "rehearsal" ? (
+                <StatusPill tone="teal">Rehearsal</StatusPill>
+              ) : null}
             </p>
             <span>
               You enter backstage. Broadcast and demo-recording permission are
@@ -157,7 +152,7 @@ export function BackstageClient({
           }}
         >
           <label className="field-label" htmlFor="performer-name">
-            What should we call you?
+            Name
             <input
               id="performer-name"
               value={name}
@@ -170,7 +165,7 @@ export function BackstageClient({
           </label>
           {!invitation ? (
             <label className="field-label" htmlFor="invitation-code">
-              Your invitation code
+              Invitation code
               <input
                 id="invitation-code"
                 value={code}
@@ -193,7 +188,7 @@ export function BackstageClient({
             ) : (
               <DoorOpen size={18} />
             )}{" "}
-            {busy ? "Opening the stage door…" : "Enter private backstage"}
+            {busy ? "Opening…" : "Enter private backstage"}
             <ArrowRight size={17} />
           </button>
         </form>
@@ -210,12 +205,9 @@ export function BackstageClient({
           </span>
         </div>
         <Link className="text-link" href="/guide">
-          A first-timer’s field guide <ArrowRight size={15} />
+          Guide <ArrowRight size={15} />
         </Link>
       </div>
-      <span className="guest-invitation-footer">
-        DIFFERENT ROOMS. ONE IMPOSSIBLE STAGE.
-      </span>
     </main>
   );
 }
@@ -403,55 +395,27 @@ function GuestWorkspace({
     !left &&
     media.connected &&
     (media.cameraPublished || media.microphonePublished);
-  let cueTitle = "Find your place in the frame.",
-    cueCopy =
-      "Enable your private preview, choose your permissions, and confirm your framing. You have time.";
-  if (participant.ready) {
-    cueTitle = participant.admitted
-      ? "Your place is ready."
-      : "Ready when the story is.";
-    cueCopy = participant.admitted
-      ? "You’re admitted to the scene. Your On air light confirms when your camera is in Program."
-      : "Your director can now admit you to the stage. You’ll see a clear On air light when your camera is in Program.";
-  }
-  if (onAir) {
-    cueTitle = "You’re part of the scene.";
-    cueCopy = `You’re on stage. Watch for a ${prop} offer from your scene partner.`;
-  }
-  if (onAir && holding) {
-    cueTitle = show.parcel
-      ? "You’ve got the delivery."
-      : "You’ve got the shelter.";
-    cueCopy = `Offer the same ${prop} to ${show.participants[otherSlot].name || "your scene partner"}. Its retained marks travel with it.`;
-  }
-  if (offeredToMe) {
-    cueTitle = "Could you hold this?";
-    cueCopy = `The ${prop} is waiting at the portal. Choose Accept when you’re ready, or decline. The crossing starts after you accept.`;
-  }
-  if (transfer?.status === "accepted" && transfer.to === slot) {
-    cueTitle = "Coming your way.";
-    cueCopy = `The same ${prop} is crossing. Get ready to catch it.`;
-  }
-  if (offeredByMe) {
-    cueTitle = "An invitation, not a race.";
-    cueCopy =
-      "Your partner has the offer. Hold your pose until they accept. You can cancel at any time before acceptance.";
-  }
-  if (show.phase === "hold") {
-    cueTitle = "A moment in the wings.";
-    cueCopy = `The director has held the stage. Your story and ${prop} are safe. If you were hidden, confirm Ready again before the director re-admits you.`;
-  }
-  if (left) {
-    cueTitle = "You’re safely backstage.";
-    cueCopy =
-      "Your media room is disconnected. To return, enable your camera, join again, and mark yourself ready. Your director admits you separately.";
-  }
+  let cueTitle = participant.ready
+    ? "Ready backstage"
+    : "Prepare your entrance";
+  if (participant.admitted) cueTitle = "Admitted";
+  if (onAir) cueTitle = holding ? `Holding the ${prop}` : "On stage";
+  if (offeredToMe)
+    cueTitle = `${prop[0].toUpperCase() + prop.slice(1)} offered`;
+  if (transfer?.status === "accepted" && transfer.to === slot)
+    cueTitle = "Crossing…";
+  if (offeredByMe) cueTitle = "Offer pending";
+  if (show.phase === "hold") cueTitle = "Stage held";
+  if (left) cueTitle = "Backstage";
   if (show.phase === "ended") return <GuestEnded episode={show.episode} />;
   return (
     <div className="studio-shell guest-shell">
       <header className="studio-header">
         <Wordmark light />
         <div className="studio-header-right">
+          {show.mode === "rehearsal" && !media.programVideo && (
+            <StatusPill tone="teal">Rehearsal</StatusPill>
+          )}
           <StatusPill
             tone={onAir ? "coral" : participant.ready ? "teal" : "muted"}
             pulse={onAir}
@@ -471,10 +435,7 @@ function GuestWorkspace({
       <main id="main-content" className="guest-main">
         <div className="guest-title-row">
           <div>
-            <p className="eyebrow">
-              YOUR PLACE IN {show.preset.episodeTitle.toUpperCase()}
-            </p>
-            <h1>Hello, {participant.name}.</h1>
+            <h1>{participant.name}</h1>
             <p>
               {show.channel ? (
                 <>
@@ -483,7 +444,7 @@ function GuestWorkspace({
                   readiness, and admission.
                 </>
               ) : (
-                "This is a labeled rehearsal. Your director controls admission separately from your readiness."
+                "Your director controls admission separately from your readiness."
               )}
             </p>
           </div>
@@ -547,9 +508,8 @@ function GuestWorkspace({
             <div className="guest-return-monitor">
               <div className="monitor-topbar">
                 <span>
-                  <Radio size={13} /> THE SHARED STAGE
+                  <Radio size={13} /> Shared stage
                 </span>
-                <span>VIDEO-ONLY RETURN</span>
               </div>
               <div className="guest-return-video">
                 {media.programVideo ? (
@@ -560,23 +520,13 @@ function GuestWorkspace({
                   />
                 ) : (
                   <div className="return-waiting">
-                    <span aria-hidden="true">✦</span>
-                    <h2>A stage worth waiting for.</h2>
                     <p>
                       {media.connected
-                        ? "Your director’s composed return will appear here when it is published."
-                        : "Your return monitor opens after you join the media room."}
+                        ? "Waiting for the stage"
+                        : "Join media to view the stage"}
                     </p>
-                    <span>DIRECT CALL AUDIO · HEADPHONES RECOMMENDED</span>
                   </div>
                 )}
-              </div>
-              <div className="monitor-bottom">
-                <span>
-                  <ShieldCheck size={13} />
-                  One director’s view. Your own choice to participate.
-                </span>
-                <span>{media.connected ? media.quality : "Not connected"}</span>
               </div>
             </div>
             <section className="guest-action-card" aria-live="polite">
@@ -590,9 +540,7 @@ function GuestWorkspace({
                 )}
               </div>
               <div>
-                <p className="eyebrow">YOUR NEXT MOMENT</p>
                 <h2>{cueTitle}</h2>
-                <p>{cueCopy}</p>
               </div>
               <div className="guest-action-buttons">
                 {offeredToMe && transfer ? (
@@ -649,15 +597,15 @@ function GuestWorkspace({
                 )}
               </div>
             </section>
-            <section className="guest-gesture-card">
-              <div className="guest-gesture-heading">
+            <details className="guest-gesture-card">
+              <summary className="guest-gesture-heading">
                 <span>
-                  <Hand size={18} /> Your hands, if you like.
+                  <Hand size={18} /> Hand cues
                 </span>
                 <StatusPill tone={gesture.enabled ? "teal" : "muted"}>
                   {gesture.enabled ? "Local tracking" : "Optional"}
                 </StatusPill>
-              </div>
+              </summary>
               <p>
                 Buttons always work. Hand cues use on-device landmarks with a
                 deliberate open-palm hold in the marked region.
@@ -701,13 +649,13 @@ function GuestWorkspace({
                       style={{ width: `${gesture.dwellProgress * 100}%` }}
                     />
                   </div>
-                  <div className="gesture-reading">
-                    <span>
-                      Confidence {Math.round(gesture.confidence * 100)}%
-                    </span>
-                    <span>Hold {Math.round(gesture.dwellProgress * 100)}%</span>
-                  </div>
-                  <p role="status">{gesture.status}</p>
+                  <StatusPill
+                    tone="muted"
+                    title={gesture.status}
+                    ariaLabel={gesture.status}
+                  >
+                    {armed ? "Armed" : "Hand cues on"}
+                  </StatusPill>
                   <p className="field-help">
                     Lower your hand once after arming. Then hold an open palm
                     for about one second.
@@ -717,14 +665,10 @@ function GuestWorkspace({
               {gesture.error ? (
                 <p className="panel-error">{gesture.error}</p>
               ) : null}
-            </section>
+            </details>
           </section>
           <aside className="guest-preparation">
             <section className="guest-setup-panel">
-              <div className="panel-eyebrow">
-                <span>YOUR CAMERA, YOUR ENTRANCE</span>
-                <Video size={15} />
-              </div>
               <DeviceSetup
                 show={show}
                 slot={slot}
@@ -735,17 +679,8 @@ function GuestWorkspace({
                 cueCalibration={gesture.enabled ? calibration : null}
               />
               <div className="guest-ready-step">
-                <div className="ready-step-number">3</div>
                 <div>
-                  <h3>
-                    {onAir
-                      ? "You’re on stage."
-                      : participant.admitted
-                        ? "Your place is ready."
-                        : participant.ready
-                          ? "You’re ready backstage."
-                          : "Ready for your entrance?"}
-                  </h3>
+                  <h3>3 Ready</h3>
                   <p>
                     {onAir
                       ? "Your camera is in Program. You can turn it off, mute, or leave whenever you need."
@@ -770,9 +705,7 @@ function GuestWorkspace({
                 }}
               >
                 <Check size={17} />
-                {participant.ready
-                  ? "Step back from readiness"
-                  : "I’m ready backstage"}
+                {participant.ready ? "Not ready" : "Ready backstage"}
               </button>
               {!readyAllowed && !participant.ready ? (
                 <p className="field-help">
@@ -842,14 +775,6 @@ function GuestWorkspace({
             {media.videoBlocked ? "Enable playback" : "Enable call audio"}
           </button>
         ) : null}
-        <footer className="guest-footer">
-          <span>
-            YOUR MIC IS SEPARATE FROM THE VIDEO RETURN. USE HEADPHONES.
-          </span>
-          <span>
-            <kbd>Esc</kbd> cancels your offer or leaves your own participation.
-          </span>
-        </footer>
       </main>
     </div>
   );

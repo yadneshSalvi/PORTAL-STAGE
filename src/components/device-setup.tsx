@@ -96,9 +96,9 @@ export function DeviceSetup({
   return (
     <div className="device-setup">
       <div className="private-preview-label">
-        <span>
-          <ShieldCheck size={15} /> YOUR PRIVATE PREVIEW
-        </span>
+        <h3>
+          <ShieldCheck size={15} /> 1 Preview
+        </h3>
         <StatusPill tone={onAir && broadcast ? "coral" : "muted"}>
           {onAir && broadcast ? "On air" : "Backstage"}
         </StatusPill>
@@ -113,8 +113,7 @@ export function DeviceSetup({
         ) : (
           <div className="camera-placeholder">
             <Video size={31} strokeWidth={1} />
-            <span>Your camera starts with you.</span>
-            <small>Enable it below to see your private framing.</small>
+            <span>Camera off</span>
           </div>
         )}
         <div className="calibration-safe-area" aria-hidden="true" />
@@ -161,9 +160,6 @@ export function DeviceSetup({
         >
           <Move size={19} />
         </button>
-        <span className="preview-mirror-label">
-          MIRRORED PREVIEW · PROGRAM IS NOT MIRRORED
-        </span>
       </div>
       <div className="device-buttons">
         <button
@@ -243,13 +239,6 @@ export function DeviceSetup({
           </label>
         </div>
       ) : null}
-      <div className="calibration-instruction">
-        <Hand size={20} />
-        <p>
-          Frame your shoulders in the arch. Place your hand at the marker, or
-          move it with the arrow keys. Buttons work from any seated position.
-        </p>
-      </div>
       <label className="field-label">
         Your cue hand
         <select
@@ -265,6 +254,7 @@ export function DeviceSetup({
         </select>
       </label>
       <div className="consent-block">
+        <h3>2 Consent</h3>
         <label className="checkbox-label">
           <input
             type="checkbox"
@@ -331,9 +321,6 @@ export function DeviceSetup({
           : "Confirm framing & consent"}
       </button>
       <div className="join-room-step">
-        <p>
-          <Headphones size={15} /> Headphones help keep your voices clear.
-        </p>
         <button
           className="button button-dark full-width"
           disabled={

@@ -78,7 +78,7 @@ function participant(
   return {
     slot,
     name: rehearsal
-      ? `Test plate ${slot}`
+      ? `Room ${slot}`
       : slot === "A"
         ? "Director"
         : "Invited performer",
