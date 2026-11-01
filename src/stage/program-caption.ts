@@ -27,10 +27,11 @@ export function decisionCredit(
   const names = decision.contributors.slice(0, 3).join(" · ");
   return `${decision.voters} ${decision.voters === 1 ? "voice chose" : "voices chose"} ${label.toLowerCase()}${names ? ` · ${names}` : ""}`;
 }
+/** Story captions carry an actual beat; before any beat there is no caption. */
 export function stageStoryCaption(show: ShowState): {
   title: string;
   sub: string;
-} {
+} | null {
   const prop = propLabel(show),
     transfer = show.umbrella.transfer;
   if (transfer?.status === "offered")
@@ -56,11 +57,10 @@ export function stageStoryCaption(show: ShowState): {
             : `A midnight garden in ${destination}.`,
         sub: `${show.beat === "delivery" ? "THE GIFT HAS FOUND ITS HOME" : "THE RECEIVING ROOM HAS CHANGED"} · TAG ${show.parcel.tag} KEPT`,
       };
+    if (!show.parcel.stamped) return null;
     return {
-      title: show.parcel.stamped
-        ? "A little parcel. An impossible delivery."
-        : "Something is waiting for the midnight post.",
-      sub: `TAG ${show.parcel.tag} · ${show.parcel.stamped ? "STAMPED · HANDLING MARKS TRAVEL WITH IT" : "A GIFT WAITING TO BE CHOSEN"}`,
+      title: "A little parcel. An impossible delivery.",
+      sub: `TAG ${show.parcel.tag} · STAMPED · HANDLING MARKS TRAVEL WITH IT`,
     };
   }
   if (show.beat === "shelter")
@@ -87,10 +87,7 @@ export function stageStoryCaption(show: ShowState): {
           : "A gentler kind of rain.",
       sub: "WATCH WHAT THE WEATHER WAKES UP",
     };
-  return {
-    title: "A little weather. A little wonder.",
-    sub: "TWO ROOMS. ONE IMPOSSIBLE STAGE.",
-  };
+  return null;
 }
 export function drawStageCaption(
   ctx: CanvasRenderingContext2D,
@@ -99,11 +96,14 @@ export function drawStageCaption(
 ) {
   const round = show.round;
   const active = round && ["open", "closing", "closed"].includes(round.status);
-  ctx.fillStyle = "#111827ed";
-  ctx.beginPath();
-  ctx.roundRect(310, 905, 1300, 151, 10);
-  ctx.fill();
+  const box = (height: number) => {
+    ctx.fillStyle = "#111827ed";
+    ctx.beginPath();
+    ctx.roundRect(310, 905, 1300, height, 10);
+    ctx.fill();
+  };
   if (active && round) {
+    box(151);
     const kind = round.kind ?? "weather",
       definition = ROUND_DEFINITIONS[kind];
     line(ctx, definition.question, 944, 36);
@@ -139,19 +139,25 @@ export function drawStageCaption(
     return;
   }
   const caption = stageStoryCaption(show);
-  line(ctx, caption.title, 952, 36);
   const decision = (
     Object.entries(show.decisions || {}) as [RoundKind, AppliedDecision][]
   ).sort((a, b) => b[1].at - a[1].at)[0];
-  if (decision && now >= decision[1].at && now - decision[1].at < 10_000)
-    line(
-      ctx,
-      decisionCredit(decision[0], decision[1]),
-      1031,
-      24,
-      "#aee0c8",
-      "Inter",
-    );
-  else if (show.mode !== "rehearsal" && show.twitch.connected)
-    line(ctx, "!rain · !thunder · !cheer", 1031, 24, "#a9bdb8", "Inter");
+  const credit =
+    decision && now >= decision[1].at && now - decision[1].at < 10_000
+      ? { value: decisionCredit(decision[0], decision[1]), color: "#aee0c8" }
+      : show.mode !== "rehearsal" && show.twitch.connected
+        ? { value: "!rain · !thunder · !cheer", color: "#a9bdb8" }
+        : null;
+  // The box fits its lines; with nothing to say, no box is drawn.
+  if (caption && credit) {
+    box(151);
+    line(ctx, caption.title, 952, 36);
+    line(ctx, credit.value, 1031, 24, credit.color, "Inter");
+  } else if (caption) {
+    box(76);
+    line(ctx, caption.title, 952, 36);
+  } else if (credit) {
+    box(60);
+    line(ctx, credit.value, 943, 24, credit.color, "Inter");
+  }
 }

@@ -242,6 +242,7 @@
 .cue-sidebar .button > span {
   min-width: 0;
   overflow-wrap: anywhere;
+  text-wrap: balance;
 }
 .studio-sidebar .button > svg,
 .cue-sidebar .button > svg {
@@ -272,6 +273,9 @@
 .connection-indicator.connected {
   background: #78b6a8;
   box-shadow: 0 0 0 3px #64d8c809;
+}
+.connection-indicator.warning {
+  background: var(--gold);
 }
 .connections-panel > .button {
   margin-top: 8px;
@@ -3163,12 +3167,19 @@
 .studio-lobby .mode-card > svg {
   color: #705669;
 }
-.studio-lobby .mode-card > h3 {
+.studio-lobby .mode-card > h3,
+.studio-lobby .mode-card-title > h3 {
   font:
     400 20px/1.4 Fraunces,
     Georgia,
     serif;
   margin: 0;
+}
+.studio-lobby .mode-card-title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 .studio-lobby .mode-card .new-show-action,
 .studio-lobby .mode-card .button {

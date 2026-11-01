@@ -39,7 +39,7 @@ Choose an episode and **Start a rehearsal**, then follow its next cue. Borrowed 
 
 The stage uses original generated test plates and test votes. Neither is presented as remote people or actual Twitch participation. A prompt same-tab reload preserves its cue and offers still within their original expiry. Genuine lease expiry shows recovery under a holding curtain. Ended shows offer New rehearsal and New show, even after the old lease expires.
 
-**Try camera & hand cues** is a separate optional path in ordinary rehearsal. Give local-preview consent, enable the camera, confirm framing/hand selection, enable cues, and arm them. It uses native camera capture, no microphone or LiveKit room. Camera frames and landmarks stay local; deliberate handoff commands still update show state. Cancelling a pending permission request fences its late result. Camera off, lost consent/authority, page exit, and End stop capture. Opening a separate Program preview does not copy this private camera into another page. See [hand-cue limits](gestures.md).
+**Camera & hand cues** is a separate optional path in ordinary rehearsal. Give local-preview consent, enable the camera, confirm framing/hand selection, enable cues, and arm them. It uses native camera capture, no microphone or LiveKit room. Camera frames and landmarks stay local; deliberate handoff commands still update show state. Cancelling a pending permission request fences its late result. Camera off, lost consent/authority, page exit, and End stop capture. Opening a separate Program preview does not copy this private camera into another page. See [hand-cue limits](gestures.md).
 
 ## A real solo Twitch show
 

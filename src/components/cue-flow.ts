@@ -17,14 +17,24 @@ const cue = (
   act: ShowAction | null,
   waiting = false,
 ): Cue => ({ number, title, description, label, act, waiting });
+/** Each audience choice keeps its story step while its window is open. */
+const ROUND_STEPS: Record<RoundKind, string> = {
+  weather: "02",
+  contents: "02",
+  accept: "04",
+  name: "05",
+  mood: "05",
+  giveback: "06",
+  ending: "07",
+  "parcel-ending": "07",
+};
 function choice(
   show: Pick<ShowState, "round">,
   kind: RoundKind,
-  number: string,
   title: string,
 ): Cue {
   return cue(
-    number,
+    ROUND_STEPS[kind],
     title,
     ROUND_DEFINITIONS[kind].question,
     "Open this choice",
@@ -34,12 +44,7 @@ function choice(
 function returnCue(show: ShowState): Cue {
   const prop = propLabel(show);
   if (show.mode === "solo" && show.umbrella.owner === "B")
-    return choice(
-      show,
-      "giveback",
-      "06",
-      "Audience Room, shall we send it home?",
-    );
+    return choice(show, "giveback", "Audience Room, shall we send it home?");
   const fixture = show.mode === "rehearsal" && show.transport !== "livekit";
   const guestOffer = !fixture && show.umbrella.owner === "B";
   return cue(
@@ -59,7 +64,7 @@ export function nextCue(show: ShowState): Cue {
   const transfer = show.umbrella.transfer;
   if (show.phase === "ended")
     return cue(
-      "FIN",
+      "Done",
       "A lovely place to leave it.",
       "The show has ended and the curtain is closed. Your saved version and stage record stay with this show.",
       "Show ended",
@@ -75,7 +80,7 @@ export function nextCue(show: ShowState): Cue {
     );
   if (show.phase === "hold")
     return cue(
-      "Ⅱ",
+      nextCue({ ...show, phase: "live" }).number,
       "Take your time.",
       `The curtain is safely closed. The same ${prop} and its committed story are waiting here.`,
       "Resume the scene",
@@ -97,17 +102,18 @@ export function nextCue(show: ShowState): Cue {
   if (round && ["open", "closing", "closed"].includes(round.status)) {
     const kind = round.kind ?? "weather";
     const definition = ROUND_DEFINITIONS[kind];
+    const step = ROUND_STEPS[kind];
     if (round.status === "open")
       return cue(
-        "✦",
-        definition.question,
+        step,
+        "Voting open",
         "Let the room have its say. Tied or empty choices wait for your deliberate decision.",
         "Close this choice",
         { type: "close-round", roundId: round.id },
       );
     if (round.status === "closing")
       return cue(
-        "✦",
+        step,
         "The last voices are finding their seats.",
         "Voting is closed. Messages sent inside the window have a brief delivery grace period before the result is final.",
         "Counting final ballots…",
@@ -116,7 +122,7 @@ export function nextCue(show: ShowState): Cue {
       );
     if (round.needsDirectorChoice || !round.result)
       return cue(
-        "✦",
+        step,
         "The next word is yours.",
         "There is no unique audience winner. Choose deliberately in the choice card, then bring the result onto the stage.",
         "Director choice needed",
@@ -126,7 +132,7 @@ export function nextCue(show: ShowState): Cue {
       (option) => option.value === round.result,
     );
     return cue(
-      "✦",
+      step,
       selected?.label || "A choice is ready.",
       selected?.description || definition.question,
       kind === "weather" ? "Let it rain" : "Bring this choice on stage",
@@ -177,12 +183,7 @@ export function nextCue(show: ShowState): Cue {
   }
   if (parcel) {
     if (!show.parcel?.contents)
-      return choice(
-        show,
-        "contents",
-        "02",
-        "Something impossible is packed inside.",
-      );
+      return choice(show, "contents", "Something impossible is packed inside.");
     if (!show.parcel.stamped)
       return cue(
         "03",
@@ -211,12 +212,7 @@ export function nextCue(show: ShowState): Cue {
       );
     if (crossings < 2) return returnCue(show);
     if (!show.parcel.ending)
-      return choice(
-        show,
-        "parcel-ending",
-        "07",
-        "Where should this gift belong?",
-      );
+      return choice(show, "parcel-ending", "Where should this gift belong?");
     if (show.beat !== "delivery")
       return cue(
         "07",
@@ -236,7 +232,7 @@ export function nextCue(show: ShowState): Cue {
     );
   }
   if (!show.weather)
-    return choice(show, "weather", "02", "Ask for a little weather.");
+    return choice(show, "weather", "Ask for a little weather.");
   if (crossings < 1)
     return cue(
       "04",
@@ -246,14 +242,9 @@ export function nextCue(show: ShowState): Cue {
       { type: "offer", from: "A" },
     );
   if (!show.decisions?.name)
-    return choice(show, "name", "05", "A visitor needs a name.");
+    return choice(show, "name", "A visitor needs a name.");
   if (!show.decisions?.mood)
-    return choice(
-      show,
-      "mood",
-      "05",
-      "A small creature, a little personality.",
-    );
+    return choice(show, "mood", "A small creature, a little personality.");
   if (!show.creature.hatched)
     return cue(
       "05",
@@ -264,7 +255,7 @@ export function nextCue(show: ShowState): Cue {
     );
   if (crossings < 2) return returnCue(show);
   if (!show.decisions?.ending)
-    return choice(show, "ending", "07", "Let the room write the last scene.");
+    return choice(show, "ending", "Let the room write the last scene.");
   if (show.beat !== "shelter")
     return cue(
       "07",

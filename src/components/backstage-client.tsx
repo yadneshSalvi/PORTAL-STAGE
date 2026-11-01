@@ -450,9 +450,11 @@ function GuestWorkspace({
           </div>
           <button
             className="button button-danger"
+            aria-keyshortcuts={offeredByMe && transfer ? undefined : "Escape"}
             onClick={() => void withdraw()}
           >
             <DoorOpen size={17} /> Leave stage
+            {offeredByMe && transfer ? null : <kbd>Esc</kbd>}
           </button>
         </div>
         {media.connected ? (
@@ -570,6 +572,7 @@ function GuestWorkspace({
                   <button
                     className="button button-dark"
                     disabled={busy}
+                    aria-keyshortcuts="Escape"
                     onClick={() =>
                       void run({
                         type: "cancel-offer",
@@ -578,7 +581,7 @@ function GuestWorkspace({
                       })
                     }
                   >
-                    Cancel your offer
+                    Cancel your offer <kbd>Esc</kbd>
                   </button>
                 ) : (
                   <button
@@ -654,6 +657,7 @@ function GuestWorkspace({
                   </div>
                   <StatusPill
                     tone="muted"
+                    live
                     title={gesture.status}
                     ariaLabel={gesture.status}
                   >

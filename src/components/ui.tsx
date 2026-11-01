@@ -53,17 +53,21 @@ export function StatusPill({
   pulse = false,
   title,
   ariaLabel,
+  live = false,
 }: {
   children: ReactNode;
   tone?: "muted" | "teal" | "gold" | "coral";
   pulse?: boolean;
   title?: string;
   ariaLabel?: string;
+  /** Announce changes politely; otherwise a labelled pill is a static image. */
+  live?: boolean;
 }) {
   return (
     <span
       className={`chip status-pill status-${tone}`}
       title={title}
+      role={live ? "status" : ariaLabel ? "img" : undefined}
       aria-label={ariaLabel}
     >
       <span

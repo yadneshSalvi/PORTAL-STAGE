@@ -7,9 +7,15 @@ import { decisionCredit, stageStoryCaption } from "./program-caption";
 function canvas() {
   const labels: string[] = [];
   const fontSizes = new Set<number>();
+  const texts: { value: string; x: number; maxWidth?: number }[] = [];
+  const boxes: number[][] = [];
   const context = new Proxy(
     {
-      fillText: (value: string) => labels.push(value),
+      fillText: (value: string, x: number, _y: number, maxWidth?: number) => {
+        labels.push(value);
+        texts.push({ value, x, maxWidth });
+      },
+      roundRect: (...box: number[]) => boxes.push(box),
       measureText: (value: string) => ({ width: value.length * 12 }),
       createLinearGradient: () => ({ addColorStop: vi.fn() }),
       createRadialGradient: () => ({ addColorStop: vi.fn() }),
@@ -25,7 +31,7 @@ function canvas() {
       },
     },
   );
-  return { context, labels, fontSizes };
+  return { context, labels, fontSizes, texts, boxes };
 }
 
 describe("truthful stage camera labels", () => {
@@ -217,13 +223,104 @@ describe("truthful stage camera labels", () => {
       contents: "stars",
       transformedRoom: "B",
     });
-    expect(stageStoryCaption(show).title).toContain("stars for room B");
+    expect(stageStoryCaption(show)?.title).toContain("stars for room B");
     Object.assign(show.parcel!, {
       contents: "garden",
       transformedRoom: "A",
       ending: "keep",
     });
-    expect(stageStoryCaption(show).title).toContain("garden in room A");
+    expect(stageStoryCaption(show)?.title).toContain("garden in room A");
+  });
+  it.each(["backstage", "live", "hold"] as const)(
+    "keeps a 60-character custom title inside the frame margins in the %s picture",
+    (phase) => {
+      const show = createRecord(
+        "ps_long_title",
+        "director",
+        "live",
+        1000,
+      ).state;
+      show.phase = phase;
+      show.preset.episodeTitle = "W".repeat(60);
+      const picture = canvas();
+      drawProgramText(picture.context, show, 1100);
+      const titles = picture.texts.filter(
+        (text) => text.value === show.preset.episodeTitle,
+      );
+      expect(titles.length).toBeGreaterThan(0);
+      for (const title of titles) {
+        expect(title.maxWidth).toBeDefined();
+        expect(title.x - title.maxWidth! / 2).toBeGreaterThanOrEqual(200);
+        expect(title.x + title.maxWidth! / 2).toBeLessThanOrEqual(1720);
+      }
+    },
+  );
+  it.each(["borrowed-weather", "midnight-parcel"] as const)(
+    "draws no %s opening caption box or tagline before a story beat",
+    (episode) => {
+      const show = createRecord(
+        "ps_opening_caption",
+        "director",
+        "rehearsal",
+        1000,
+        null,
+        episode,
+      ).state;
+      show.phase = "live";
+      expect(stageStoryCaption(show)).toBeNull();
+      const picture = canvas();
+      drawProgramText(picture.context, show, 1100);
+      expect(picture.labels.join(" ")).not.toMatch(
+        /A little weather|Something is waiting/,
+      );
+      // Only the Rehearsal chip remains; there is no bottom caption box.
+      expect(picture.boxes.filter(([, y]) => y >= 900)).toEqual([]);
+    },
+  );
+  it("sizes single-line captions to one line and keeps two-line and vote boxes", () => {
+    const show = createRecord("ps_caption_box", "director", "live", 1000).state;
+    show.phase = "live";
+    show.weather = "gentle";
+    const caption = (now = 1100) => {
+      const picture = canvas();
+      drawProgramText(picture.context, show, now);
+      return picture;
+    };
+    const single = caption();
+    expect(single.labels).toContain("A gentler kind of rain.");
+    expect(single.boxes.filter(([, y]) => y >= 900)).toEqual([
+      [310, 905, 1300, 76, 10],
+    ]);
+    show.twitch.connected = true;
+    const double = caption();
+    expect(double.labels).toContain("!rain · !thunder · !cheer");
+    expect(double.boxes.filter(([, y]) => y >= 900)).toEqual([
+      [310, 905, 1300, 151, 10],
+    ]);
+    show.weather = null;
+    const commandsOnly = caption();
+    expect(commandsOnly.labels).toContain("!rain · !thunder · !cheer");
+    expect(commandsOnly.boxes.filter(([, y]) => y >= 900)).toEqual([
+      [310, 905, 1300, 60, 10],
+    ]);
+    show.round = {
+      id: "test-box-round",
+      kind: "weather",
+      status: "open",
+      openedAt: 1000,
+      closesAt: 31000,
+      closedAt: null,
+      tallies: { gentle: 1 },
+      uniqueVoters: 1,
+      result: null,
+      source: null,
+      lastMessageAt: null,
+    };
+    const vote = caption(2000);
+    expect(vote.labels).toContain("29s");
+    expect(vote.boxes.filter(([, y]) => y >= 900)).toEqual([
+      [310, 905, 1300, 151, 10],
+    ]);
   });
   it("distinguishes a local human camera from synthetic rehearsal plates", () => {
     const show = createRecord("ps_labels", "director", "rehearsal", 1000).state;

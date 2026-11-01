@@ -2,14 +2,16 @@ import { renderToStaticMarkup } from "react-dom/server";
 import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createRecord } from "@/server/core";
-import type { ShowEnvelope, ShowState } from "@/lib/contracts";
+import type { SessionInfo, ShowEnvelope, ShowState } from "@/lib/contracts";
 import { drawProgramText } from "@/stage/scene-art";
-import { StudioClient } from "./studio-client";
+import { DuetModeCard, StudioClient } from "./studio-client";
+import { ProgramPairing } from "./studio-panels";
 
 const fixture = vi.hoisted(() => ({
   envelope: null as ShowEnvelope | null,
   leaseStatus: "active",
 }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
 vi.mock("./use-show-controller", () => ({
   useNow: () => 2000,
   useShowController: () => ({
@@ -79,7 +81,7 @@ vi.mock("next/dynamic", () => ({
     },
 }));
 
-function render(mode: "rehearsal" | "live") {
+function render(mode: "rehearsal" | "live" | "solo", withRound = true) {
   const show = createRecord("ps_whole_studio", "director", mode, 1000).state;
   show.phase = "live";
   show.renderLease = {
@@ -88,19 +90,20 @@ function render(mode: "rehearsal" | "live") {
     epoch: show.epoch,
     expiresAt: 60000,
   };
-  show.round = {
-    id: "fixture-round",
-    kind: "weather",
-    status: "open",
-    openedAt: 1000,
-    closesAt: 31000,
-    closedAt: null,
-    tallies: {},
-    uniqueVoters: 0,
-    result: null,
-    source: null,
-    lastMessageAt: null,
-  };
+  if (withRound)
+    show.round = {
+      id: "fixture-round",
+      kind: "weather",
+      status: "open",
+      openedAt: 1000,
+      closesAt: 31000,
+      closedAt: null,
+      tallies: {},
+      uniqueVoters: 0,
+      result: null,
+      source: null,
+      lastMessageAt: null,
+    };
   fixture.envelope = { show, role: "director", slot: "A", serverNow: 2000 };
   return renderToStaticMarkup(<StudioClient showId={show.id} />);
 }
@@ -135,5 +138,68 @@ describe("whole Studio presentation", () => {
       .map(([button]) => button)
       .find((button) => button.includes("<span>Connect Twitch</span>"));
     expect(chatButton).toMatch(/^<button[^>]*disabled=""/);
+  });
+  it("names the solo phase in one header chip", () => {
+    const html = render("solo", false);
+    expect(html).toContain(">Solo · Live</span>");
+    expect(html).not.toMatch(/>Solo<\/span>/);
+  });
+  it("gives rehearsal's camera button a short visible label and a descriptive name", () => {
+    const html = render("rehearsal");
+    const cameraButton = [
+      ...html.matchAll(/<button\b[^>]*>[\s\S]*?<\/button>/g),
+    ]
+      .map(([button]) => button)
+      .find((button) => button.includes("Camera &amp; hand cues"));
+    expect(cameraButton).toContain("<span>Camera &amp; hand cues</span>");
+    expect(cameraButton).toContain(
+      'aria-label="Try camera &amp; hand cues in this browser"',
+    );
+    expect(html).not.toContain("<span>Try camera &amp; hand cues</span>");
+    expect(html).toMatch(/class="cast-avatar avatar-a" role="img"/);
+  });
+  it("marks Duet as invite-only and disables it for uninvited signed-in hosts", () => {
+    const session = (hostAllowed: boolean): SessionInfo => ({
+      authenticated: true,
+      hostAllowed,
+      displayName: "TestHost",
+      login: "test_host",
+      twitchConnected: true,
+      currentShowId: null,
+      services: {
+        database: "local",
+        mediaConfigured: true,
+        twitchConfigured: true,
+      },
+    });
+    const card = (value: SessionInfo | null) =>
+      renderToStaticMarkup(
+        <DuetModeCard session={value} episode="borrowed-weather" />,
+      );
+    const signedOut = card(null);
+    expect(signedOut).toContain("Invite only");
+    expect(signedOut).toContain("Sign in with Twitch");
+    const uninvited = card(session(false));
+    expect(uninvited).toContain("Invite only");
+    expect(uninvited).toMatch(/<button[^>]*disabled=""[^>]*>Start duet show/);
+    expect(uninvited).not.toContain("Sign in with Twitch");
+    expect(uninvited).not.toMatch(/<p[\s>]/);
+    const invited = card(session(true));
+    expect(invited).not.toContain("Invite only");
+    expect(invited).toContain("Start duet show");
+    expect(invited).not.toMatch(/<button[^>]*disabled=""/);
+  });
+  it("offers a new Program pairing code without implying existing outputs are unpaired", () => {
+    const html = renderToStaticMarkup(
+      <ProgramPairing
+        showId="ps_pairing_fixture"
+        grant={{ code: "ABCDE12345", expiresAt: 300000 }}
+        busy={false}
+        onPrepare={vi.fn()}
+      />,
+    );
+    expect(html).toContain("New pairing code");
+    expect(html).toContain('title="Existing outputs stay paired"');
+    expect(html).not.toContain("Replace pairing code");
   });
 });

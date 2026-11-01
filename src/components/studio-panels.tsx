@@ -191,6 +191,50 @@ export function InvitePanel({
     </Modal>
   );
 }
+/** A new code adds another pairing; it does not unpair existing outputs. */
+export function ProgramPairing({
+  showId,
+  grant,
+  busy,
+  transportTesting = false,
+  onPrepare,
+}: {
+  showId: string;
+  grant: { code: string; expiresAt: number };
+  busy: boolean;
+  transportTesting?: boolean;
+  onPrepare: () => void;
+}) {
+  return (
+    <div className="program-pairing">
+      <span>Private output code</span>
+      <strong id="program-code">{grant.code}</strong>
+      <StatusPill title="Pairing code expiry">
+        {new Date(grant.expiresAt).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })}
+      </StatusPill>
+      <a
+        className="button button-gold"
+        href={`/program?show=${encodeURIComponent(showId)}${transportTesting ? "&transport=1" : ""}`}
+        target="_blank"
+        rel="noreferrer"
+      >
+        Open Program <ExternalLink size={16} />
+      </a>
+      <button
+        className="button button-dark"
+        disabled={busy}
+        title="Existing outputs stay paired"
+        onClick={onPrepare}
+      >
+        <RefreshCw size={16} />
+        {busy ? "Preparing access…" : "New pairing code"}
+      </button>
+    </div>
+  );
+}
 export function OutputPanel({
   show,
   open,
@@ -297,32 +341,13 @@ export function OutputPanel({
           Open scene preview <ExternalLink size={17} />
         </a>
       ) : grant ? (
-        <div className="program-pairing">
-          <span>Private output code</span>
-          <strong id="program-code">{grant.code}</strong>
-          <StatusPill title="Pairing code expiry">
-            {new Date(grant.expiresAt).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          </StatusPill>
-          <a
-            className="button button-gold"
-            href={`/program?show=${encodeURIComponent(show.id)}${transportTesting ? "&transport=1" : ""}`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            Open Program <ExternalLink size={16} />
-          </a>
-          <button
-            className="button button-dark"
-            disabled={busy}
-            onClick={() => void prepare()}
-          >
-            <RefreshCw size={16} />
-            {busy ? "Preparing access…" : "Replace pairing code"}
-          </button>
-        </div>
+        <ProgramPairing
+          showId={show.id}
+          grant={grant}
+          busy={busy}
+          transportTesting={transportTesting}
+          onPrepare={() => void prepare()}
+        />
       ) : (
         <button
           className="button button-gold full-width"

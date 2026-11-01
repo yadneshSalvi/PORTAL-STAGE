@@ -91,4 +91,31 @@ describe("Twitch intake delivery warnings", () => {
       connector.stop();
     },
   );
+  it("reports a failed subscription as a distinct stopped state", async () => {
+    vi.useFakeTimers();
+    vi.stubGlobal("WebSocket", FixtureSocket);
+    const message = "Twitch authorization expired or was revoked.";
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => Response.json({ error: message }, { status: 403 })),
+    );
+    const onState = vi.fn();
+    const connector = new TwitchConnector(
+      "fixture-show",
+      onState,
+      vi.fn(),
+      () => ({
+        rendererId: "fixture-renderer",
+        epoch: 1,
+      }),
+    );
+    connector.start();
+    sockets[0].receive({
+      metadata: { message_type: "session_welcome" },
+      payload: { session: { id: "fixture-session" } },
+    });
+    await vi.advanceTimersByTimeAsync(0);
+    expect(onState).toHaveBeenLastCalledWith("failed", message);
+    connector.stop();
+  });
 });

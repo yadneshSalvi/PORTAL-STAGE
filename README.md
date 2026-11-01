@@ -10,7 +10,7 @@ _Current deployed illustrated rehearsal. Rehearsal and test-vote chips identify 
 
 **[Open the live site](https://portal-stage-eight.vercel.app)** · [How it works](docs/architecture.md) · [Verification record](docs/evidence/README.md)
 
-The round-3 release simplifies the Studio, scenes and public pages, fixes anonymous page loads that could trigger media cleanup, and restores a compact warning when chat commands are rate-limited. **455 ordinary tests passed**, with **seven actual Neon checks passing separately**. Both stories completed locally and in signed-out production Chrome; 80 production layout observations across four widths reported no overflow. [Implementation](docs/evidence/round-3-implementation.md) · [Browser evidence](docs/evidence/review-round3-2026-11-01/production-browser.md) · [Before/after UI](docs/evidence/ui-pass-2026-11-01/README.md) · [Current release](docs/release-manifest.md).
+The round-3 release simplifies the Studio, scenes and public pages, fixes anonymous page loads that could trigger media cleanup, and restores a compact warning when chat commands are rate-limited. **486 ordinary tests passed**, with **seven actual Neon checks passing separately**. Both stories completed locally and in signed-out production Chrome; 80 production layout observations across four widths reported no overflow. [Implementation](docs/evidence/round-3-implementation.md) · [Browser evidence](docs/evidence/review-round3-2026-11-01/production-browser.md) · [Before/after UI](docs/evidence/ui-pass-2026-11-01/README.md) · [Current release](docs/release-manifest.md).
 
 The earlier round-2 private solo run used two owned Twitch accounts, exercised all six choice windows, and a **manual early End** closed its media on the first attempt. That real-camera evidence remains [historical](docs/evidence/round-2-release.md); this round’s illustrated rehearsals do not replace the outstanding human-performance checks.
 
@@ -18,7 +18,7 @@ The earlier round-2 private solo run used two owned Twitch accounts, exercised a
 
 1. Open Studio, choose **Borrowed Weather**, and **Start rehearsal**. No account or camera is required.
 2. Open the curtain and weather choice. Cast a clearly labeled test ballot, close the choice, and let it rain.
-3. Offer the patched umbrella and accept as illustrated part B. Its new owner is committed before it crosses the portal.
+3. Offer the patched umbrella, then select **Accept** to receive it as illustrated part B. Its new owner is committed before it crosses the portal.
 4. Continue with the cue card: name the visitor, choose its mood, bring the umbrella home, and choose a shared shelter or playful chase.
 
 Try **Midnight Parcel** for a different story: choose a pocket of stars or a midnight garden, stamp a tagged parcel, send it across, and change the receiving room. Its tag and handling marks survive the return; the final choice decides which room keeps the gift.
@@ -27,7 +27,7 @@ Try **Midnight Parcel** for a different story: choose a pocket of stars or a mid
 
 _Illustrated Midnight Parcel rehearsal; the full out-and-back prop journey and its final choice are recorded separately in the round-3 browser evidence._
 
-**Try camera & hand cues** is optional inside ordinary rehearsal. Give local preview consent, enable the camera, confirm framing, enable hand cues, and arm them. Your camera and landmarks stay in that browser; rehearsal requests no microphone or media room. Offer/Accept buttons remain available. Framing and dwell have automated tests; physical hand accuracy is still an acceptance task.
+**Camera & hand cues** is optional inside ordinary rehearsal. Give local preview consent, enable the camera, confirm framing, enable hand cues, and arm them. Your camera and landmarks stay in that browser; rehearsal requests no microphone or media room. Offer/Accept buttons remain available. Framing and dwell have automated tests; physical hand accuracy is still an acceptance task.
 
 ## With real Twitch chat
 

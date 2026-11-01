@@ -10,7 +10,7 @@ const api = <T = unknown>(path: string, body: unknown) =>
 const EVENTSUB_URL =
   "wss://eventsub.wss.twitch.tv/ws?keepalive_timeout_seconds=30";
 export type ClientState =
-  "connecting" | "connected" | "gap" | "revoked" | "disconnected";
+  "connecting" | "connected" | "gap" | "revoked" | "failed" | "disconnected";
 interface Envelope {
   metadata?: { message_type?: string; subscription_type?: string };
   payload?: {
@@ -86,7 +86,7 @@ export class TwitchConnector {
   }
 
   private async health(
-    status: Exclude<ClientState, "connecting">,
+    status: Exclude<ClientState, "connecting" | "failed">,
     message: string,
   ) {
     try {
@@ -179,7 +179,7 @@ export class TwitchConnector {
           .catch((error) => {
             this.stopped = true;
             socket.close(1000, "Subscription unavailable");
-            this.onState("disconnected", errorMessage(error));
+            this.onState("failed", errorMessage(error));
           });
       } else if (type === "session_keepalive") {
         if (socket === this.active) this.touchHeartbeat(socket);

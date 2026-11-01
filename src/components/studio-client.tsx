@@ -68,7 +68,9 @@ import {
   StudioAuthorityNotice,
   StudioChatStatus,
   StudioChatWarning,
+  StudioMediaHint,
   StudioVisibilityNotice,
+  chatToggleAction,
 } from "./studio-notices";
 import { canIssueDirectorAction } from "./studio-controls";
 import { RehearsalCameraControls } from "./rehearsal-camera-controls";
@@ -113,7 +115,6 @@ function StudioLobby() {
     session?.soloAllowed &&
     session.services.mediaConfigured &&
     session.soloUsage?.available !== false;
-  const duetReady = session?.hostAllowed && session.services.mediaConfigured;
   return (
     <>
       <SiteHeader active="studio" />
@@ -211,32 +212,7 @@ function StudioLobby() {
                 </StatusPill>
               ) : null}
             </article>
-            <article className="mode-card">
-              <Users size={28} strokeWidth={1.4} aria-hidden="true" />
-              <h3>Duet</h3>
-              {duetReady ? (
-                <NewShowButton
-                  mode="live"
-                  episode={episode}
-                  className="button button-ink"
-                >
-                  Start duet show
-                </NewShowButton>
-              ) : session?.authenticated ? (
-                <button
-                  className="button button-ink"
-                  disabled
-                  title="Duet hosting requires invited host access and available media."
-                >
-                  Invite required
-                </button>
-              ) : (
-                <a className="button button-ink" href="/api/auth/twitch/login">
-                  Sign in with Twitch{" "}
-                  <ArrowUpRight size={16} aria-hidden="true" />
-                </a>
-              )}
-            </article>
+            <DuetModeCard session={session} episode={episode} />
           </div>
         </section>
         {session?.currentShowId ? (
@@ -250,6 +226,50 @@ function StudioLobby() {
       </main>
       <SiteFooter />
     </>
+  );
+}
+/** Duet hosting is invite-only; uninvited accounts see why instead of a dead end. */
+export function DuetModeCard({
+  session,
+  episode,
+}: {
+  session: SessionInfo | null;
+  episode: EpisodeId;
+}) {
+  const invited = !!session?.hostAllowed;
+  return (
+    <article className="mode-card">
+      <Users size={28} strokeWidth={1.4} aria-hidden="true" />
+      <div className="mode-card-title">
+        <h3>Duet</h3>
+        {invited ? null : <StatusPill>Invite only</StatusPill>}
+      </div>
+      {invited && session?.services.mediaConfigured ? (
+        <NewShowButton
+          mode="live"
+          episode={episode}
+          className="button button-ink"
+        >
+          Start duet show
+        </NewShowButton>
+      ) : session?.authenticated ? (
+        <button
+          className="button button-ink"
+          disabled
+          title={
+            invited
+              ? "Live media is not configured for this deployment."
+              : "Duet hosting is limited to invited hosts."
+          }
+        >
+          Start duet show
+        </button>
+      ) : (
+        <a className="button button-ink" href="/api/auth/twitch/login">
+          Sign in with Twitch <ArrowUpRight size={16} aria-hidden="true" />
+        </a>
+      )}
+    </article>
   );
 }
 function ConnectedStudio({ showId }: { showId: string }) {
@@ -305,6 +325,7 @@ function StudioWorkspace({
     [calibration, setCalibration] = useState<GestureCalibration | null>(null),
     [gestureArmed, setGestureArmed] = useState(false),
     [chatEnabled, setChatEnabled] = useState(false),
+    [chatAttempt, setChatAttempt] = useState(0),
     [chatState, setChatState] = useState<TwitchClientState>("disconnected"),
     [chatMessage, setChatMessage] = useState(""),
     [localTest, setLocalTest] = useState(false),
@@ -486,6 +507,7 @@ function StudioWorkspace({
     return () => connector.stop();
   }, [
     chatEnabled,
+    chatAttempt,
     leaseValid,
     isRehearsal,
     show.id,
@@ -622,15 +644,15 @@ function StudioWorkspace({
           <div className="studio-title-actions">
             {!isRehearsal ? (
               <StatusPill tone={show.phase === "live" ? "teal" : "muted"}>
-                {show.phase === "ended"
-                  ? "Ended"
-                  : isSoloShow
-                    ? "Solo"
+                {`${isSoloShow ? "Solo · " : ""}${
+                  show.phase === "ended"
+                    ? "Ended"
                     : show.phase === "live"
                       ? "Live"
                       : show.phase === "hold"
                         ? "Held"
-                        : "Backstage"}
+                        : "Backstage"
+                }`}
               </StatusPill>
             ) : null}
             {isSoloShow && show.solo && show.phase !== "ended" ? (
@@ -716,6 +738,7 @@ function StudioWorkspace({
                   <article className="cast-member" key={slot}>
                     <div
                       className={`cast-avatar avatar-${slot.toLowerCase()}`}
+                      role="img"
                       title={status}
                       aria-label={`${name}: ${status}`}
                     >
@@ -761,6 +784,11 @@ function StudioWorkspace({
               <button
                 className="button button-dark button-small full-width"
                 disabled={show.phase === "ended"}
+                aria-label={
+                  fixtureRehearsal && !localTest && !localCamera.enabled
+                    ? "Try camera & hand cues in this browser"
+                    : undefined
+                }
                 onClick={() =>
                   setPanel(
                     fixtureRehearsal && !localTest
@@ -772,9 +800,7 @@ function StudioWorkspace({
                 <Camera size={16} aria-hidden="true" />
                 <span>
                   {fixtureRehearsal && !localTest
-                    ? localCamera.enabled
-                      ? "Camera & hand cues"
-                      : "Try camera & hand cues"
+                    ? "Camera & hand cues"
                     : "Your camera & consent"}
                 </span>
               </button>
@@ -802,15 +828,27 @@ function StudioWorkspace({
                   className="button button-text button-small full-width"
                   disabled={!leaseValid || show.phase === "ended"}
                   title={chatMessage || "Connect this director to Twitch chat"}
-                  onClick={() => setChatEnabled((value) => !value)}
+                  onClick={() => {
+                    if (
+                      chatToggleAction(chatEnabled, chatState) === "reconnect"
+                    )
+                      setChatAttempt((value) => value + 1);
+                    else setChatEnabled((value) => !value);
+                  }}
                 >
                   <Radio size={16} aria-hidden="true" />
                   <span>
-                    {chatEnabled ? "Disconnect chat" : "Connect Twitch"}
+                    {
+                      {
+                        connect: "Connect Twitch",
+                        reconnect: "Reconnect chat",
+                        disconnect: "Disconnect chat",
+                      }[chatToggleAction(chatEnabled, chatState)]
+                    }
                   </span>
                 </button>
               ) : null}
-              <StudioChatWarning message={chatMessage} />
+              <StudioChatWarning state={chatState} message={chatMessage} />
             </section>
           </aside>
           <section className="stage-workspace" aria-label="The canonical stage">
@@ -1122,13 +1160,7 @@ function StudioWorkspace({
             </button>
           </div>
         </div>
-        {hint && show.phase !== "ended" ? (
-          <div className="media-status-chip">
-            <StatusPill title={hint} ariaLabel={hint}>
-              Media update
-            </StatusPill>
-          </div>
-        ) : null}
+        {show.phase !== "ended" ? <StudioMediaHint hint={hint} /> : null}
         {show.phase !== "ended" &&
         (media.audioBlocked || media.videoBlocked) ? (
           <button
@@ -1321,7 +1353,7 @@ function StudioWorkspace({
             </label>
           ) : null}
           {gesture.enabled ? (
-            <StatusPill title={gesture.status} ariaLabel={gesture.status}>
+            <StatusPill live title={gesture.status} ariaLabel={gesture.status}>
               {gestureArmed ? "Armed" : "Hand cues on"}
             </StatusPill>
           ) : null}

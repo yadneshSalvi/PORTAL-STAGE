@@ -313,7 +313,7 @@ export function RehearsalCameraControls({
           </>
         ) : null}
         {gesture.enabled ? (
-          <StatusPill title={gesture.status} ariaLabel={gesture.status}>
+          <StatusPill live title={gesture.status} ariaLabel={gesture.status}>
             {armed ? "Armed" : "Hand cues on"}
           </StatusPill>
         ) : null}

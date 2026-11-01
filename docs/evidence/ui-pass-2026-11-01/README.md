@@ -29,7 +29,7 @@ Additional after captures: [Weather finale](after-weather-finale.png), [Weather 
 
 ## Layout acceptance
 
-Twenty final production states × 1280/1440/1920/390 px = 80 native DOM observations. All report an empty review overflow predicate and at most three visible DOM text sizes. The Program preview is a canvas-only surface, so it correctly reports zero DOM text sizes; its24/36/64 px canvas type scale and single room-name labels are covered by renderer tests and visual inspection. Local checkpoint measurements remain separate: 19 states / 76 observations, including the guest 13 px issue fixed before release.
+Twenty final production states × 1280/1440/1920/390 px = 80 native DOM observations. All report an empty review overflow predicate and at most three visible DOM text sizes. The Program preview is a canvas-only surface, so it correctly reports zero DOM text sizes; its 24/36/64 px canvas type scale and single room-name labels are covered by renderer tests and visual inspection. Local checkpoint measurements remain separate: 19 states / 76 observations, including the guest 13 px issue fixed before release.
 
 Native CDP `Runtime.evaluate` supplied actual DOM geometry; the automation DOM proxy did not provide reliable `offsetParent` values. Temporary viewport overrides were cleared afterward. Consent text was retained. Rehearsal/Test vote chips remain visible in their own scene or choice context; canonical live Program labeling is covered by tests.
 

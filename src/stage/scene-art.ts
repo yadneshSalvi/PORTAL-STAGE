@@ -13,6 +13,8 @@ export const INK = "#111827",
   GOLD = "#F2BC62",
   TEAL = "#64D8C8",
   CORAL = "#F17E78";
+/** Titles stay between the curtains, clear of both side drapes. */
+export const TITLE_MAX_WIDTH = 1440;
 export function canvasTexture(width = STAGE_WIDTH, height = STAGE_HEIGHT) {
   const canvas = document.createElement("canvas");
   canvas.width = width;
@@ -64,11 +66,13 @@ function text(
   color: string,
   family = "Inter",
   align: CanvasTextAlign = "center",
+  maxWidth?: number,
 ) {
   ctx.font = `${size}px ${family}, ${family === "Fraunces" ? "Georgia" : "Arial"}`;
   ctx.fillStyle = color;
   ctx.textAlign = align;
-  ctx.fillText(content, x, y);
+  if (maxWidth === undefined) ctx.fillText(content, x, y);
+  else ctx.fillText(content, x, y, maxWidth);
 }
 export function makeScenery() {
   const art = canvasTexture();
@@ -250,7 +254,17 @@ export function drawProgramText(
   options: { localCameraA?: boolean } = {},
 ) {
   ctx.clearRect(0, 0, 1920, 1080);
-  text(ctx, show.preset.episodeTitle, 960, 151, 64, PAPER, "Fraunces");
+  text(
+    ctx,
+    show.preset.episodeTitle,
+    960,
+    151,
+    64,
+    PAPER,
+    "Fraunces",
+    "center",
+    TITLE_MAX_WIDTH,
+  );
   for (const slot of ["A", "B"] as Slot[]) {
     const p = show.participants[slot],
       room = ROOMS[slot];
@@ -333,7 +347,17 @@ export function drawProgramText(
     }
     text(ctx, "✦", 960, 392, 64, GOLD);
     text(ctx, title, 960, 521, 64, PAPER, "Fraunces");
-    text(ctx, show.preset.episodeTitle, 960, 588, 36, "#CEB59A");
+    text(
+      ctx,
+      show.preset.episodeTitle,
+      960,
+      588,
+      36,
+      "#CEB59A",
+      "Inter",
+      "center",
+      TITLE_MAX_WIDTH,
+    );
   }
   if (show.mode === "rehearsal") {
     ctx.fillStyle = "#111827ed";

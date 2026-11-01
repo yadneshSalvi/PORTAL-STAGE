@@ -59,7 +59,7 @@ export default function GuidePage() {
               <h2>Local camera</h2>
               <ol>
                 <li>
-                  Choose Try camera &amp; hand cues, allow local preview, then
+                  Choose Camera &amp; hand cues, allow local preview, then
                   Enable local camera.
                 </li>
                 <li>
