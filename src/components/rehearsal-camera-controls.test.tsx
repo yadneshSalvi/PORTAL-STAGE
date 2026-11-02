@@ -29,6 +29,10 @@ function props() {
       anchor: null,
       inferenceMs: null,
       processing: "unavailable" as const,
+      tracked: false,
+      feedback: "idle" as const,
+      localHand: null,
+      firedAt: null,
       enable: vi.fn(async () => {}),
       disable: vi.fn(),
     },
@@ -43,6 +47,14 @@ function props() {
 }
 
 describe("local rehearsal camera controls", () => {
+  it("defaults the local A cue to the subject's left hand and keeps both choices", () => {
+    const html = renderToStaticMarkup(<RehearsalCameraControls {...props()} />);
+    expect(html).toContain(
+      '<option value="left" selected="">Left hand</option>',
+    );
+    expect(html).toContain('<option value="right">Right hand</option>');
+  });
+
   it("requires consent before enabling capture and explains the control-message boundary", () => {
     const state = props();
     const html = renderToStaticMarkup(<RehearsalCameraControls {...state} />);

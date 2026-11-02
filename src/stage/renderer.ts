@@ -11,11 +11,18 @@ import {
 } from "./scene-art";
 import { makePip, makeUmbrella, UMBRELLA_GRIP } from "./props";
 import { apertureCoverCrop } from "@/vision/calibration";
-import { stagePointForAperture } from "./coordinates";
 import { VideoFrameUpload } from "./video-frame-upload";
 import { startStageFrameLoop } from "./frame-loop";
 import { makeParcel } from "./parcel-prop";
 import { makeRoomIllustrations } from "./room-illustrations";
+import { HeldPropMotion, crossingPoint, propAnchor } from "./prop-presentation";
+import {
+  directorHandFeedback,
+  localHandPoint,
+  type DirectorHandPresentation,
+} from "@/vision/local-hand-presentation";
+import { makeHandCueFeedback } from "./hand-cue-feedback";
+import { createProgramFrame, presentCanonicalFrame } from "./program-frame";
 
 export type RenderInput = {
   show: ShowState;
@@ -23,6 +30,8 @@ export type RenderInput = {
   videoB?: HTMLVideoElement | null;
   localPreviewA?: HTMLVideoElement | null;
   localAnchorA?: Point | null;
+  /** Director-local palm and cue feedback; never passed to an independent Program preview. */
+  directorHand?: DirectorHandPresentation | null;
   serverOffset?: number;
   forceCurtain?: boolean;
   anchors?: Partial<Record<Slot, Point>>;
@@ -56,18 +65,6 @@ export function rainPresentation(show: Pick<ShowState, "weather" | "preset">) {
     length: stormy ? 23 : 15,
   };
 }
-function anchor(
-  show: ShowState,
-  slot: Slot,
-  anchors?: Partial<Record<Slot, Point>>,
-) {
-  const point =
-    show.mode === "solo" && slot === "B"
-      ? { x: 0.58, y: 0.72 }
-      : anchors?.[slot] || show.participants[slot].anchor;
-  return stagePointForAperture(slot, point);
-}
-
 export function createTheaterRenderer(
   canvas: HTMLCanvasElement,
   getInput: () => RenderInput,
@@ -84,6 +81,9 @@ export function createTheaterRenderer(
   renderer.setSize(STAGE_WIDTH, STAGE_HEIGHT, false);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.setClearColor("#111827");
+  const programFrame = getInput().onCanvas ? createProgramFrame(canvas) : null;
+  const handFeedback = makeHandCueFeedback();
+  const heldProp = new HeldPropMotion();
   const scene = new THREE.Scene();
   const camera = new THREE.OrthographicCamera(
     0,
@@ -197,7 +197,7 @@ export function createTheaterRenderer(
     duration: number;
     from: { x: number; y: number };
   } | null = null;
-  let lastUmbrellaPosition = anchor(
+  let lastUmbrellaPosition = propAnchor(
     checkpoint,
     checkpoint.umbrella.owner,
     getInput().anchors,
@@ -281,10 +281,21 @@ export function createTheaterRenderer(
       show.transport !== "livekit" &&
       !!current.localPreviewA;
     const videoA = localCameraA ? current.localPreviewA : current.videoA;
+    const hand = current.forceCurtain
+      ? null
+      : localHandPoint(current.directorHand, show, time);
     const anchors =
       localCameraA && current.localAnchorA
         ? { ...current.anchors, A: current.localAnchorA }
         : current.anchors;
+    const stageAnchor = (slot: Slot) =>
+      propAnchor(
+        show,
+        slot,
+        anchors,
+        current.forceCurtain ? null : current.directorHand,
+        time,
+      );
     updateVideo("A", videoA, show, !!current.forceCurtain, localCameraA);
     updateVideo("B", current.videoB, show, !!current.forceCurtain);
     const available = { A: !!videoA, B: !!current.videoB };
@@ -300,14 +311,17 @@ export function createTheaterRenderer(
       overlay.texture.needsUpdate = true;
       lastText = textKey;
     }
-    const point = anchor(show, show.umbrella.owner, anchors);
+    const point = stageAnchor(show.umbrella.owner);
     let ux = point.x,
       uy = point.y,
       tilt = show.umbrella.owner === "A" ? 0.1 : -0.1;
     const transfer = show.umbrella.transfer;
     if (transfer?.status === "offered") {
-      ux += transfer.from === "A" ? 80 : -80;
-      uy += 8;
+      // A tracked grip stays in the palm while the other room decides.
+      if (hand?.slot !== transfer.from) {
+        ux += transfer.from === "A" ? 80 : -80;
+        uy += 8;
+      }
       tilt = transfer.from === "A" ? -0.15 : 0.15;
     }
     // A new committed event gets its full presentation duration when this renderer observes it.
@@ -322,6 +336,7 @@ export function createTheaterRenderer(
       observedCommit = transfer?.committedAt ? transfer.id : null;
       wasLive = false;
     }
+    let crossing = false;
     if (
       transfer?.committedAt &&
       transfer.commitSequence !== null &&
@@ -340,19 +355,23 @@ export function createTheaterRenderer(
         observedCommit = transfer.id;
       }
       if (transfer.status === "arrived") presentation = null;
+      crossing = presentation?.id === transfer.id;
       const p =
           presentation?.id === transfer.id
             ? clamp((time - presentation.start) / presentation.duration, 0, 1)
             : 1,
-        eased = p * p * (3 - 2 * p),
-        from = presentation?.from || anchor(show, transfer.from, anchors),
-        to = anchor(show, transfer.to, anchors);
-      ux = from.x + (to.x - from.x) * eased;
-      uy =
-        from.y +
-        (to.y - from.y) * eased +
-        Math.sin(p * Math.PI) * (isParcel ? 80 : 70 + UMBRELLA_GRIP.y);
+        from = presentation?.from || stageAnchor(transfer.from),
+        to = stageAnchor(transfer.to);
+      const crossingPosition = crossingPoint(
+        from,
+        to,
+        p,
+        isParcel ? 80 : 70 + UMBRELLA_GRIP.y,
+      );
+      ux = crossingPosition.x;
+      uy = crossingPosition.y;
       tilt = Math.sin(p * Math.PI * 2) * 0.12;
+      if (p >= 1) presentation = null;
       if (
         p >= 1 &&
         transfer.status === "accepted" &&
@@ -385,7 +404,17 @@ export function createTheaterRenderer(
       uy = 485 + UMBRELLA_GRIP.y;
       tilt = 0;
     }
-    lastUmbrellaPosition = { x: ux, y: uy };
+    const heldPosition = heldProp.update({ x: ux, y: uy }, time, {
+      epoch: show.epoch,
+      phase: show.phase,
+      forceCurtain: current.forceCurtain,
+      crossing,
+      shelter: show.beat === "shelter",
+      reducedMotion: calm,
+    });
+    ux = heldPosition.x;
+    uy = heldPosition.y;
+    lastUmbrellaPosition = heldPosition;
     const prop = isParcel ? parcel.group : umbrella.group;
     prop.position.set(ux, uy, 90);
     prop.rotation.z = tilt + (calm ? 0 : Math.sin(t * 0.9) * 0.012);
@@ -468,7 +497,18 @@ export function createTheaterRenderer(
       }
       rainGeometry.attributes.position.needsUpdate = true;
     }
-    renderer.render(scene, camera);
+    const cueVisible = handFeedback.update(
+      current.forceCurtain
+        ? null
+        : directorHandFeedback(current.directorHand, show, time, calm),
+    );
+    presentCanonicalFrame(
+      renderer,
+      scene,
+      camera,
+      programFrame,
+      cueVisible ? handFeedback.scene : null,
+    );
     frames++;
     if (time - healthAt > 2500) {
       current.onRenderHealth?.({
@@ -495,11 +535,14 @@ export function createTheaterRenderer(
     onFailure();
   }
   canvas.addEventListener("webglcontextlost", contextLost);
-  getInput().onCanvas?.(canvas);
+  getInput().onCanvas?.(programFrame?.canvas || canvas);
   const stopFrameLoop = startStageFrameLoop(render);
   document.fonts.ready
     .then(() => {
-      if (!stopped) lastText = "";
+      if (!stopped) {
+        lastText = "";
+        handFeedback.invalidate();
+      }
     })
     .catch(() => undefined);
   return () => {
@@ -532,6 +575,8 @@ export function createTheaterRenderer(
     textures.forEach((v) => v.dispose());
     geometries.forEach((g) => g.dispose());
     materials.forEach((m) => m.dispose());
+    handFeedback.dispose();
+    programFrame?.dispose();
     renderer.dispose();
   };
 }

@@ -14,6 +14,8 @@ The explicitly enabled local transport test includes a read-only canonical-decod
 
 The capture targets are two 1280 × 720 / 30 fps performer feeds and a 1920 × 1080 / 30 fps canvas. They are requested settings and compositor targets, not measured performance claims. Actual devices and bandwidth may produce different results. The controller exposes connection quality, playback blocks, permissions, selected devices, publication state, input meters, and capability checks. VP8 is requested for video; the selected browser and OBS runtime still need compatibility verification.
 
+The canonical renderer's `onCanvas` callback supplies a clean capture buffer to `publishProgram()`, shared by Program and the video-only guest return. Each frame makes one 1920 × 1080 pixel copy immediately after the authored stage render, before the same WebGL renderer adds the director's palm cue ring/hint. The visible Studio canvas retains that feedback for director recording, while published video excludes it. There is no second renderer or independently timed show. Automated ordering checks cover overlay onset, consecutive frames and removal; actual copy overhead and concurrent recording load remain browser dry-run checks.
+
 Configuration guidance uses the server's structured error code: `media_unconfigured` and `media_url` identify missing/invalid media configuration. Other HTTP 503 responses, including a database timeout, are reported as a temporary service interruption rather than a request to reconfigure LiveKit.
 
 ## Private and public paths
@@ -51,6 +53,8 @@ Leave, page hide, unmount, and end-show cleanup stop capture, unpublish tracks, 
 ## Disposable position samples
 
 `sendAnchor(point)` updates the local presentation immediately and sends a normalized point over the private room's unreliable `portal-anchor/v1` data topic. The canonical renderer consumes `media.anchors`; `media.transientAnchors` distinguishes a received sample from the durable calibration fallback. These position samples do not invoke the HTTP action API, grow its idempotency memo, or modify prop ownership. Framing/calibration and all Offer/Accept/Recall commands remain durable server actions.
+
+The director's own hand has an additional local presentation sample at inference cadence, so a still hand does not expire merely because the network movement threshold suppresses a packet. A current receiving palm can also be sampled locally before ownership commits, for the crossing's landing target. This sample stays in the director page, obeys its camera/admission/lease gates, and does not call `sendAnchor` for a receiver. Solo still sends no peer anchor packets; its Program view receives the composed director video, so it already shows the rendered prop position. Optional solo anchor distribution was not added.
 
 The sender keeps one data publish in flight and only the latest pending point, with a minimum 100 ms send interval. A point that becomes too old behind backpressure is dropped with its original capture timestamp. The receiver requires the current SDK peer object, server-signed show/role/slot metadata, the corresponding SDK identity, current show epoch, eligible admitted owner, and a live render lease. It accepts only finite 0–1 coordinates in a strict packet no larger than 256 bytes, with monotonic sequence/time, at most 1000 ms age, at most 250 ms future clock tolerance, and a 20 packets/second receive ceiling per slot. Data messages cannot accept an offer, issue a cue, or change an authoritative show field.
 

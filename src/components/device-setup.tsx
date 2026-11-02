@@ -57,7 +57,13 @@ export function DeviceSetup({
     : null;
   const [broadcast, setBroadcast] = useState(participant.consentBroadcast),
     [recording, setRecording] = useState(participant.consentRecording),
-    [handedness, setHandedness] = useState(participant.handedness),
+    [handedness, setHandedness] = useState<"left" | "right">(
+      participant.calibrated
+        ? participant.handedness
+        : slot === "A"
+          ? "left"
+          : "right",
+    ),
     [point, setPoint] = useState<Point>({
       x: Math.max(0.16, Math.min(0.84, 1 - participant.anchor.x)),
       y: Math.max(0.3, Math.min(0.72, participant.anchor.y)),

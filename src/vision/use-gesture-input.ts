@@ -15,12 +15,18 @@ import {
   calibrationMatchesVideo,
   type GestureCalibration,
 } from "./calibration";
+import {
+  updateLocalHandSample,
+  type LocalHandSample,
+} from "./local-hand-presentation";
 
 export type { GestureCalibration } from "./calibration";
 export type GestureInputOptions = GestureContext & {
   onOffer: () => void | Promise<unknown>;
   onAccept: () => void | Promise<unknown>;
   onAnchor?: (point: Point) => void | Promise<unknown>;
+  /** Enables a private director sample, fenced to this show and epoch. Never sent by onAnchor. */
+  presentationScope?: string;
   /** Must match calibration; mirroring is applied once to raw video coordinates. */
   mirrored?: boolean;
 };
@@ -38,6 +44,8 @@ type GestureState = Omit<GestureReading, "intent"> & {
   error: string | null;
   inferenceMs: number | null;
   processing: "worker" | "unavailable";
+  localHand: LocalHandSample | null;
+  firedAt: number | null;
 };
 const initial: GestureState = {
   enabled: false,
@@ -48,6 +56,10 @@ const initial: GestureState = {
   error: null,
   inferenceMs: null,
   processing: "unavailable",
+  tracked: false,
+  feedback: "idle",
+  localHand: null,
+  firedAt: null,
 };
 
 export function useGestureInput(
@@ -86,8 +98,7 @@ export function useGestureInput(
     stop();
     setState({
       ...initial,
-      status:
-        "Gestures are off. Your last stable anchor is held; use buttons to continue.",
+      status: "Gestures are off. Use Offer / Accept buttons to continue.",
     });
   }, [stop]);
   useEffect(() => () => stop(), [stop]);
@@ -177,6 +188,8 @@ export function useGestureInput(
           ...previous,
           dwellProgress: 0,
           confidence: 0,
+          tracked: false,
+          feedback: "idle",
           status: "Tracking paused — keep the preview active, or use buttons.",
         }));
         schedule();
@@ -257,6 +270,9 @@ export function useGestureInput(
           ...previous,
           confidence: 0,
           dwellProgress: 0,
+          tracked: false,
+          feedback: "idle",
+          localHand: null,
           status:
             "Camera framing changed. Confirm calibration again; buttons remain available.",
         }));
@@ -269,22 +285,26 @@ export function useGestureInput(
           ...previous,
           confidence: 0,
           dwellProgress: 0,
+          tracked: false,
+          feedback: "idle",
           inferenceMs: data.inferenceMs,
           status: "Tracking is too slow for a safe cue. Use buttons.",
         }));
         schedule();
         return;
       }
+      // The worker receives unmirrored pixels. A CSS preview/calibration mirror is unrelated.
       const observation = observationFromLandmarks(
         data.detection,
         calibration?.handedness ?? "right",
       );
+      const sampledAt = performance.now();
       const reading = engine.current.sample(
         observation,
         { ...current, calibration },
-        performance.now(),
+        sampledAt,
       );
-      setState({
+      setState((previous) => ({
         enabled: true,
         error: null,
         processing: "worker",
@@ -293,7 +313,17 @@ export function useGestureInput(
         anchor: reading.anchor,
         status: reading.status,
         inferenceMs: data.inferenceMs,
-      });
+        tracked: reading.tracked,
+        feedback: reading.feedback,
+        localHand: updateLocalHandSample(
+          previous.localHand,
+          reading,
+          { ...current, calibration },
+          current.presentationScope,
+          sampledAt,
+        ),
+        firedAt: reading.intent ? sampledAt : previous.firedAt,
+      }));
       if (reading.intent) {
         const callback =
           reading.intent === "offer" ? current.onOffer : current.onAccept;
@@ -310,6 +340,7 @@ export function useGestureInput(
       }
       if (
         reading.anchor &&
+        reading.tracked &&
         observation &&
         current.armed &&
         current.owner === current.slot &&

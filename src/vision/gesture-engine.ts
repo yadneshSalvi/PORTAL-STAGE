@@ -7,6 +7,7 @@ import {
   validCalibration,
 } from "./calibration";
 import type { GestureCalibration } from "./calibration";
+import { subjectHandedness } from "./handedness";
 
 export type HandObservation = {
   point: Point;
@@ -29,6 +30,9 @@ export type GestureReading = {
   anchor: Point | null;
   status: string;
   intent: "offer" | "accept" | null;
+  /** True only for a selected, calibrated hand in this inference, never a retained anchor. */
+  tracked: boolean;
+  feedback: "idle" | "dwelling" | "release" | "fired";
 };
 export const GESTURE_LIMITS = {
   minConfidence: 0.8,
@@ -64,16 +68,20 @@ export class GestureIntentEngine {
     context: GestureContext,
     now: number,
   ): GestureReading {
+    let tracked = false;
     const result = (
       status: string,
       dwellProgress = 0,
       intent: GestureReading["intent"] = null,
+      feedback: GestureReading["feedback"] = "idle",
     ): GestureReading => ({
       status,
       confidence: observation?.confidence ?? 0,
       anchor: this.anchor,
       dwellProgress,
       intent,
+      tracked,
+      feedback,
     });
     const key = JSON.stringify([
       context.armed,
@@ -130,6 +138,7 @@ export class GestureIntentEngine {
       return result("Move your hand inside the calibrated region.");
     }
     this.anchor = stableAnchor(this.anchor, mapped);
+    tracked = true;
     if (!context.armed) {
       this.since = null;
       this.releaseRequired = false;
@@ -163,7 +172,12 @@ export class GestureIntentEngine {
       return result("Raise an open palm in the marked cue region when ready.");
     }
     if (this.releaseRequired || this.fired)
-      return result("Lower your hand before arming the next cue.");
+      return result(
+        "Lower your hand before arming the next cue.",
+        0,
+        null,
+        "release",
+      );
     if (now < this.cooldownUntil) {
       this.since = null;
       return result("Cue cooldown — keep using buttons if needed.");
@@ -184,7 +198,8 @@ export class GestureIntentEngine {
         ? GESTURE_LIMITS.offerDwellMs
         : GESTURE_LIMITS.acceptDwellMs;
     const progress = Math.min(1, (now - this.since) / dwell);
-    if (progress < 1) return result(`Hold to ${intent}…`, progress);
+    if (progress < 1)
+      return result(`Hold to ${intent}…`, progress, null, "dwelling");
     this.fired = true;
     this.releaseRequired = true;
     this.since = null;
@@ -193,6 +208,7 @@ export class GestureIntentEngine {
       `${intent === "offer" ? "Offer" : "Accept"} requested. Waiting for the server.`,
       1,
       intent,
+      "fired",
     );
   }
 }
@@ -213,12 +229,16 @@ const distance = (a: Landmark, b: Landmark) => Math.hypot(a.x - b.x, a.y - b.y);
 export function observationFromLandmarks(
   detection: HandDetection,
   wanted: "left" | "right",
+  inputMirrored = false,
 ): HandObservation | null {
   const candidates: HandObservation[] = [];
   for (let i = 0; i < detection.landmarks.length; i++) {
     const landmarks = detection.landmarks[i];
     const category = detection.handedness[i]?.[0];
-    const handedness = category?.categoryName?.toLowerCase();
+    const handedness = subjectHandedness(
+      category?.categoryName ?? "",
+      inputMirrored,
+    );
     if (
       landmarks.length !== 21 ||
       handedness !== wanted ||

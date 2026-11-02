@@ -29,6 +29,8 @@ _Illustrated Midnight Parcel rehearsal; the full out-and-back prop journey and i
 
 **Camera & hand cues** is optional inside ordinary rehearsal. Give local preview consent, enable the camera, confirm framing, enable hand cues, and arm them. Your camera and landmarks stay in that browser; rehearsal requests no microphone or media room. Offer/Accept buttons remain available. Framing and dwell have automated tests; physical hand accuracy is still an acceptance task.
 
+The revision-009 candidate adds smooth local hand-follow, a 1.5-second tracking-loss grace, a return crossing that targets the receiving palm, and a quiet gold dwell ring in the director's stage. A defaults to **Left hand**, toward the portal; the selector remains available. Modern MediaPipe Tasks uses the subject's handedness for unmirrored pixels, so the implementation preserves those labels. Automated checks cover the presentation path; the owner's physical-camera dry run, handoff and catch remain pending. [Hand-cue behavior and verification](docs/gestures.md) explains the local feedback and clean Program capture.
+
 ## With real Twitch chat
 
 Sign in with Twitch and create a **solo Twitch show**, subject to the displayed shared allowance. You prepare, consent, and admit your own camera. The illustrated Audience Room needs no guest invitation: chat's `!accept`/`!wait` choice receives the prop, and `!giveback`/`!keep` decides its return. You explicitly accept it back.

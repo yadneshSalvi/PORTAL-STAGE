@@ -50,6 +50,7 @@ import { useLocalRehearsalCamera } from "@/media/use-local-rehearsal-camera";
 import { LocalVideoDiagnostics } from "@/media/local-video-diagnostics";
 import { type GestureCalibration } from "@/vision/calibration";
 import { useGestureInput } from "@/vision/use-gesture-input";
+import { handPresentationScope } from "@/vision/local-hand-presentation";
 import { Wordmark, SiteHeader, SiteFooter } from "./brand";
 import { TheaterPoster } from "./theater-poster";
 import { ParcelPoster } from "./parcel-poster";
@@ -423,17 +424,11 @@ function StudioWorkspace({
       ? run({ type: "accept", transferId: transfer.id, slot: "A" })
       : Promise.resolve(null);
   }, [run, show.umbrella.transfer, leaseValid]);
-  const onAnchor = useCallback(
-    (anchor: Point) => {
-      if (fixtureRehearsal && !localTest) setLocalAnchor(anchor);
-      else media.sendAnchor(anchor);
-    },
-    [media.sendAnchor, fixtureRehearsal, localTest],
-  );
   const gesture = useGestureInput(
     fixtureRehearsal && !localTest ? localCamera.preview : media.localPreview,
     {
-      armed: gestureArmed && show.phase === "live" && leaseValid,
+      armed:
+        gestureArmed && show.phase === "live" && leaseValid && !forceCurtain,
       calibration,
       slot: "A",
       owner: show.umbrella.owner,
@@ -448,7 +443,8 @@ function StudioWorkspace({
       canOffer: canOffer && !busy,
       onOffer: offer,
       onAccept: accept,
-      onAnchor,
+      onAnchor: fixtureRehearsal && !localTest ? undefined : media.sendAnchor,
+      presentationScope: handPresentationScope(show),
     },
   );
   stopGesture.current = gesture.disable;
@@ -950,6 +946,21 @@ function StudioWorkspace({
                   localAnchorA={
                     fixtureRehearsal && !localTest ? localAnchor : null
                   }
+                  directorHand={{
+                    sample: gesture.localHand,
+                    armed:
+                      gesture.enabled &&
+                      gestureArmed &&
+                      leaseValid &&
+                      (fixtureRehearsal && !localTest
+                        ? localCameraConsent && localCamera.enabled
+                        : isStageReady(show, "A") &&
+                          show.participants.A.calibrated),
+                    tracked: gesture.tracked,
+                    dwellProgress: gesture.dwellProgress,
+                    feedback: gesture.feedback,
+                    firedAt: gesture.firedAt,
+                  }}
                   serverOffset={serverOffset}
                   anchors={media.anchors}
                   forceCurtain={forceCurtain}

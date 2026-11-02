@@ -70,7 +70,9 @@ export function RehearsalCameraControls({
 }) {
   const consentId = useId();
   const armId = useId();
-  const [handedness, setHandedness] = useState<"left" | "right">("right");
+  const [handedness, setHandedness] = useState<"left" | "right">(
+    calibration?.handedness ?? "left",
+  );
   const [framingError, setFramingError] = useState("");
   const dimensions = {
     videoWidth: camera.preview?.videoWidth || 0,
