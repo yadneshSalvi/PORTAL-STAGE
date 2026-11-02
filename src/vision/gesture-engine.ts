@@ -217,6 +217,7 @@ export type Landmark = {
   x: number;
   y: number;
   z?: number;
+  /** Tasks includes this as 0 even when the xyz-only hand model does not output it. */
   visibility?: number;
 };
 export type HandDetection = {
@@ -243,7 +244,9 @@ export function observationFromLandmarks(
       landmarks.length !== 21 ||
       handedness !== wanted ||
       !category ||
-      !Number.isFinite(category.score)
+      !Number.isFinite(category.score) ||
+      category.score < 0 ||
+      category.score > 1
     )
       continue;
     if (
@@ -282,10 +285,11 @@ export function observationFromLandmarks(
     candidates.push({
       point,
       openPalm: extended === 4,
-      confidence: Math.min(
-        category.score,
-        ...landmarks.map((landmark) => landmark.visibility ?? 1),
-      ),
+      // HandLandmarker outputs xyz, not per-landmark visibility. Tasks' shared
+      // converter fills absent visibility with 0; it is not a weak-hand score.
+      // The worker already gates hand detection/presence/tracking at 0.8.
+      // https://github.com/google-ai-edge/mediapipe/blob/76f1d78eb1c350f882536adfa84d248ad0c84a60/mediapipe/tasks/web/components/processors/landmark_result.ts#L29-L34
+      confidence: category.score,
       handedness: wanted,
     });
   }
