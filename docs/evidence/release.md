@@ -1,4 +1,17 @@
-# Round-four release — 2 November 2026
+# Hand-presentation release — 3 November 2026
+
+The revision-009 code is live at [portal-stage-eight.vercel.app](https://portal-stage-eight.vercel.app): smoother held props, a refreshed local palm anchor, return-to-palm targeting, subject-hand defaults and private director feedback. Server ownership, network anchor permissions, consent and admission are unchanged. Program and guest return receive the canonical frame before the local ring is drawn.
+
+| Identity                | Value                                                            |
+| ----------------------- | ---------------------------------------------------------------- |
+| Deployed runtime/source | `ec2af18a34b6059c7980ef606e3f6ef207d44ac2`                       |
+| Vercel deployment       | `dpl_EVyyLCkyGdPtY2ocTwz2z8FYwUBS` — Ready (production)          |
+| Deployment URL          | https://portal-stage-luq1r5xfe-yadneshsalvis-projects.vercel.app |
+| Tests                   | 528 passed; seven opt-in Neon checks skipped                     |
+
+Typecheck, formatting, optimized build and diff checks passed. Local browser rehearsal covered the weather choice and button-driven crossing with no browser errors. A signed-out production rehearsal completed its first test vote and applied rain; public routes returned HTTP 200 and the initial deployment-specific error scan was empty. The camera-free recording pipeline separately retained 44.7841 seconds of decoded 1920 × 1080 H.264 across browser-tool calls. This recording check does not establish hand tracking or camera performance. The owner's physical rehearsal and filmed handoff/catch are pending; revision 008 remains the current local film delivery.
+
+## Round-four release — 2 November 2026
 
 The round-4 fixes are live at [portal-stage-eight.vercel.app](https://portal-stage-eight.vercel.app): visible media and Twitch failure chips, no idle caption text, steady cue steps, an invite-only Duet card and accessibility polish.
 
